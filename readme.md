@@ -1,0 +1,6 @@
+- Bmob账号：dolly332@163.com dolly332
+- Bmob demo：
+  - camera绑BmobUnity.cs
+  - camera中的BmobTest.cs以及Sample/testTable.cs
+- sample是一个数据传递的实例
+- TapOn为项目目录
