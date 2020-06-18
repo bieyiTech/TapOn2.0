@@ -1,6 +1,7 @@
 ﻿using Models.Redux;
 using Models.State;
 using Screens;
+using TapOn.Components;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.UIWidgets.animation;
