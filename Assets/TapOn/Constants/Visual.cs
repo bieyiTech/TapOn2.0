@@ -7,7 +7,7 @@ namespace TapOn.Constants {
         public const float TabBarHeight = 49;
     }
 
-    public static class Icons {
+    public static class MyIcons {
         public static readonly IconData UnityLogo = new IconData(0xe61d, "iconfont");
         public static readonly IconData UnityTabIcon = new IconData(0xe623, "iconfont");
         public static readonly IconData LogoWithUnity = new IconData(0xe622, "iconfont");
@@ -85,6 +85,9 @@ namespace TapOn.Constants {
         public static readonly IconData camera_alt = new IconData(0xe3b0, "Material Icons");
         public static readonly IconData add = new IconData(0xe145, "Material Icons");
         public static readonly IconData edit = new IconData(0xe3c9, "Material Icons");
+
+        public static readonly IconData upload = new IconData(0xe2c3, "Material Icons");
+        //public static readonly IconData home = new IconData(0xe7a5, "Material Icons");
     }
 
     public static class CTextStyle {
