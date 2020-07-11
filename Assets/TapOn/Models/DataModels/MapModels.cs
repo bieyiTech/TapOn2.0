@@ -19,8 +19,8 @@ namespace TapOn.Models.DataModels
     /// </summary>
     public class Mark
     {
+        public string id;
         public Coordinate coordinate;
-        public static IconData mark_icon = new IconData(0xe55f, "Material Icons");
     }
 
     public class Position

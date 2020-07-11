@@ -1,13 +1,16 @@
-﻿using RSG;
+﻿using cn.bmob.response;
+using RSG;
 using System.Collections;
 using System.Collections.Generic;
 using TapOn.Api;
 using TapOn.Constants;
+using TapOn.Models;
 using TapOn.Models.ActionModels;
 using TapOn.Models.DataModels;
 using TapOn.Models.States;
 using TapOn.Models.ViewModels;
 using TapOn.Redux.Actions;
+using TencentMap.CoordinateSystem;
 using UIWidgetsGallery.gallery;
 using Unity.UIWidgets.foundation;
 using Unity.UIWidgets.material;
@@ -52,10 +55,16 @@ namespace TapOn.Screens
                             dispatcher.dispatch(new MapVerticalDragAction { offset = y }),
                         mapZoom = s =>
                             dispatcher.dispatch(new MapZoomAction { scale = s }),
-                        markPositionUpdate = u => 
-                            dispatcher.dispatch(new UpdatePositionsAction { update = u,}),
+                        markPositionUpdate = u =>
+                            dispatcher.dispatch(new UpdatePositionsAction { update = u }),
+                        selectMark = u =>
+                            dispatcher.dispatch(new SelectMarkAction { pos = u }),
+                        addMarkJustLoading = l =>
+                            dispatcher.dispatch(new AddMarkJustLoadingAction { newMarks = l }),
                         moveMap = () => dispatcher.dispatch<IPromise>(Actions.moveMap()),
                         zoomMap = () => dispatcher.dispatch<IPromise>(Actions.zoomMap()),
+                        changeMark = () => dispatcher.dispatch<IPromise>(Actions.changeMark()),
+                        loadMark = () => dispatcher.dispatch<IPromise>(Actions.loadMark()),
                     };
                     return new MapScreen(viewModel: viewModel, actionModel: actionModel);
                 }
@@ -81,7 +90,6 @@ namespace TapOn.Screens
         public override State createState()
         {
             _MapScreenState s = new _MapScreenState();
-            s.updateAllPos(viewModel.marks);
             return s;
         }
     }
@@ -91,27 +99,6 @@ namespace TapOn.Screens
         private List<Vector2> allPos = new List<Vector2>();
         private int markSize = 40;
         public int _currentIndex = 0;
-
-        public void updateAllPos(List<Mark> marks = null)
-        {
-            allPos = new List<Vector2>();
-            if (marks == null)
-            {
-                for (int i = 0; i < this.widget.viewModel.marks.Count; i++)
-                {
-                    Vector2 offset = MapApi.CoordinateConvert(this.widget.viewModel.marks[i].coordinate, markSize);
-                    allPos.Add(offset);
-                }
-            }
-            else
-            {
-                for (int i = 0; i < marks.Count; i++)
-                {
-                    Vector2 offset = MapApi.CoordinateConvert(marks[i].coordinate, markSize);
-                    allPos.Add(offset);
-                }
-            }
-        }
         public List<Widget> _buildMark()
         {
             List<Widget> allMark = new List<Widget>();
@@ -128,14 +115,14 @@ namespace TapOn.Screens
                     alignment: new FractionalOffset(this.widget.viewModel.positions[i].x, this.widget.viewModel.positions[i].y),
                     //alignment: new FractionalOffset(0,0),
                     child: new Icon(
-                        icon: Mark.mark_icon,
+                        icon: MyIcons.mark_icon,
                         size: markSize,
                         color: CColors.Red
                     )
                     ));
                /*allMark.Add(new Positioned(
                     child: new Icon(
-                        icon: Mark.mark_icon,
+                        icon: MyIcons.mark_icon,
                         size: markSize,
                         color: CColors.Red
                     ),
@@ -170,16 +157,28 @@ namespace TapOn.Screens
                             children: _buildMark()
                             )
                         ),
+                    onTapDown: detail => 
+                    {
+                        Vector2 t = new Vector2(detail.globalPosition.dx, detail.globalPosition.dy);
+                        this.widget.actionModel.selectMark(t);
+                    },
                     onPanStart:detail =>
                     {
-                        this.widget.actionModel.markPositionUpdate(false);
+                        //this.widget.actionModel.markPositionUpdate(false);
                     },
-                    onPanEnd: detail =>
+                    onPanEnd: async detail =>
                     {
-
+                        QueryCallbackData<Marks> data = await BmobApi.queryFuzztMarksAsync(MapApi.map.GetCoordinate(), 3);
+                        Debug.LogError(2);
+                        List<Mark> marks = new List<Mark>();
+                        foreach (var mark in data.results)
+                            marks.Add(new Mark { coordinate = new Coordinate(mark.coordinate.Latitude.Get(), mark.coordinate.Longitude.Get()), id = mark.objectId });
+                        this.widget.actionModel.addMarkJustLoading(marks);
+                        this.widget.actionModel.changeMark();
                         //MapApi.mapEnd.velocity_x = detail.velocity.pixelsPerSecond.dx;
                         //MapApi.mapEnd.velocity_y = detail.velocity.pixelsPerSecond.dy;
-                        this.widget.actionModel.markPositionUpdate(true);
+                        //this.widget.actionModel.markPositionUpdate(true);
+                        //this.widget.actionModel.loadMark();
                     },
                     onPanUpdate: details =>
                     {
@@ -200,8 +199,8 @@ namespace TapOn.Screens
         {
             List<BottomNavigationBarItem> t = new List<BottomNavigationBarItem>
             {
-                new BottomNavigationBarItem(icon: new Icon(icon: Mark.mark_icon, color: CColors.Black)),
-                new BottomNavigationBarItem(icon: new Icon(icon: Mark.mark_icon, color: CColors.Black))
+                new BottomNavigationBarItem(icon: new Icon(icon: MyIcons.mark_icon, color: CColors.Black)),
+                new BottomNavigationBarItem(icon: new Icon(icon: MyIcons.mark_icon, color: CColors.Black))
             };
             return new Scaffold(
                 backgroundColor: CColors.Transparent,
@@ -216,27 +215,27 @@ namespace TapOn.Screens
                             // type: BottomNavigationBarType.fix,
                             items: new List<BottomNavigationBarItem> {
                                 new BottomNavigationBarItem(
-                                    icon: new Icon(icon: Mark.mark_icon, size: 30),
+                                    icon: new Icon(icon: MyIcons.mark_icon, size: 30),
                                     title: new Text("Work"),
-                                    activeIcon: new Icon(icon: Mark.mark_icon, size: 50),
+                                    activeIcon: new Icon(icon: MyIcons.mark_icon, size: 50),
                                     backgroundColor: Colors.blue
                                 ),
                                 new BottomNavigationBarItem(
-                                    icon: new Icon(icon: Mark.mark_icon, size: 30),
+                                    icon: new Icon(icon: MyIcons.mark_icon, size: 30),
                                     title: new Text("Home"),
-                                    activeIcon: new Icon(icon: Mark.mark_icon, size: 50),
+                                    activeIcon: new Icon(icon: MyIcons.mark_icon, size: 50),
                                     backgroundColor: Colors.blue
                                 ),
                                 new BottomNavigationBarItem(
-                                    icon: new Icon(icon: Mark.mark_icon, size: 30),
+                                    icon: new Icon(icon: MyIcons.mark_icon, size: 30),
                                     title: new Text("Shop"),
-                                    activeIcon: new Icon(icon: Mark.mark_icon, size: 50),
+                                    activeIcon: new Icon(icon: MyIcons.mark_icon, size: 50),
                                     backgroundColor: Colors.blue
                                 ),
                                 new BottomNavigationBarItem(
-                                    icon: new Icon(icon: Mark.mark_icon, size: 30),
+                                    icon: new Icon(icon: MyIcons.mark_icon, size: 30),
                                     title: new Text("School"),
-                                    activeIcon: new Icon(icon: Mark.mark_icon, size: 50),
+                                    activeIcon: new Icon(icon: MyIcons.mark_icon, size: 50),
                                     backgroundColor: Colors.blue
                                 ),
                             },

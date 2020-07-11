@@ -1,6 +1,7 @@
 ﻿using RSG;
 using System.Collections;
 using System.Collections.Generic;
+using TapOn.Constants;
 using TapOn.Models.DataModels;
 using TencentMap.API;
 using TencentMap.CoordinateSystem;
@@ -12,6 +13,8 @@ namespace TapOn.Api
     {
         public static MapController map;
         public static MapEnd mapEnd;
+        public static Prefabs prefabs;
+        public static Camera camera;
         public static Promise<string> MoveMap(float offX, float offY)
         {
             var promise = new Promise<string>();
@@ -29,10 +32,29 @@ namespace TapOn.Api
             if (scale > 1)
                 newLevel = nowLevel + 0.02f;
             else newLevel = nowLevel - 0.02f;
+            newLevel = nowLevel + Mathf.Log(scale, 2) * 0.5f;
             newLevel = Mathf.Clamp(newLevel, 1, 16);
             map.SetZoomLevel(newLevel);
             map.DidRender();
             promise.Resolve(value: "zoom success!");
+            return promise;
+        }
+
+        public static Promise<List<GameObject>> AddMark(List<Mark> marks)
+        {
+            var promise = new Promise<List<GameObject>>();
+            List<GameObject> m = new List<GameObject>();
+            if(prefabs == null)
+            {
+                promise.Reject(ex: new System.Exception("prefabs is null!"));
+            }
+            foreach(Mark mark in marks)
+            {
+                Vector3 pos = map.ConvertCoordinateToWorld(mark.coordinate);
+                GameObject t = Object.Instantiate(prefabs.marker);
+                t.transform.position = pos + 0.5f * new Vector3(0, 0, t.transform.localScale.y * t.GetComponent<SpriteRenderer>().bounds.size.y);
+            }
+            promise.Resolve(value: m);
             return promise;
         }
 

@@ -87,10 +87,29 @@ namespace TapOn.Constants {
         public static readonly IconData edit = new IconData(0xe3c9, "Material Icons");
 
         public static readonly IconData upload = new IconData(0xe2c3, "Material Icons");
+        public static readonly IconData picture = new IconData(0xe3b6, "Material Icons");
+        public static readonly IconData video = new IconData(0xe63a, "Material Icons");
+        public static readonly IconData text = new IconData(0xe8e2, "Material Icons");
+
+        public static IconData mark_icon = new IconData(0xe55f, "Material Icons");
         //public static readonly IconData home = new IconData(0xe7a5, "Material Icons");
     }
 
     public static class CTextStyle {
+        public static readonly TextStyle normal = new TextStyle(
+            fontSize: 18,
+            fontFamily: "Roboto-Bold",
+            color: CColors.White
+        );
+
+        public static readonly TextStyle strength = new TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            fontFamily: "Roboto-Bold",
+            color: CColors.White
+        );
+
+
         public static readonly TextStyle Xtra = new TextStyle(
             height: 1.03f,
             fontSize: 48,

@@ -7,7 +7,7 @@ namespace TapOn.Models.ViewModels
 {
     public class MapScreenViewModel
     {
-        public List<Mark> marks;
+        public Queue<Mark> marks;
         public List<Vector2> positions;
         public List<Position> pixelPositions;
     }

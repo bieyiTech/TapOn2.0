@@ -93,7 +93,7 @@ using UnityEngine;
             return new Scaffold(
                 backgroundColor: CColors.Transparent,
                 //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-                //floatingActionButton: new FloatingActionButton(child: new Icon(icon: Mark.mark_icon)),
+                //floatingActionButton: new FloatingActionButton(child: new Icon(icon: MyIcons.mark_icon)),
                 appBar: new AppBar(title: new Text("TapOn")),
                 body:page,
                 bottomNavigationBar: new BottomAppBar(

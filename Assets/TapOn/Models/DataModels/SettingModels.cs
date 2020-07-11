@@ -5,13 +5,19 @@ using UnityEngine;
 
 namespace TapOn.Models.DataModels
 {
-    /// <summary>
-    /// 放置界面的图标
-    /// </summary>
-    public class MyIcon
+    public enum ProductType
     {
-        public string text;
-        public Icon icon;
+        Text,
+        Picture,
+        Video,
+        Model
+    }
+    /// <summary>
+    /// 放置界面的半成品（选好图的图片）
+    /// </summary>
+    public class Product
+    {
+        public ProductType type;
         public GameObject instance;
     }
 }

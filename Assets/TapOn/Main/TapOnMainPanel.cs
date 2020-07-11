@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using cn.bmob.api;
+using cn.bmob.tools;
+using System.Collections;
 using System.Collections.Generic;
 using TapOn.Api;
 using TapOn.Constants;
@@ -6,9 +8,11 @@ using TapOn.Models.States;
 using TapOn.Redux;
 using TapOn.Screens;
 using TencentMap.API;
+using TencentMap.CoordinateSystem;
 using Unity.UIWidgets.engine;
 using Unity.UIWidgets.foundation;
 using Unity.UIWidgets.material;
+using Unity.UIWidgets.painting;
 using Unity.UIWidgets.Redux;
 using Unity.UIWidgets.ui;
 using Unity.UIWidgets.widgets;
@@ -19,6 +23,7 @@ namespace TapOn.Main
     public class TapOnMainPanel : UIWidgetsPanel
     {
         public MapController map;
+        public Prefabs prefabs;
         protected override void OnEnable()
         {
             base.OnEnable();
@@ -28,8 +33,21 @@ namespace TapOn.Main
             //Window.onFrameRateCoolDown = CustomFrameRateCoolDown;
             LoadFonts();
             GameObject mapObject = GameObject.FindGameObjectWithTag("Map");
+            Prefabs.map = mapObject;
             MapApi.map = mapObject.GetComponent<MapController>();
             MapApi.mapEnd = mapObject.GetComponent<MapEnd>();
+            GameObject config = GameObject.FindGameObjectWithTag("config");
+            MapApi.camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+            prefabs = config.GetComponent<Prefabs>();
+            MapApi.prefabs = prefabs;
+            BmobDebug.Register(print);
+            BmobDebug.level = BmobDebug.Level.TRACE;
+            BmobApi.Bmob = prefabs.GetComponent<BmobUnity>();
+            //Coordinate coordinate = new Coordinate(39.986, 116.308);
+            //Vector3 pos = MapApi.map.ConvertCoordinateToWorld(coordinate);
+            //GameObject t = Instantiate(prefabs.marker);
+            //t.transform.position = pos + 0.5f * new Vector3(0,0,t.transform.localScale.y * t.GetComponent<SpriteRenderer>().bounds.size.y);
+            //Debug.Log(t.transform.localScale.y);
             if (MapApi.map != null)
                 Debug.Log("get map !");
             Debug.Log("width:" + Screen.width + " height:" + Screen.height);
@@ -95,7 +113,7 @@ namespace TapOn.Main
             new StoreProvider<AppState>(
                 store: StoreProvider.store,
                 new MaterialApp(
-                    home: new SettingScreenConnector()
+                    home: new MineScreen()
                 )
             ),
         };
@@ -103,37 +121,37 @@ namespace TapOn.Main
         public Widget _bottomNavigationBar()
         {
             return new BottomAppBar(
-                //shape: new CircularNotchedRectangle(),
+                shape: new CircularNotchedRectangle(),
                 color: CColors.White,
                 child: new BottomNavigationBar(
-                    type: BottomNavigationBarType.shifting,
+                    type: BottomNavigationBarType.fix,
                         // type: BottomNavigationBarType.fix,
                         items: new List<BottomNavigationBarItem> {
                             new BottomNavigationBarItem(
                                 icon: new Icon(icon: MyIcons.tab_home_fill, size: 30),
-                                title: new Text("地图"),
-                                activeIcon: new Icon(icon: MyIcons.tab_home_fill, size: 50)
+                                title: new Text("地图")
+                                //activeIcon: new Icon(icon: MyIcons.tab_home_fill, size: 50)
                             ),
-                            new BottomNavigationBarItem(
+                            /*new BottomNavigationBarItem(
                                 icon: new Icon(icon: MyIcons.camera_alt, size: 30),
-                                title: new Text("印记"),
-                                activeIcon: new Icon(icon: MyIcons.camera_alt, size: 50)
-                            ),
-                            new BottomNavigationBarItem(
+                                title: new Text("印记")
+                                //activeIcon: new Icon(icon: MyIcons.camera_alt, size: 50)
+                            ),*/
+                            /*new BottomNavigationBarItem(
                                 icon: new Icon(MyIcons.tab_messenger_fill, size: 30),
-                                title: new Text("消息"),
-                                activeIcon: new Icon(MyIcons.tab_messenger_fill, size: 50)
-                            ),
+                                title: new Text("消息")
+                                //activeIcon: new Icon(MyIcons.tab_messenger_fill, size: 50)
+                            ),*/
                             new BottomNavigationBarItem(
                                 icon: new Icon(icon: MyIcons.tab_mine_fill, size: 30),
-                                title: new Text("我的"),
-                                activeIcon: new Icon(icon: MyIcons.tab_mine_fill, size: 50)
+                                title: new Text("我的")
+                                //activeIcon: new Icon(icon: MyIcons.tab_mine_fill, size: 50)
                             ),
                         },
-                        selectedItemColor: CColors.Black,
+                        selectedItemColor: CColors.Green,
                         unselectedItemColor: CColors.Black,
                         currentIndex: this._currentIndex,
-                        onTap: (value) => { Debug.LogError(value); this.setState(() => { this._currentIndex = value; }); }
+                        onTap: (value) => { if(value != _currentIndex) this.setState(() => { this._currentIndex = value; }); }
                 )
             );
         }
@@ -150,14 +168,39 @@ namespace TapOn.Main
             );
         }
 
+        /*public override Widget build(BuildContext context)
+        {
+            return new Container();
+        }*/
+
         public override Widget build(BuildContext context)
         {
+            Prefabs.homeContext = context;
             return new Scaffold(
                 backgroundColor: CColors.Transparent,
-                //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-                //floatingActionButton: new FloatingActionButton(child: new Icon(icon: Mark.mark_icon)),
-                appBar: _appBar(),
-                body: _currentIndex > 1 ? page[0] : page[_currentIndex],
+                floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+                floatingActionButton: new FloatingActionButton(
+                    onPressed: ()=>
+                    {
+                        Prefabs.map.SetActive(false);
+                        Navigator.push(context, new MaterialPageRoute(builder: (_) =>
+                        {
+                            return new StoreProvider<AppState>(
+                                store: StoreProvider.store,
+                                new MaterialApp(
+                                    home: new SettingScreenConnector()
+                                )
+                            );
+                        }));
+                    },
+                    backgroundColor: CColors.Red,
+                    child: new Icon(
+                        icon: MyIcons.camera_alt
+                        )
+                    ),
+                //appBar: _appBar(),
+                body: page[_currentIndex],
+                //body: _currentIndex > 1 ? page[0] : page[_currentIndex],
                 bottomNavigationBar: _bottomNavigationBar()
             );
         }

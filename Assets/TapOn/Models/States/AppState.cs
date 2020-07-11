@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using TapOn.Models.DataModels;
 using TencentMap.CoordinateSystem;
+using Unity.UIWidgets.widgets;
+using TapOn.Constants;
 
 namespace TapOn.Models.States
 {
@@ -13,16 +15,15 @@ namespace TapOn.Models.States
 
         public static AppState initialState()
         {
-            List<Mark> mapMarks = new List<Mark>();
-            mapMarks.Add(new Mark { coordinate = new Coordinate(39.986, 116.308) });
-            mapMarks.Add(new Mark { coordinate = new Coordinate(39.983, 116.309) });
             return new AppState
             {
                 mapState = new MapState
                 {
                     upper = new Coordinate(),
                     lower = new Coordinate(),
-                    marks = mapMarks,
+                    marks = new Queue<Mark>(),
+                    marksJustLoading = new List<Mark>(),
+                    marksOnMap = new Queue<GameObject>(),
                     positions = new List<Vector2>(),
                     pixelPositions = new List<Position>(),
                     markLoading = false,
@@ -33,11 +34,16 @@ namespace TapOn.Models.States
                 },
                 settingState = new SettingState
                 {
-                    allIcons = new List<List<MyIcon>>(),
+                    allIcons = new List<IconData>()
+                    {
+                        MyIcons.text,
+                        MyIcons.picture,
+                        MyIcons.video,
+                        MyIcons.UnityLogo,
+                    },
                     index = 0,
-                    sourceImage = null,
-                    text = "",
-                    videoPath = ""
+                    products = new Queue<Product>(),
+                    objects = new List<GameObject>(),
                 }
             };
         }
