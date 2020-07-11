@@ -454,8 +454,8 @@ namespace TapOn.Screens
                                     child: new IconButton(
                                         onPressed: () =>
                                         {
-                                            Navigator.pop(Prefabs.homeContext);
-                                            Prefabs.map.SetActive(true);
+                                            Navigator.pop(Prefabs.instance.homeContext);
+                                            Prefabs.instance.map.SetActive(true);
                                         },
                                         icon: new Icon(
                                             icon: MyIcons.arrow_back,

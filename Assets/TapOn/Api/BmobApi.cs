@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TapOn.Constants;
 using TapOn.Models;
 using TapOn.Models.DataModels;
 using TencentMap.CoordinateSystem;
@@ -17,14 +18,13 @@ namespace TapOn.Api
 {
     public class BmobApi
     {
-        public static BmobUnity Bmob;
+        public static BmobUnity Bmob { get { return Prefabs.instance.bmob; } }
 
         public static async Task<QueryCallbackData<Marks>> queryFuzztMarksAsync(Coordinate coodinate, int limit)
         {
             BmobQuery query = new BmobQuery();
             query.WhereNear("position", new BmobGeoPoint(coodinate.latitude, coodinate.lontitude));
             query.Limit(limit);
-            Debug.LogError("1");
             List<Mark> marks = new List<Mark>();
             return await Bmob.FindTaskAsync<Marks>(Marks.table_name, query);
             /*Debug.LogError(333);

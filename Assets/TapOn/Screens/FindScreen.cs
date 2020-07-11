@@ -84,7 +84,7 @@ namespace TapOn.Screens
                             child: new IconButton(
                                 onPressed: () =>
                                 {
-                                    Navigator.pop(Prefabs.homeContext);
+                                    Navigator.pop(Prefabs.instance.homeContext);
                                 },
                                 icon: new Icon(
                                     size: 60,

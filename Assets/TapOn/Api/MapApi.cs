@@ -11,9 +11,9 @@ namespace TapOn.Api
 {
     public static class MapApi
     {
-        public static MapController map;
+        public static MapController map { get { return Prefabs.instance.mapController; } }
+
         public static MapEnd mapEnd;
-        public static Prefabs prefabs;
         public static Camera camera;
         public static Promise<string> MoveMap(float offX, float offY)
         {
@@ -29,11 +29,10 @@ namespace TapOn.Api
             var promise = new Promise<string>();
             float nowLevel = (float)map.GetZoomLevel();
             float newLevel;
-            if (scale > 1)
-                newLevel = nowLevel + 0.02f;
-            else newLevel = nowLevel - 0.02f;
-            newLevel = nowLevel + Mathf.Log(scale, 2) * 0.5f;
-            newLevel = Mathf.Clamp(newLevel, 1, 16);
+            float s = scale / (scale - 1);
+            float deltaLevel = Mathf.Log(s, 2) * 0.5f;
+            newLevel = nowLevel + deltaLevel;
+            //newLevel = Mathf.Clamp(newLevel, 1, 16);
             map.SetZoomLevel(newLevel);
             map.DidRender();
             promise.Resolve(value: "zoom success!");
@@ -44,14 +43,14 @@ namespace TapOn.Api
         {
             var promise = new Promise<List<GameObject>>();
             List<GameObject> m = new List<GameObject>();
-            if(prefabs == null)
+            /*if(prefabs == null)
             {
                 promise.Reject(ex: new System.Exception("prefabs is null!"));
-            }
+            }*/
             foreach(Mark mark in marks)
             {
                 Vector3 pos = map.ConvertCoordinateToWorld(mark.coordinate);
-                GameObject t = Object.Instantiate(prefabs.marker);
+                GameObject t = Object.Instantiate(Prefabs.instance.marker);
                 t.transform.position = pos + 0.5f * new Vector3(0, 0, t.transform.localScale.y * t.GetComponent<SpriteRenderer>().bounds.size.y);
             }
             promise.Resolve(value: m);

@@ -12,7 +12,7 @@ namespace TapOn.Models.ActionModels
         public Action<float> mapMoveOffsetX;
         public Action<float> mapMoveOffsetY;
         public Action<float> mapZoom;
-        public Action<bool> markPositionUpdate;
+        public Action<double> changeZoomLevel;
         public Action<List<Mark>> addMarkJustLoading;
         public Action<Vector2> selectMark;
         public Func<IPromise> moveMap;

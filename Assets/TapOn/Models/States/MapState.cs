@@ -11,8 +11,8 @@ namespace TapOn.Models.States
         public Queue<Mark> marks;
         public List<Mark> marksJustLoading;
         public Queue<GameObject> marksOnMap;
-        public List<Vector2> positions;
-        public List<Position> pixelPositions;
+        public double zoomLevel;
+
         public Coordinate upper;
         public Coordinate lower;
         public bool markLoading;
