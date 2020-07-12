@@ -90,14 +90,12 @@ namespace TapOn.Screens
         bool dismissReset = false;
         bool isFirst = true;
 
-        //int nowPadding = 50;
         int cameraType = 0;
 
         List<float> left = new List<float> { 0, 56.6f, 80 };
         List<float> bottom = new List<float> { 80, 56.6f, 0 };
         bool span = false;
         bool show = false;
-        //readonly List<float> data = new List<float> { 0, 80, 56.6f, 56.6f, 80, 0 };
 
         public override void initState()
         {

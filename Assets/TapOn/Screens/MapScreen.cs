@@ -2,6 +2,7 @@
 using RSG;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TapOn.Api;
 using TapOn.Constants;
 using TapOn.Models;
@@ -100,16 +101,39 @@ namespace TapOn.Screens
         public override void initState()
         {
             base.initState();
-            updateMarks();
+            update();
+            //updateMarks();
         }
+
         private async void updateMarks()
         {
-            QueryCallbackData<Marks> data = await BmobApi.queryFuzztMarksAsync(MapApi.map.GetCoordinate(), 3);
+            QueryCallbackData<Marks> data = await BmobApi.queryFuzztMarksAsync(Prefabs.instance.mapController.GetCoordinate(), 3);
             List<Mark> marks = new List<Mark>();
             foreach (var mark in data.results)
                 marks.Add(new Mark { coordinate = new Coordinate(mark.coordinate.Latitude.Get(), mark.coordinate.Longitude.Get()), id = mark.objectId });
             this.widget.actionModel.addMarkJustLoading(marks);
             this.widget.actionModel.changeMark();
+        }
+
+        private Task<bool> waitForMapController()
+        {
+            return Task.Run(
+                () =>
+                {
+                    for (int i = 0; i < 100000; i++)
+                        if(Prefabs.instance.mapController!=null)
+                        {
+                            Debug.Log(i);
+                            return true;
+                        }
+                    return false;
+                });
+        }
+
+        private async void update()
+        {
+            bool t = await waitForMapController();
+            if (t) updateMarks();
         }
         public override Widget build(BuildContext context)
         {
@@ -166,7 +190,7 @@ namespace TapOn.Screens
                     },
                     onScaleEnd: detail =>
                     {
-
+                        this.widget.actionModel.mapZoom(1);
                     }
                 )
             );

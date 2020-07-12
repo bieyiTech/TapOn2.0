@@ -67,7 +67,8 @@ namespace TapOn.Redux.Actions
         {
             return new ThunkAction<AppState>((dispatcher, getState) => {
                 var scale = getState().mapState.scale;
-                return MapApi.ZoomMap(scale);
+                var scaleLastFrame = getState().mapState.scaleLastFrame;
+                return MapApi.ZoomMap(scale, scaleLastFrame);
             });
         }
 

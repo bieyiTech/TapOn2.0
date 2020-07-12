@@ -19,6 +19,7 @@ namespace TapOn.Models.States
         public float moveSpeed;
         public float offsetX;
         public float offsetY;
+        public float scaleLastFrame;
         public float scale;
     }
 }

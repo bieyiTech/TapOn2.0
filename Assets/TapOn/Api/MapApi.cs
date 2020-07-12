@@ -5,6 +5,7 @@ using TapOn.Constants;
 using TapOn.Models.DataModels;
 using TencentMap.API;
 using TencentMap.CoordinateSystem;
+using Unity.UIWidgets.ui;
 using UnityEngine;
 
 namespace TapOn.Api
@@ -24,15 +25,18 @@ namespace TapOn.Api
             return promise;
         }
 
-        public static Promise<string> ZoomMap(float scale)
+        public static Promise<string> ZoomMap(float scale, float scaleLastFrame)
         {
             var promise = new Promise<string>();
+            if (scale == 1) return promise;
             float nowLevel = (float)map.GetZoomLevel();
             float newLevel;
-            float s = scale / (scale - 1);
+            float s = scale / scaleLastFrame;
             float deltaLevel = Mathf.Log(s, 2) * 0.5f;
+            Debug.Log("Scale: " + scale);
+            Debug.Log("deltaLevel: " + deltaLevel);
             newLevel = nowLevel + deltaLevel;
-            //newLevel = Mathf.Clamp(newLevel, 1, 16);
+            newLevel = Mathf.Clamp(newLevel, 4, 16);
             map.SetZoomLevel(newLevel);
             map.DidRender();
             promise.Resolve(value: "zoom success!");
@@ -52,7 +56,9 @@ namespace TapOn.Api
                 Vector3 pos = map.ConvertCoordinateToWorld(mark.coordinate);
                 GameObject t = Object.Instantiate(Prefabs.instance.marker);
                 t.transform.position = pos + 0.5f * new Vector3(0, 0, t.transform.localScale.y * t.GetComponent<SpriteRenderer>().bounds.size.y);
+                m.Add(t);
             }
+            if (!Window.hasInstance) Debug.LogError("window instance is null");
             promise.Resolve(value: m);
             return promise;
         }

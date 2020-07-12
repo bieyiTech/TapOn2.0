@@ -32,6 +32,7 @@ namespace TapOn.Redux.Reducers {
                     }
                 case MapZoomAction action:
                     {
+                        state.mapState.scaleLastFrame = state.mapState.scale;
                         state.mapState.scale = action.scale;
                         break;
                     }

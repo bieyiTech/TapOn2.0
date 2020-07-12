@@ -28,6 +28,7 @@ namespace TapOn.Models.States
                     moveSpeed = 300,
                     offsetX = 0,
                     offsetY = 0,
+                    scaleLastFrame = 1,
                     scale = 1
                 },
                 settingState = new SettingState
