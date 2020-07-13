@@ -169,10 +169,11 @@ namespace TapOn.Screens
                     onPanEnd: async detail =>
                     {
                         QueryCallbackData<Marks> data = await BmobApi.queryFuzztMarksAsync(MapApi.map.GetCoordinate(), 3);
+
                         Debug.LogError(2);
                         List<Mark> marks = new List<Mark>();
                         foreach (var mark in data.results)
-                            marks.Add(new Mark { coordinate = new Coordinate(mark.coordinate.Latitude.Get(), mark.coordinate.Longitude.Get()), id = mark.objectId });
+                            marks.Add(new Mark { coordinate = new Coordinate(mark.coordinate.Latitude.Get(), mark.coordinate.Longitude.Get()), id = mark.objectId, date = mark.upLoadTime, filePath = mark.snapShot.url });
                         this.widget.actionModel.addMarkJustLoading(marks);
                         this.widget.actionModel.changeMark();
                         //MapApi.mapEnd.velocity_x = detail.velocity.pixelsPerSecond.dx;

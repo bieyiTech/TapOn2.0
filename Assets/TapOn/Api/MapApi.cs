@@ -15,6 +15,8 @@ namespace TapOn.Api
         public static MapEnd mapEnd;
         public static Prefabs prefabs;
         public static Camera camera;
+        public static MarkManager markManager;
+
         public static Promise<string> MoveMap(float offX, float offY)
         {
             var promise = new Promise<string>();
@@ -44,15 +46,14 @@ namespace TapOn.Api
         {
             var promise = new Promise<List<GameObject>>();
             List<GameObject> m = new List<GameObject>();
+
             if(prefabs == null)
             {
                 promise.Reject(ex: new System.Exception("prefabs is null!"));
             }
             foreach(Mark mark in marks)
             {
-                Vector3 pos = map.ConvertCoordinateToWorld(mark.coordinate);
-                GameObject t = Object.Instantiate(prefabs.marker);
-                t.transform.position = pos + 0.5f * new Vector3(0, 0, t.transform.localScale.y * t.GetComponent<SpriteRenderer>().bounds.size.y);
+                markManager.AddMark(mark);
             }
             promise.Resolve(value: m);
             return promise;

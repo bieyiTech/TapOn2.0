@@ -97,8 +97,7 @@ namespace TapOn.Redux.Actions
                     bool isNew = true;
                     foreach(Mark mark in getState().mapState.marks)
                     {
-                        if (_mark.id.Equals(mark.id))
-                        {
+                        if (_mark.id.Equals(mark.id))                        {
                             isNew = false;
                             break;
                         }
