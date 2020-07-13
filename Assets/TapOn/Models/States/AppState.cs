@@ -24,12 +24,11 @@ namespace TapOn.Models.States
                     marks = new Queue<Mark>(),
                     marksJustLoading = new List<Mark>(),
                     marksOnMap = new Queue<GameObject>(),
-                    positions = new List<Vector2>(),
-                    pixelPositions = new List<Position>(),
                     markLoading = false,
                     moveSpeed = 300,
                     offsetX = 0,
                     offsetY = 0,
+                    scaleLastFrame = 1,
                     scale = 1
                 },
                 settingState = new SettingState

@@ -12,6 +12,7 @@ TagManager:
   - building
   - config
   - mark
+  - global
   layers:
   - Default
   - TransparentFX

@@ -27,16 +27,9 @@ namespace TapOn.Redux.Actions
         public float scale;
     }
 
-    public class UpdatePositionsAction
+    public class ChangeMapZoomLevelAction
     {
-        public List<Vector2> positions;
-        public bool update;
-    }
-
-    public class UpdatePixelPositionsAction
-    {
-        public List<Position> positions;
-        public bool update;
+        public double zoomLevel;
     }
 
     public class AddMarkJustLoadingAction
@@ -65,18 +58,8 @@ namespace TapOn.Redux.Actions
         {
             return new ThunkAction<AppState>((dispatcher, getState) => {
                 var offsetX = getState().mapState.offsetX;
-                //Debug.LogError("offsetX: " + offsetX);
                 var offsetY = getState().mapState.offsetY;
-                return MapApi.MoveMap(offsetX, offsetY)
-                .Then(message=>
-                {
-                    //to do 获取新标记
-                    //List<Mark> marks = new List<Mark>();
-                    
-                    //mapMarks.Add(new Mark { coordinate = new Coordinate(39.986, 116.308) });
-                    //mapMarks.Add(new Mark { coordinate = new Coordinate(39.983, 116.309) });
-                    
-                });
+                return MapApi.MoveMap(offsetX, offsetY);
             });
         }
 
@@ -84,7 +67,8 @@ namespace TapOn.Redux.Actions
         {
             return new ThunkAction<AppState>((dispatcher, getState) => {
                 var scale = getState().mapState.scale;
-                return MapApi.ZoomMap(scale);
+                var scaleLastFrame = getState().mapState.scaleLastFrame;
+                return MapApi.ZoomMap(scale, scaleLastFrame);
             });
         }
 

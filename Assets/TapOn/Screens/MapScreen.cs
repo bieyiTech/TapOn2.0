@@ -2,6 +2,7 @@
 using RSG;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TapOn.Api;
 using TapOn.Constants;
 using TapOn.Models;
@@ -40,9 +41,8 @@ namespace TapOn.Screens
 
                     return new MapScreenViewModel
                     {
+                        zoomLevel = state.mapState.zoomLevel,
                         marks = state.mapState.marks,
-                        positions = state.mapState.positions,
-                        pixelPositions = state.mapState.pixelPositions,
                     };
                 },
                 builder: (context1, viewModel, dispatcher) =>
@@ -53,10 +53,10 @@ namespace TapOn.Screens
                             dispatcher.dispatch(new MapHorizontalDragAction { offset = x }),
                         mapMoveOffsetY = y =>
                             dispatcher.dispatch(new MapVerticalDragAction { offset = y }),
+                        changeZoomLevel = z =>
+                            dispatcher.dispatch(new ChangeMapZoomLevelAction { zoomLevel = z }),
                         mapZoom = s =>
                             dispatcher.dispatch(new MapZoomAction { scale = s }),
-                        markPositionUpdate = u =>
-                            dispatcher.dispatch(new UpdatePositionsAction { update = u }),
                         selectMark = u =>
                             dispatcher.dispatch(new SelectMarkAction { pos = u }),
                         addMarkJustLoading = l =>
@@ -96,54 +96,49 @@ namespace TapOn.Screens
 
     public class _MapScreenState : SingleTickerProviderStateMixin<MapScreen>
     {
-        private List<Vector2> allPos = new List<Vector2>();
-        private int markSize = 40;
         public int _currentIndex = 0;
-        public List<Widget> _buildMark()
+
+        public override void initState()
         {
-            List<Widget> allMark = new List<Widget>();
-            //if(this.widget.viewModel.positions.Count>0)
-            //Debug.LogError("vertex : " + this.widget.viewModel.positions[0].x + ", " + this.widget.viewModel.positions[0].y);
-
-
-            for (int i=0;i<this.widget.viewModel.positions.Count;i++)
-            {                /*FractionalOffset tt = FractionalOffset.fromOffsetAndSize
-                    (new Unity.UIWidgets.ui.Offset(this.widget.viewModel.positions[i].x, this.widget.viewModel.positions[i].y),
-                    new Unity.UIWidgets.ui.Size(40, 40));*/
-                //Debug.LogError("x: " + tt.dx + " y: " + tt.dy);
-                allMark.Add(new Align(
-                    alignment: new FractionalOffset(this.widget.viewModel.positions[i].x, this.widget.viewModel.positions[i].y),
-                    //alignment: new FractionalOffset(0,0),
-                    child: new Icon(
-                        icon: MyIcons.mark_icon,
-                        size: markSize,
-                        color: CColors.Red
-                    )
-                    ));
-               /*allMark.Add(new Positioned(
-                    child: new Icon(
-                        icon: MyIcons.mark_icon,
-                        size: markSize,
-                        color: CColors.Red
-                    ),
-                    top: this.widget.viewModel.pixelPositions[i].top,
-                    left: this.widget.viewModel.pixelPositions[i].left,
-                    bottom: this.widget.viewModel.pixelPositions[i].bottom,
-                    right: this.widget.viewModel.pixelPositions[i].right
-                    ));*/
-            }
-            return allMark;
+            base.initState();
+            update();
+            //updateMarks();
         }
-        public void test()
+
+        private async void updateMarks()
         {
-            //yield return null;
-            this.widget.actionModel.markPositionUpdate(true);
+            QueryCallbackData<Marks> data = await BmobApi.queryFuzztMarksAsync(Prefabs.instance.mapController.GetCoordinate(), 3);
+            List<Mark> marks = new List<Mark>();
+            foreach (var mark in data.results)
+                marks.Add(new Mark { coordinate = new Coordinate(mark.coordinate.Latitude.Get(), mark.coordinate.Longitude.Get()), id = mark.objectId });
+            this.widget.actionModel.addMarkJustLoading(marks);
+            this.widget.actionModel.changeMark();
+        }
+
+        private Task<bool> waitForMapController()
+        {
+            return Task.Run(
+                () =>
+                {
+                    for (int i = 0; i < 100000; i++)
+                        if(Prefabs.instance.mapController!=null)
+                        {
+                            Debug.Log(i);
+                            return true;
+                        }
+                    return false;
+                });
+        }
+
+        private async void update()
+        {
+            bool t = await waitForMapController();
+            if (t) updateMarks();
         }
         public override Widget build(BuildContext context)
         {
             return new Container(
                 padding:EdgeInsets.zero,
-                //constraints: new BoxConstraints(minWidth:2000,minHeight:2000),
                 height: 2000,
                 width: 1000,
                 child: new GestureDetector(
@@ -151,11 +146,8 @@ namespace TapOn.Screens
                         padding: EdgeInsets.zero,
                         height: 1000, 
                         width: 2000, 
-                        alignment:Unity.UIWidgets.painting.Alignment.center,
-                        color: TapOn.Constants.CColors.Transparent,
-                        child: new Stack(
-                            children: _buildMark()
-                            )
+                        alignment:Alignment.center,
+                        color: CColors.Transparent
                         ),
                     onTapDown: detail => 
                     {
@@ -168,18 +160,14 @@ namespace TapOn.Screens
                     },
                     onPanEnd: async detail =>
                     {
+                        Debug.Log("velocity: " + detail.velocity.pixelsPerSecond.dx);
                         QueryCallbackData<Marks> data = await BmobApi.queryFuzztMarksAsync(MapApi.map.GetCoordinate(), 3);
 
-                        Debug.LogError(2);
                         List<Mark> marks = new List<Mark>();
                         foreach (var mark in data.results)
                             marks.Add(new Mark { coordinate = new Coordinate(mark.coordinate.Latitude.Get(), mark.coordinate.Longitude.Get()), id = mark.objectId, date = mark.upLoadTime, filePath = mark.snapShot.url });
                         this.widget.actionModel.addMarkJustLoading(marks);
                         this.widget.actionModel.changeMark();
-                        //MapApi.mapEnd.velocity_x = detail.velocity.pixelsPerSecond.dx;
-                        //MapApi.mapEnd.velocity_y = detail.velocity.pixelsPerSecond.dy;
-                        //this.widget.actionModel.markPositionUpdate(true);
-                        //this.widget.actionModel.loadMark();
                     },
                     onPanUpdate: details =>
                     {
@@ -191,61 +179,23 @@ namespace TapOn.Screens
                     {
                         this.widget.actionModel.mapZoom(details.scale);
                         this.widget.actionModel.zoomMap();
+                        if ((int)(this.widget.viewModel.zoomLevel) != (int)(Prefabs.instance.mapController.GetZoomLevel()))
+                        {
+                            this.widget.actionModel.changeZoomLevel(Prefabs.instance.mapController.GetZoomLevel());
+                            Debug.Log("zoomlevel change!");
+                        }
+                    },
+                    onScaleStart: detail =>
+                    {
+                        this.widget.actionModel.changeZoomLevel(Prefabs.instance.mapController.GetZoomLevel());
+                    },
+                    onScaleEnd: detail =>
+                    {
+                        this.widget.actionModel.mapZoom(1);
                     }
                 )
             );
         }
-
-        public Widget scaffold()
-        {
-            List<BottomNavigationBarItem> t = new List<BottomNavigationBarItem>
-            {
-                new BottomNavigationBarItem(icon: new Icon(icon: MyIcons.mark_icon, color: CColors.Black)),
-                new BottomNavigationBarItem(icon: new Icon(icon: MyIcons.mark_icon, color: CColors.Black))
-            };
-            return new Scaffold(
-                backgroundColor: CColors.Transparent,
-                appBar: new AppBar(title: new Text("TapOn")),
-                body: new Container(decoration: new BoxDecoration(color: CColors.Transparent)),
-                bottomNavigationBar: new Container(
-                    height: 50,
-                    color: Colors.blue,
-                    child: new Center(
-                        child: new BottomNavigationBar(
-                            type: BottomNavigationBarType.shifting,
-                            // type: BottomNavigationBarType.fix,
-                            items: new List<BottomNavigationBarItem> {
-                                new BottomNavigationBarItem(
-                                    icon: new Icon(icon: MyIcons.mark_icon, size: 30),
-                                    title: new Text("Work"),
-                                    activeIcon: new Icon(icon: MyIcons.mark_icon, size: 50),
-                                    backgroundColor: Colors.blue
-                                ),
-                                new BottomNavigationBarItem(
-                                    icon: new Icon(icon: MyIcons.mark_icon, size: 30),
-                                    title: new Text("Home"),
-                                    activeIcon: new Icon(icon: MyIcons.mark_icon, size: 50),
-                                    backgroundColor: Colors.blue
-                                ),
-                                new BottomNavigationBarItem(
-                                    icon: new Icon(icon: MyIcons.mark_icon, size: 30),
-                                    title: new Text("Shop"),
-                                    activeIcon: new Icon(icon: MyIcons.mark_icon, size: 50),
-                                    backgroundColor: Colors.blue
-                                ),
-                                new BottomNavigationBarItem(
-                                    icon: new Icon(icon: MyIcons.mark_icon, size: 30),
-                                    title: new Text("School"),
-                                    activeIcon: new Icon(icon: MyIcons.mark_icon, size: 50),
-                                    backgroundColor: Colors.blue
-                                ),
-                            },
-                            currentIndex: this._currentIndex,
-                            onTap: (value) => { this.setState(() => { this._currentIndex = value; }); }
-                        )
-                    )
-                )
-            );
-        }
+        
     }
 }

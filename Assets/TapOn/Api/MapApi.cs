@@ -5,15 +5,16 @@ using TapOn.Constants;
 using TapOn.Models.DataModels;
 using TencentMap.API;
 using TencentMap.CoordinateSystem;
+using Unity.UIWidgets.ui;
 using UnityEngine;
 
 namespace TapOn.Api
 {
     public static class MapApi
     {
-        public static MapController map;
+        public static MapController map { get { return Prefabs.instance.mapController; } }
+
         public static MapEnd mapEnd;
-        public static Prefabs prefabs;
         public static Camera camera;
         public static MarkManager markManager;
 
@@ -26,16 +27,18 @@ namespace TapOn.Api
             return promise;
         }
 
-        public static Promise<string> ZoomMap(float scale)
+        public static Promise<string> ZoomMap(float scale, float scaleLastFrame)
         {
             var promise = new Promise<string>();
+            if (scale == 1) return promise;
             float nowLevel = (float)map.GetZoomLevel();
             float newLevel;
-            if (scale > 1)
-                newLevel = nowLevel + 0.02f;
-            else newLevel = nowLevel - 0.02f;
-            newLevel = nowLevel + Mathf.Log(scale, 2) * 0.5f;
-            newLevel = Mathf.Clamp(newLevel, 1, 16);
+            float s = scale / scaleLastFrame;
+            float deltaLevel = Mathf.Log(s, 2) * 0.5f;
+            Debug.Log("Scale: " + scale);
+            Debug.Log("deltaLevel: " + deltaLevel);
+            newLevel = nowLevel + deltaLevel;
+            newLevel = Mathf.Clamp(newLevel, 4, 16);
             map.SetZoomLevel(newLevel);
             map.DidRender();
             promise.Resolve(value: "zoom success!");
@@ -47,14 +50,12 @@ namespace TapOn.Api
             var promise = new Promise<List<GameObject>>();
             List<GameObject> m = new List<GameObject>();
 
-            if(prefabs == null)
-            {
-                promise.Reject(ex: new System.Exception("prefabs is null!"));
-            }
             foreach(Mark mark in marks)
             {
                 markManager.AddMark(mark);
             }
+            
+            if (!Window.hasInstance) Debug.LogError("window instance is null");
             promise.Resolve(value: m);
             return promise;
         }

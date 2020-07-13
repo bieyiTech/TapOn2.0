@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using TapOn.Api;
 using TapOn.Constants;
 using TapOn.Models.States;
+using TapOn.Models.ViewModels;
 using TapOn.Redux;
 using TapOn.Screens;
 using TencentMap.API;
@@ -32,25 +33,8 @@ namespace TapOn.Main
             Screen.orientation = ScreenOrientation.Portrait;
             //Window.onFrameRateCoolDown = CustomFrameRateCoolDown;
             LoadFonts();
-            GameObject mapObject = GameObject.FindGameObjectWithTag("Map");
-            Prefabs.map = mapObject;
-            MapApi.map = mapObject.GetComponent<MapController>();
-            MapApi.mapEnd = mapObject.GetComponent<MapEnd>();
-            GameObject config = GameObject.FindGameObjectWithTag("config");
-            MapApi.camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-            prefabs = config.GetComponent<Prefabs>();
-            MapApi.prefabs = prefabs;
             BmobDebug.Register(print);
             BmobDebug.level = BmobDebug.Level.TRACE;
-            BmobApi.Bmob = prefabs.GetComponent<BmobUnity>();
-            //Coordinate coordinate = new Coordinate(39.986, 116.308);
-            //Vector3 pos = MapApi.map.ConvertCoordinateToWorld(coordinate);
-            //GameObject t = Instantiate(prefabs.marker);
-            //t.transform.position = pos + 0.5f * new Vector3(0,0,t.transform.localScale.y * t.GetComponent<SpriteRenderer>().bounds.size.y);
-            //Debug.Log(t.transform.localScale.y);
-            if (MapApi.map != null)
-                Debug.Log("get map !");
-            Debug.Log("width:" + Screen.width + " height:" + Screen.height);
         }
 
         static void LoadFonts()
@@ -87,6 +71,16 @@ namespace TapOn.Main
         }
     }
 
+    /*class MainConnector: StatelessWidget
+    {
+        public override Widget build(BuildContext context)
+        {
+            return new StoreConnector<AppState, MapScreenViewModel>
+            (
+
+            )
+        }
+    }*/
     class MainScaffold : StatefulWidget
     {
         public MainScaffold(Key key = null) : base(key)
@@ -175,14 +169,17 @@ namespace TapOn.Main
 
         public override Widget build(BuildContext context)
         {
-            Prefabs.homeContext = context;
+            Prefabs.instance.homeContext = context;
             return new Scaffold(
                 backgroundColor: CColors.Transparent,
                 floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
                 floatingActionButton: new FloatingActionButton(
                     onPressed: ()=>
                     {
-                        Prefabs.map.SetActive(false);
+                        Prefabs.instance.map.SetActive(false);
+                        GameObject[] t = GameObject.FindGameObjectsWithTag("mark");
+                        foreach (GameObject mark in t)
+                            mark.SetActive(false);
                         Navigator.push(context, new MaterialPageRoute(builder: (_) =>
                         {
                             return new StoreProvider<AppState>(

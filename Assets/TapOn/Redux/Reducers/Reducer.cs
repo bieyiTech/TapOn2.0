@@ -32,22 +32,13 @@ namespace TapOn.Redux.Reducers {
                     }
                 case MapZoomAction action:
                     {
+                        state.mapState.scaleLastFrame = state.mapState.scale;
                         state.mapState.scale = action.scale;
                         break;
                     }
-                case UpdatePositionsAction action:
+                case ChangeMapZoomLevelAction action:
                     {
-                        if(!action.update)
-                        {
-                            state.mapState.positions = new List<Vector2>();
-                            break;
-                        }
-                        
-                        break;
-                    }
-                case UpdatePixelPositionsAction action:
-                    {
-                        state.mapState.pixelPositions = action.positions;
+                        state.mapState.zoomLevel = action.zoomLevel;
                         break;
                     }
                 case ChangeIndexAction action:
@@ -127,8 +118,7 @@ namespace TapOn.Redux.Reducers {
                             GameObject gameobj = hit.collider.gameObject;;
                             if (gameobj.tag == "mark")
                             {
-                                Debug.LogError("mark!");
-                                Navigator.push(Prefabs.homeContext, new MaterialPageRoute(builder: (_) =>
+                                Navigator.push(Prefabs.instance.homeContext, new MaterialPageRoute(builder: (_) =>
                                 {
                                     return new StoreProvider<AppState>(
                                         store: StoreProvider.store,
