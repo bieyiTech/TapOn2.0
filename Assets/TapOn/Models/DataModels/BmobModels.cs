@@ -14,6 +14,7 @@ namespace TapOn.Models
         public string userId;
 
         public BmobFile snapShot;
+        public string upLoadTime;
 
         public override void readFields(BmobInput input)
         {
@@ -22,7 +23,8 @@ namespace TapOn.Models
             coordinate = input.getGeoPoint("position");
             type = input.getInt("type");
             userId = input.getString("userId");
-            //objectId = input.getString("objectId");
+            upLoadTime = input.getString("createdAt");
+            snapShot = input.getFile("snapShot");
         }
 
         public override void write(BmobOutput output, bool all)
@@ -32,6 +34,8 @@ namespace TapOn.Models
             output.Put("position", coordinate);
             output.Put("type", type);
             output.Put("userId", userId);
+            output.Put("createdAt", upLoadTime);
+            output.Put("snapShot", snapShot);
         }
     }
 }

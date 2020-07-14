@@ -40,6 +40,9 @@ namespace TapOn.Constants {
 
         public BmobUnity bmob;
         public MapController mapController;
+
+        public MarkManager markManager;
+        public SpriteMask spriteMask;
         // Start is called before the first frame update
         void Start()
         {

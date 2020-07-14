@@ -1,4 +1,5 @@
 ﻿using RSG;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TapOn.Constants;
@@ -8,6 +9,7 @@ using TencentMap.CoordinateSystem;
 using Unity.UIWidgets.ui;
 using UnityEngine;
 
+
 namespace TapOn.Api
 {
     public static class MapApi
@@ -16,6 +18,7 @@ namespace TapOn.Api
 
         public static MapEnd mapEnd;
         public static Camera camera;
+
         public static Promise<string> MoveMap(float offX, float offY)
         {
             var promise = new Promise<string>();
@@ -47,17 +50,12 @@ namespace TapOn.Api
         {
             var promise = new Promise<List<GameObject>>();
             List<GameObject> m = new List<GameObject>();
-            /*if(prefabs == null)
-            {
-                promise.Reject(ex: new System.Exception("prefabs is null!"));
-            }*/
+
             foreach(Mark mark in marks)
             {
-                Vector3 pos = map.ConvertCoordinateToWorld(mark.coordinate);
-                GameObject t = Object.Instantiate(Prefabs.instance.marker);
-                t.transform.position = pos + 0.5f * new Vector3(0, 0, t.transform.localScale.y * t.GetComponent<SpriteRenderer>().bounds.size.y);
-                m.Add(t);
+                Prefabs.instance.markManager.AddMark(mark);
             }
+            
             if (!Window.hasInstance) Debug.LogError("window instance is null");
             promise.Resolve(value: m);
             return promise;
