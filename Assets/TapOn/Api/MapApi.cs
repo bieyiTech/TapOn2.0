@@ -1,4 +1,5 @@
 ﻿using RSG;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TapOn.Constants;
@@ -8,6 +9,7 @@ using TencentMap.CoordinateSystem;
 using Unity.UIWidgets.ui;
 using UnityEngine;
 
+
 namespace TapOn.Api
 {
     public static class MapApi
@@ -16,7 +18,6 @@ namespace TapOn.Api
 
         public static MapEnd mapEnd;
         public static Camera camera;
-        public static MarkManager markManager;
 
         public static Promise<string> MoveMap(float offX, float offY)
         {
@@ -52,7 +53,7 @@ namespace TapOn.Api
 
             foreach(Mark mark in marks)
             {
-                markManager.AddMark(mark);
+                Prefabs.instance.markManager.AddMark(mark);
             }
             
             if (!Window.hasInstance) Debug.LogError("window instance is null");

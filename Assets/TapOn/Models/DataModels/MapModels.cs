@@ -22,7 +22,8 @@ namespace TapOn.Models.DataModels
         public string id;
         public Coordinate coordinate;
         public string date;
-        public string filePath;
+        public string url;
+        public string fileName;
     }
 
     public class Position

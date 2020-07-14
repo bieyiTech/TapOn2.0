@@ -110,7 +110,15 @@ namespace TapOn.Screens
             QueryCallbackData<Marks> data = await BmobApi.queryFuzztMarksAsync(Prefabs.instance.mapController.GetCoordinate(), 3);
             List<Mark> marks = new List<Mark>();
             foreach (var mark in data.results)
-                marks.Add(new Mark { coordinate = new Coordinate(mark.coordinate.Latitude.Get(), mark.coordinate.Longitude.Get()), id = mark.objectId });
+            {
+                marks.Add(new Mark { coordinate = new Coordinate(mark.coordinate.Latitude.Get(), mark.coordinate.Longitude.Get()),
+                    id = mark.objectId,
+                    date = mark.upLoadTime,
+                    url = mark.snapShot.url,
+                    fileName = mark.snapShot.filename
+                });
+
+            }
             this.widget.actionModel.addMarkJustLoading(marks);
             this.widget.actionModel.changeMark();
         }
@@ -165,7 +173,19 @@ namespace TapOn.Screens
 
                         List<Mark> marks = new List<Mark>();
                         foreach (var mark in data.results)
-                            marks.Add(new Mark { coordinate = new Coordinate(mark.coordinate.Latitude.Get(), mark.coordinate.Longitude.Get()), id = mark.objectId, date = mark.upLoadTime, filePath = mark.snapShot.url });
+                        {
+                            marks.Add(new Mark
+                            {
+                                coordinate = new Coordinate(mark.coordinate.Latitude.Get(), mark.coordinate.Longitude.Get()),
+                                id = mark.objectId,
+                                date = mark.upLoadTime,
+                                url = mark.snapShot.url,
+                                fileName = mark.snapShot.filename
+                            });
+                            Debug.Log("mark.upLoadTime: " + mark.upLoadTime);
+                            Debug.Log("mark.snapShot.url: " + mark.snapShot.url);
+                        }
+                            
                         this.widget.actionModel.addMarkJustLoading(marks);
                         this.widget.actionModel.changeMark();
                     },
