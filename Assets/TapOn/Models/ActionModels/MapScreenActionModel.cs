@@ -15,9 +15,9 @@ namespace TapOn.Models.ActionModels
         public Action<double> changeZoomLevel;
         public Action<List<Mark>> addMarkJustLoading;
         public Action<Vector2> selectMark;
-        public Func<IPromise> moveMap;
-        public Func<IPromise> zoomMap;
-        public Func<IPromise> changeMark;
-        public Func<IPromise> loadMark;
+        public Func<object> moveMap;
+        public Func<object> zoomMap;
+        public Func<object> changeMark;
+        public Func<object> loadMark;
     }
 }

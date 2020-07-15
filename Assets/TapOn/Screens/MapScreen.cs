@@ -66,10 +66,10 @@ namespace TapOn.Screens
                             dispatcher.dispatch(new SelectMarkAction { pos = u }),
                         addMarkJustLoading = l =>
                             dispatcher.dispatch(new AddMarkJustLoadingAction { newMarks = l }),
-                        moveMap = () => dispatcher.dispatch<IPromise>(Actions.moveMap()),
-                        zoomMap = () => dispatcher.dispatch<IPromise>(Actions.zoomMap()),
-                        changeMark = () => dispatcher.dispatch<IPromise>(Actions.changeMark()),
-                        loadMark = () => dispatcher.dispatch<IPromise>(Actions.loadMark()),
+                        moveMap = () => dispatcher.dispatch<object>(Actions.moveMap()),
+                        zoomMap = () => dispatcher.dispatch<object>(Actions.zoomMap()),
+                        changeMark = () => dispatcher.dispatch<object>(Actions.changeMark()),
+                        loadMark = () => dispatcher.dispatch<object>(Actions.loadMark()),
                     };
                     return new MapScreen(viewModel: viewModel, actionModel: actionModel);
                 }

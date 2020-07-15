@@ -48,7 +48,7 @@ namespace TapOn.Api
 
         public static Promise<List<GameObject>> AddMark(List<Mark> marks)
         {
-            var promise = new Promise<List<GameObject>>();
+            var promise = new Promise<List<GameObject>>(true);
             List<GameObject> m = new List<GameObject>();
 
             foreach(Mark mark in marks)
@@ -56,7 +56,6 @@ namespace TapOn.Api
                 Prefabs.instance.markManager.AddMark(mark);
             }
             
-            if (!Window.hasInstance) Debug.LogError("window instance is null");
             promise.Resolve(value: m);
             return promise;
         }
