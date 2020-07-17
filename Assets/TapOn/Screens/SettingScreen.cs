@@ -36,7 +36,7 @@ namespace TapOn.Screens
                 {
                     return new SettingScreenViewModel
                     {
-                        products = state.settingState.products,
+                        products = state.settingState.products.ToArray(),
                         allIcons = state.settingState.allIcons,
                         objects = state.settingState.objects,
                     };
@@ -94,8 +94,29 @@ namespace TapOn.Screens
 
         List<float> left = new List<float> { 0, 56.6f, 80 };
         List<float> bottom = new List<float> { 80, 56.6f, 0 };
-        bool span = false;
-        bool show = false;
+        bool span = true;
+        bool show = true;
+
+        /// <summary>
+        /// 转盘移动的参数
+        /// </summary>
+        List<int> productIndex = new List<int> {0,1,2 };
+        List<bool> appear = new List<bool> { false, false, false };
+        bool moveByCircle = false;
+        List<bool> moveStep = new List<bool> { false, false, false, false, false };
+        List<List<float>> circleLeft = new List<List<float>> { new List<float> { 56.6f, 47.0f, 36.3f, 24.7f, 12.5f, 0 }, new List<float> { 80, 79.0f, 76.1f, 71.3f, 64.7f, 56.6f } };
+        List<List<float>> circleBottom = new List<List<float>> { new List<float> { 56.6f, 64.7f, 71.3f, 76.1f, 79.0f, 80 }, new List<float> { 0, 12.5f, 24.7f, 36.3f, 47.0f, 56.6f } };
+
+        List<Animation<float>> am_0_left = new List<Animation<float>>();
+        List<Animation<float>> am_1_left = new List<Animation<float>>();
+        List<Animation<float>> am_0_bottom = new List<Animation<float>>();
+        List<Animation<float>> am_1_bottom = new List<Animation<float>>();
+        List<AnimationController> ac_0_left = new List<AnimationController>();
+        List<AnimationController> ac_1_left = new List<AnimationController>();
+        List<AnimationController> ac_0_bottom = new List<AnimationController>();
+        List<AnimationController> ac_1_bottom = new List<AnimationController>();
+
+        bool bottomShow = false;
 
         public override void initState()
         {
@@ -114,6 +135,122 @@ namespace TapOn.Screens
             {
                 setState(() => { });
             });
+        }
+
+        private void changeIndex()
+        {
+            int temp = productIndex[2];
+            productIndex[2] = productIndex[1];
+            productIndex[1] = productIndex[0];
+            productIndex[0] = temp;
+        }
+
+        private IEnumerator waitForShow()
+        {
+            yield return new UIWidgetsWaitForSeconds(0.3f);
+            setState(() => { appear[2] = true; });
+        }
+
+        private IEnumerator waitForMiss()
+        {
+            setState(() => { appear[2] = false; });
+            yield return new UIWidgetsWaitForSeconds(0.3f);
+            #region
+            /*foreach (AnimationController ac in ac_0_left)
+                ac.dispose();
+            foreach (AnimationController ac in ac_1_left)
+                ac.dispose();
+            foreach (AnimationController ac in ac_0_bottom)
+                ac.dispose();
+            foreach (AnimationController ac in ac_1_bottom)
+                ac.dispose();
+            ac_0_left = new List<AnimationController>();
+            ac_1_left = new List<AnimationController>();
+            ac_0_bottom = new List<AnimationController>();
+            ac_1_bottom = new List<AnimationController>();
+            am_0_left = new List<Animation<float>>();
+            am_1_left = new List<Animation<float>>();
+            am_0_bottom = new List<Animation<float>>();
+            am_1_bottom = new List<Animation<float>>();
+            for(int i = 0; i < 5; i++)
+            {
+                ac_0_left.Add(new AnimationController(vsync: this, duration: new System.TimeSpan(0, 0, 0, 0, 60)));
+                ac_1_left.Add(new AnimationController(vsync: this, duration: new System.TimeSpan(0, 0, 0, 0, 60)));
+                ac_0_bottom.Add(new AnimationController(vsync: this, duration: new System.TimeSpan(0, 0, 0, 0, 60)));
+                ac_1_bottom.Add(new AnimationController(vsync: this, duration: new System.TimeSpan(0, 0, 0, 0, 60)));
+                am_0_left.Add(new FloatTween(circleLeft[0][i], circleLeft[0][i + 1]).animate(ac_0_left[i]));
+                am_1_left.Add(new FloatTween(circleLeft[1][i], circleLeft[1][i + 1]).animate(ac_1_left[i]));
+                am_0_bottom.Add(new FloatTween(circleBottom[0][i], circleBottom[0][i + 1]).animate(ac_0_bottom[i]));
+                am_1_bottom.Add(new FloatTween(circleBottom[1][i], circleBottom[1][i + 1]).animate(ac_1_bottom[i]));
+                am_0_left[i].addListener(() => { setState(() => { }); });
+                am_1_left[i].addListener(() => { setState(() => { }); });
+                am_0_bottom[i].addListener(() => { setState(() => { }); });
+                am_1_bottom[i].addListener(() => { setState(() => { }); });
+            }
+            am_0_left[0].addStatusListener(status =>
+            {
+                if (status == AnimationStatus.completed)
+                {
+                    setState(() => { moveStep[0] = false; moveStep[1] = true; });
+                    ac_0_left[1].forward();
+                    ac_1_left[1].forward();
+                    ac_0_bottom[1].forward();
+                    ac_1_bottom[1].forward();
+                }
+            });
+            am_0_left[1].addStatusListener(status =>
+            {
+                if (status == AnimationStatus.completed)
+                {
+                    setState(() => { moveStep[1] = false; moveStep[2] = true; });
+                    ac_0_left[2].forward();
+                    ac_1_left[2].forward();
+                    ac_0_bottom[2].forward();
+                    ac_1_bottom[2].forward();
+                }
+            });
+            am_0_left[2].addStatusListener(status =>
+            {
+                if (status == AnimationStatus.completed)
+                {
+                    setState(() => { moveStep[2] = false; moveStep[3] = true; });
+                    ac_0_left[3].forward();
+                    ac_1_left[3].forward();
+                    ac_0_bottom[3].forward();
+                    ac_1_bottom[3].forward();
+                }
+            });
+            am_0_left[3].addStatusListener(status =>
+            {
+                if (status == AnimationStatus.completed)
+                {
+                    setState(() => { moveStep[3] = false; moveStep[4] = true; });
+                    ac_0_left[4].forward();
+                    ac_1_left[4].forward();
+                    ac_0_bottom[4].forward();
+                    ac_1_bottom[4].forward();
+                }
+            });
+            am_0_left[4].addStatusListener(status =>
+            {
+                if (status == AnimationStatus.completed)
+                {
+                    setState(() => { moveStep[4] = false; moveByCircle = false; });
+                }
+            });
+            setState(() => { moveByCircle = true; });
+            ac_0_left[0].forward();
+            ac_1_left[0].forward();
+            ac_0_bottom[0].forward();
+            ac_1_bottom[0].forward();*/
+            #endregion
+            Window.instance.startCoroutine(waitForShow());
+        }
+
+        private void updateCircle()
+        {
+            setState(() => { changeIndex(); });
+            Window.instance.startCoroutine(waitForMiss());
         }
 
         private List<Widget> _products()
@@ -188,19 +325,138 @@ namespace TapOn.Screens
                 });
         }
 
+        private List<Widget> _labels()
+        {
+            List<Widget> t = new List<Widget>();
+            foreach (string s in Model.typeNames)
+                t.Add(new RaisedButton(
+                    child: new Text(
+                        data: s
+                        )
+                    ));
+            return t;
+        }
+        private IPromise<object> showModelBottomSheet(BuildContext cont)
+        {
+            return BottomSheetUtils.showBottomSheet(
+                context: cont,
+                builder: (context) =>
+                {
+                    PageController pc = new PageController(Model.typeNames.Count);
+                    return new Container(
+                        color: CColors.White,
+                        height: 270,
+                        child: new Stack(
+                            children: new List<Widget>
+                            {
+                                new Align(
+                                    alignment: Alignment.topRight, 
+                                    child: new IconButton(
+                                        onPressed: () =>
+                                        {
+                                            Navigator.of(context).pop(null);
+                                        },
+                                        icon:new Icon(
+                                            color: CColors.Black,
+                                            icon: MyIcons.close
+                                            )
+                                        )
+                                    ),
+                                new Column(
+                                    children: new List<Widget>
+                                    {
+                                        new Row(children: _labels()),
+                                    })
+                            })
+                        );
+                })._completer;
+        }
+
         private IEnumerator wait_300()
         {
             yield return new UIWidgetsWaitForSeconds(0.3f);
             setState(() => { show = span; });
+        }
+        private IEnumerator wait_100_opacity(int index)
+        {
+            yield return new UIWidgetsWaitForSeconds(0.1f);
+            setState(() => { appear[index] = true; });
+        }
+
+        private Widget runningCircle(int index)
+        {
+            if (!show) return null;
+            if (widget.viewModel.products.Length <= index) return null;
+            return new AnimatedOpacity(
+                opacity: appear[productIndex[index]] ? 1 : 0,
+                duration: new System.TimeSpan(0,0,0,0,300),
+                child: new RaisedButton(
+                    shape: new CircleBorder(),
+                    color: CColors.Transparent,
+                    child: new IconButton(
+                        icon: new Icon(
+                            size: 28,
+                            icon: widget.viewModel.allIcons[(int)widget.viewModel.products[productIndex[index]].type]
+                            )
+                        )
+                    )
+                );
+        }
+
+        private Widget runningCirclePosition(int index)
+        {
+            Widget normal =
+                new AnimatedPositioned(
+                    curve: Curves.easeIn,
+                    duration: new System.TimeSpan(0, 0, 0, 0, 300),
+                    left: span ? left[productIndex[index]] : 0,
+                    bottom: span ? bottom[productIndex[index]] : 0,
+                    child: runningCircle(index)
+                    );
+            float l = 0, b = 0;
+            
+            return normal;
+        }
+
+        public Widget _buildBottomList()
+        {
+            PageController pc = new PageController(Model.typeNames.Count);
+            return new Container(
+                        child: new Column(
+                            children: new List<Widget>
+                            {
+                                    new Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: new List<Widget>
+                                        {
+                                            new Expanded(flex: 2, child: new Row(children: _labels())),
+                                            new Expanded(
+                                                child: new IconButton(
+                                                    iconSize: 18,
+                                                    icon: new Icon(icon: MyIcons.cancel)
+                                                    )
+                                                )
+                                            ,
+                                        }
+                                        ),
+                                    PageView.builder(
+                                        controller: pc,
+                                        itemBuilder: (con, index) =>
+                                        {
+                                            return new Text(index.ToString());
+                                        })
+                            }
+                            )
+                        );
         }
 
         public Widget _buildBottom()
         {
             return new Scaffold(
                 backgroundColor: CColors.Transparent,
-                floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-                floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-                floatingActionButton: new FloatingActionButton(
+                //floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+                //floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+                /*floatingActionButton: new FloatingActionButton(
                     elevation: 0,
                     shape: new CircleBorder(new BorderSide(color: CColors.White, width: 3)),
                     backgroundColor: CColors.Transparent,
@@ -211,16 +467,18 @@ namespace TapOn.Screens
                                 icon: MyIcons.upload
                             )
                         )
-                    ),
-                bottomNavigationBar: new BottomNavigationBar(
-                    type: BottomNavigationBarType.fix,
-                    selectedItemColor: CColors.Black,
-                    unselectedItemColor: CColors.Black,
-                    onTap: (value) =>
-                    {
-                        switch (value)
+                    ),*/
+                bottomNavigationBar: new Builder(builder: context=> {
+                    return new BottomNavigationBar(
+                        type: BottomNavigationBarType.fix,
+                        selectedItemColor: CColors.Black,
+                        unselectedItemColor: CColors.Black,
+                        onTap: (value) =>
                         {
-                            case 0:
+                            int nowLength = widget.viewModel.products.Length;
+                            switch (value)
+                            {
+                                case 0:
                                 {
                                     showTextDialog().Then((content) =>
                                     {
@@ -228,11 +486,17 @@ namespace TapOn.Screens
                                         if (data != null)
                                         {
                                             this.widget.actionModel.ChangeIndex(0);
+                                            if (nowLength < 3)
+                                            Window.instance.startCoroutine(wait_100_opacity(nowLength));
+                                            else
+                                            {
+                                                updateCircle();
+                                            }
                                         }
                                     });
-                                    break;
+                                break;
                                 }
-                            case 1:
+                                case 1:
                                 {
                                     showSelectDialog().Then((content) =>
                                     {
@@ -241,31 +505,41 @@ namespace TapOn.Screens
                                             this.widget.actionModel.ChangeIndex(1);
                                         else
                                             this.widget.actionModel.ChangeIndex(11);
+                                        if (nowLength < 3)
+                                            Window.instance.startCoroutine(wait_100_opacity(nowLength));
+                                        else
+                                            updateCircle();
                                     });
                                     break;
                                 }
-                        }
-                    },
-                    items: new List<BottomNavigationBarItem>
-                    {
-                        new BottomNavigationBarItem(
-                                icon: new Icon(icon: this.widget.viewModel.allIcons[0], size: 30, color: CColors.Black),
-                                title: new Text("文字")
-                            ),
-                        new BottomNavigationBarItem(
-                                icon: new Icon(icon: this.widget.viewModel.allIcons[1], size: 30, color: CColors.Black),
-                                title: new Text("图片")
-                            ),
-                        new BottomNavigationBarItem(
-                                icon: new Icon(icon: this.widget.viewModel.allIcons[2], size: 30, color: CColors.Black),
-                                title: new Text("视频")
-                            ),
-                        new BottomNavigationBarItem(
-                                icon: new Icon(icon: this.widget.viewModel.allIcons[3], size: 30, color: CColors.Black),
-                                title: new Text("模型")
-                            ),
-                    }
-                    ),
+                                case 3:
+                                {
+                                        //setState(() => { bottomShow = true; });
+                                        showModelBottomSheet(context);
+                                        break;
+                                }
+                            }
+                        },
+                        items: new List<BottomNavigationBarItem>
+                        {
+                            new BottomNavigationBarItem(
+                                    icon: new Icon(icon: this.widget.viewModel.allIcons[0], size: 30, color: CColors.Black),
+                                    title: new Text("文字")
+                                ),
+                            new BottomNavigationBarItem(
+                                    icon: new Icon(icon: this.widget.viewModel.allIcons[1], size: 30, color: CColors.Black),
+                                    title: new Text("图片")
+                                ),
+                            new BottomNavigationBarItem(
+                                    icon: new Icon(icon: this.widget.viewModel.allIcons[2], size: 30, color: CColors.Black),
+                                    title: new Text("视频")
+                                ),
+                            new BottomNavigationBarItem(
+                                    icon: new Icon(icon: this.widget.viewModel.allIcons[3], size: 30, color: CColors.Black),
+                                    title: new Text("模型")
+                                ),
+                        });
+                    }),
                 body: new GestureDetector(
                         onPanEnd: detail =>
                         {
@@ -324,7 +598,23 @@ namespace TapOn.Screens
                                                             )
                                                     )
                                                 )
+                                            ),
+                                    new Align(
+                                        alignment: new Alignment(0, 0.5f),
+                                        child: new RaisedButton(
+                                            shape: new CircleBorder(new BorderSide(color: CColors.White, width: 8)),
+                                            elevation: 0,
+                                            color: CColors.Transparent,
+                                            child: new IconButton(
+                                                    iconSize: 48,
+                                                    icon: new Icon(
+                                                        color: CColors.White,
+                                                        size: 36,
+                                                        icon: MyIcons.upload
+                                                    )
+                                                )
                                             )
+                                        ),
                                 })
                             )
                         )
@@ -347,19 +637,6 @@ namespace TapOn.Screens
                         child:new Stack(
                             children: new List<Widget>
                             {
-                                /*new Align(
-                                    alignment: Alignment.center,
-                                    child: new IconButton(
-                                        onPressed: () =>
-                                        {
-                                            Navigator.pop(Prefabs.homeContext);
-                                        },
-                                        icon: new Icon(
-                                            icon: MyIcons.tab_home_fill,
-                                            color: CColors.Black
-                                            )
-                                        )
-                                    ),*/
                                 new Align(
                                     alignment: Alignment.bottomLeft,
                                     child: new RaisedButton(
@@ -368,6 +645,8 @@ namespace TapOn.Screens
                                         child: new IconButton(
                                             onPressed: () =>
                                             {
+                                                if(widget.viewModel.products.Length == 0)
+                                                    return;
                                                 if(span == false)
                                                     setState(()=>{span = true; show = true; });
                                                 else
@@ -386,54 +665,10 @@ namespace TapOn.Screens
                                             )
                                         )
                                     ),
-                                new AnimatedPositioned(
-                                    curve: Curves.easeIn,
-                                    duration: new System.TimeSpan(0,0,0,0,300),
-                                    left: span ? left[0] : 0,
-                                    bottom: span ? bottom[0] : 0,
-                                    child: show ? new RaisedButton(
-                                        shape: new CircleBorder(),
-                                        color: CColors.Transparent,
-                                        child: new IconButton(
-                                            icon: new Icon(
-                                                size: 28,
-                                                icon: MyIcons.add
-                                                )
-                                            )
-                                        ) : null
-                                    ),
-                                new AnimatedPositioned(
-                                    curve: Curves.easeIn,
-                                    duration: new System.TimeSpan(0,0,0,0,300),
-                                    left: span ? left[1] : 0,
-                                    bottom: span ? bottom[1] : 0,
-                                    child: show ? new RaisedButton(
-                                        shape: new CircleBorder(),
-                                        color: CColors.Transparent,
-                                        child: new IconButton(
-                                            icon: new Icon(
-                                                size: 28,
-                                                icon: MyIcons.add
-                                                )
-                                            )
-                                        ) : null
-                                    ),
-                                new AnimatedPositioned(
-                                    curve: Curves.easeIn,
-                                    duration: new System.TimeSpan(0,0,0,0,300),
-                                    left: span ? left[2] : 0,
-                                    bottom: span ? bottom[2] : 0,
-                                    child: show ? new RaisedButton(
-                                        shape: new CircleBorder(),
-                                        color: CColors.Transparent,
-                                        child: new IconButton(
-                                            icon: new Icon(
-                                                size: 28,
-                                                icon: MyIcons.add
-                                                )
-                                            )
-                                        ) : null
-                                    ),
+
+                                runningCirclePosition(0),
+                                runningCirclePosition(1),
+                                runningCirclePosition(2),
                             })
                     ),
                 }
@@ -445,26 +680,50 @@ namespace TapOn.Screens
             return new Container(
                 color: CColors.Transparent,
                 child: new Stack(
+                    fit: StackFit.loose,
                     children: new List<Widget>
                     {
                         new Align(
-                                    alignment: Alignment.topLeft,
-                                    child: new IconButton(
-                                        onPressed: () =>
-                                        {
-                                            Navigator.pop(Prefabs.instance.homeContext);
-                                            Prefabs.instance.map.SetActive(true);
-                                        },
-                                        icon: new Icon(
-                                            icon: MyIcons.arrow_back,
-                                            color: CColors.Black
-                                            )
-                                        )
-                                    ),
+                            alignment: Alignment.topLeft,
+                            child: new IconButton(
+                                color: CColors.Transparent,
+                                onPressed: () =>
+                                {
+                                    Navigator.pop(Prefabs.instance.homeContext);
+                                    Prefabs.instance.map.SetActive(true);
+                                },
+                                icon: new Icon(
+                                    icon: MyIcons.arrow_back,
+                                    color: CColors.Black
+                                    )
+                                )
+                            ),
                         new Align(alignment: Alignment.bottomCenter, child: _buildMain()),
+                        new AnimatedPositioned(
+                            duration: new System.TimeSpan(0,0,0,0,300),
+                            curve: Curves.bounceIn,
+                            bottom: bottomShow ? 0: -280,
+                            //child: new Container(color: CColors.Transparent, width: 1000, height: 280, child: _buildBottomList())
+                            child: new Container(
+                                color: CColors.White, 
+                                width: 1000,
+                                height: 280, 
+                                child: _buildBottomList())
+                            )
+                        //new Align(alignment: Alignment.bottomCenter, child: new Container(color: CColors.White, width: 1000, height: 280, child: _buildBottomList()))
+                        /*child: new RaisedButton(
+                                        shape: new CircleBorder(),
+                                        elevation: 0,
+                                        disabledColor: CColors.Transparent,
+                                        disabledElevation: 0,
+                                        splashColor: CColors.Transparent,
+                                        highlightColor: CColors.Transparent,
+                                        color: CColors.Transparent,
+                                    child:*/
                     }
                     )
                 );
         }
     }
+
 }

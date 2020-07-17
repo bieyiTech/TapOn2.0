@@ -13,11 +13,14 @@ using TapOn.Models.ViewModels;
 using TapOn.Redux.Actions;
 using TencentMap.CoordinateSystem;
 using UIWidgetsGallery.gallery;
+using Unity.UIWidgets.animation;
+using Unity.UIWidgets.async;
 using Unity.UIWidgets.foundation;
 using Unity.UIWidgets.material;
 using Unity.UIWidgets.painting;
 using Unity.UIWidgets.Redux;
 using Unity.UIWidgets.rendering;
+using Unity.UIWidgets.ui;
 using Unity.UIWidgets.widgets;
 using UnityEngine;
 using Stack = Unity.UIWidgets.widgets.Stack;
@@ -42,6 +45,8 @@ namespace TapOn.Screens
                     return new MapScreenViewModel
                     {
                         zoomLevel = state.mapState.zoomLevel,
+                        scale = state.mapState.scale,
+                        scaleLastFrame = state.mapState.scaleLastFrame,
                         marks = state.mapState.marks,
                     };
                 },
@@ -61,10 +66,10 @@ namespace TapOn.Screens
                             dispatcher.dispatch(new SelectMarkAction { pos = u }),
                         addMarkJustLoading = l =>
                             dispatcher.dispatch(new AddMarkJustLoadingAction { newMarks = l }),
-                        moveMap = () => dispatcher.dispatch<IPromise>(Actions.moveMap()),
-                        zoomMap = () => dispatcher.dispatch<IPromise>(Actions.zoomMap()),
-                        changeMark = () => dispatcher.dispatch<IPromise>(Actions.changeMark()),
-                        loadMark = () => dispatcher.dispatch<IPromise>(Actions.loadMark()),
+                        moveMap = () => dispatcher.dispatch<object>(Actions.moveMap()),
+                        zoomMap = () => dispatcher.dispatch<object>(Actions.zoomMap()),
+                        changeMark = () => dispatcher.dispatch<object>(Actions.changeMark()),
+                        loadMark = () => dispatcher.dispatch<object>(Actions.loadMark()),
                     };
                     return new MapScreen(viewModel: viewModel, actionModel: actionModel);
                 }
@@ -98,6 +103,18 @@ namespace TapOn.Screens
     {
         public int _currentIndex = 0;
 
+        AnimationController am_horizontal;
+        AnimationController am_vertical;
+        AnimationController am_scale;
+        Animation<float> animation_horizontal;
+        Animation<float> animation_vertical;
+        Animation<float> animation_scale;
+
+        float lastHorizontal = 0;
+        float lastVertical = 0;
+
+        float lastScale = 1;
+
         public override void initState()
         {
             base.initState();
@@ -123,6 +140,12 @@ namespace TapOn.Screens
             this.widget.actionModel.changeMark();
         }
 
+        private IEnumerator wait_500()
+        {
+            yield return new UIWidgetsWaitForSeconds(0.55f);
+            updateMarks();
+        }
+
         private Task<bool> waitForMapController()
         {
             return Task.Run(
@@ -131,7 +154,6 @@ namespace TapOn.Screens
                     for (int i = 0; i < 100000; i++)
                         if(Prefabs.instance.mapController!=null)
                         {
-                            Debug.Log(i);
                             return true;
                         }
                     return false;
@@ -142,6 +164,19 @@ namespace TapOn.Screens
         {
             bool t = await waitForMapController();
             if (t) updateMarks();
+        }
+
+        private IPromise<object> showBottomSheet()
+        {
+            return BottomSheetUtils.showBottomSheet(
+                context: context,
+                builder: (context) =>
+                {
+                    return new BottomAppBar(
+                        color: CColors.White,
+                        child: new Container(width: 1000, height: 80, child: new Text("455"))
+                        );
+                })._completer;
         }
         public override Widget build(BuildContext context)
         {
@@ -159,6 +194,7 @@ namespace TapOn.Screens
                         ),
                     onTapDown: detail => 
                     {
+                        //showBottomSheet();
                         Vector2 t = new Vector2(detail.globalPosition.dx, detail.globalPosition.dy);
                         this.widget.actionModel.selectMark(t);
                     },
@@ -166,28 +202,31 @@ namespace TapOn.Screens
                     {
                         //this.widget.actionModel.markPositionUpdate(false);
                     },
-                    onPanEnd: async detail =>
+                    onPanEnd: detail =>
                     {
-                        Debug.Log("velocity: " + detail.velocity.pixelsPerSecond.dx);
-                        QueryCallbackData<Marks> data = await BmobApi.queryFuzztMarksAsync(MapApi.map.GetCoordinate(), 3);
-
-                        List<Mark> marks = new List<Mark>();
-                        foreach (var mark in data.results)
+                        if (am_horizontal != null) am_horizontal.dispose();
+                        if (am_vertical != null) am_vertical.dispose();
+                        am_horizontal = new AnimationController(vsync: this, duration: new System.TimeSpan(0, 0, 0, 0, 500));
+                        am_vertical = new AnimationController(vsync: this, duration: new System.TimeSpan(0, 0, 0, 0, 500));
+                        animation_horizontal = new FloatTween(0, -detail.velocity.pixelsPerSecond.dx * 0.1f).chain(new CurveTween(Curves.decelerate)).animate(am_horizontal);
+                        animation_vertical = new FloatTween(0, detail.velocity.pixelsPerSecond.dy * 0.1f).chain(new CurveTween(Curves.decelerate)).animate(am_vertical);
+                        animation_horizontal.addListener(() => 
                         {
-                            marks.Add(new Mark
+                            MapApi.MoveMap(animation_horizontal.value - lastHorizontal, animation_vertical.value - lastVertical);
+                            lastHorizontal = animation_horizontal.value;
+                            lastVertical = animation_vertical.value;
+                        });
+                        animation_horizontal.addStatusListener(status => 
+                        {
+                            if (status == AnimationStatus.completed)
                             {
-                                coordinate = new Coordinate(mark.coordinate.Latitude.Get(), mark.coordinate.Longitude.Get()),
-                                id = mark.objectId,
-                                date = mark.upLoadTime,
-                                url = mark.snapShot.url,
-                                fileName = mark.snapShot.filename
-                            });
-                            Debug.Log("mark.upLoadTime: " + mark.upLoadTime);
-                            Debug.Log("mark.snapShot.url: " + mark.snapShot.url);
-                        }
-                            
-                        this.widget.actionModel.addMarkJustLoading(marks);
-                        this.widget.actionModel.changeMark();
+                                lastHorizontal = 0;
+                                lastVertical = 0;
+                            }
+                        });
+                        am_horizontal.forward();
+                        am_vertical.forward();
+                        Window.instance.startCoroutine(wait_500());
                     },
                     onPanUpdate: details =>
                     {
@@ -211,6 +250,16 @@ namespace TapOn.Screens
                     },
                     onScaleEnd: detail =>
                     {
+                        if (am_scale != null) am_scale.dispose();
+                        am_scale = new AnimationController(vsync: this, duration: new System.TimeSpan(0, 0, 0, 0, 500));
+                        animation_scale = new FloatTween(widget.viewModel.scale, widget.viewModel.scale + (widget.viewModel.scale - widget.viewModel.scaleLastFrame) * 0.3f).chain(new CurveTween(Curves.decelerate)).animate(am_scale);
+                        lastScale = widget.viewModel.scale;
+                        animation_scale.addListener(() =>
+                        {
+                            MapApi.ZoomMap(animation_scale.value, lastScale);
+                            lastScale = animation_scale.value;
+                        });
+                        am_scale.forward();
                         this.widget.actionModel.mapZoom(1);
                     }
                 )

@@ -71,7 +71,7 @@ namespace TapOn.Redux.Reducers {
                                     break;
                                 }
                         }
-                        if (state.settingState.products.Count > 3)
+                        if (state.settingState.products.Count >= 3)
                             state.settingState.products.Dequeue();
                         state.settingState.products.Enqueue(new Product() { type = (ProductType)(ind) });
                         break;
