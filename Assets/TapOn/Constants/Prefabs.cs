@@ -43,6 +43,11 @@ namespace TapOn.Constants {
 
         public MarkManager markManager;
         public SpriteMask spriteMask;
+
+        public GameObject arEffect;
+        public GameObject arDisplay;
+
+        public List<GameObject> templet;
         // Start is called before the first frame update
         void Start()
         {

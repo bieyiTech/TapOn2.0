@@ -78,7 +78,7 @@ namespace TapOn.Screens
 
     public class _SettingScreenState : SingleTickerProviderStateMixin<SettingScreen>
     {
-
+        byte[] snapChatForCza;
         //TabController _tabController;
         //ScrollController _scrollController;
         Animation<int> animation_first;
@@ -325,6 +325,44 @@ namespace TapOn.Screens
                 });
         }
 
+        private IPromise<object> showUploadDialog()
+        {
+            return DialogUtils.showDialog(
+                context: context,
+                builder: (context) =>
+                {
+                    TextEditingController textEditingController = new TextEditingController();
+                    return new SimpleDialog(
+                    title: new Text("dubug"),
+                    children: new List<Widget>
+                    {
+                        new TextField(
+                            textInputAction: Unity.UIWidgets.service.TextInputAction.go,
+                            controller: textEditingController
+                        ),
+                        new Unity.UIWidgets.widgets.Image(image: new MemoryImage(snapChatForCza), width: 40, height:40),
+                        new Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: new List<Widget>
+                            {
+                                new FlatButton(
+                                    child: new Text("取消"),
+                                    onPressed: () => {Navigator.of(context).pop(null);}
+                                    ),
+                                new FlatButton(
+                                    child: new Text("上传"),
+                                    onPressed: () => 
+                                    {
+                                        //to do upload - popop
+                                        Navigator.of(context).pop(textEditingController.text);
+                                    }
+                                    )
+                            }
+                        )
+                    });
+                });
+        }
+
         private List<Widget> _labels()
         {
             List<Widget> t = new List<Widget>();
@@ -512,6 +550,13 @@ namespace TapOn.Screens
                                     });
                                     break;
                                 }
+                                case 2:
+                                    {
+
+                                        //to do after
+                                        showUploadDialog().Then(message => { });
+                                        break;
+                                    }
                                 case 3:
                                 {
                                         //setState(() => { bottomShow = true; });
@@ -602,6 +647,10 @@ namespace TapOn.Screens
                                     new Align(
                                         alignment: new Alignment(0, 0.5f),
                                         child: new RaisedButton(
+                                            onPressed: ()=>
+                                            {
+                                                //插入UpLoad代码
+                                            },
                                             shape: new CircleBorder(new BorderSide(color: CColors.White, width: 8)),
                                             elevation: 0,
                                             color: CColors.Transparent,

@@ -64,7 +64,9 @@ namespace System
                     list.Add(current);
                 }
             }
+#pragma warning disable CS0436 // 类型与导入类型冲突
             return new AggregateException(list);
+#pragma warning restore CS0436 // 类型与导入类型冲突
         }
 
         public override string ToString()
@@ -176,7 +178,9 @@ namespace cn.bmob.api
             {
                 table.Add(header.Key, header.Value);
             }
+#pragma warning disable CS0618 // 类型或成员已过时
             WWW www = new WWW(url, method.Equals("GET") ? null : postData, table);
+#pragma warning restore CS0618 // 类型或成员已过时
 
             yield return www;
 

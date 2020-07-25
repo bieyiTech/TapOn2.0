@@ -18,6 +18,7 @@ using Unity.UIWidgets.Redux;
 using Unity.UIWidgets.ui;
 using Unity.UIWidgets.widgets;
 using UnityEngine;
+using AREffect;
 
 namespace TapOn.Main
 {
@@ -25,6 +26,7 @@ namespace TapOn.Main
     {
         public MapController map;
         public Prefabs prefabs;
+
         protected override void OnEnable()
         {
             base.OnEnable();
@@ -189,6 +191,9 @@ namespace TapOn.Main
                                 )
                             );
                         }));
+                        //运行create部分代码和edit代码
+                        Prefabs.instance.arEffect.SetActive(true);
+                        Prefabs.instance.arEffect.GetComponent<AREffectManager>().CreateAndEditMap();
                     },
                     backgroundColor: CColors.Red,
                     child: new Icon(

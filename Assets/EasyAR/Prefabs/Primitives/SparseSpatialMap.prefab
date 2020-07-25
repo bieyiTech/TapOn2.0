@@ -58,7 +58,7 @@ MonoBehaviour:
     StartSize: 0.015
     StartLifetime: 3.4028235e+38
     RemainingLifetime: 3.4028235e+38
-  mapWorkerHasSet: 0
+  mapWorkerHasSet: 1
   mapWorker: {fileID: 0}
 --- !u!1 &1773439523083248
 GameObject:

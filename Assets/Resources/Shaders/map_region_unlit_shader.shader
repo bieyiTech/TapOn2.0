@@ -62,7 +62,7 @@ Shader "Unlit/map_region_unlit"
 //				UNITY_TRANSFER_FOG(o,o.vertex);
 				o.color = v.color;
 
-				TRANSFER_VERTEX_TO_FRAGMENT(o);
+				//TRANSFER_VERTEX_TO_FRAGMENT(o);
 
 				return o;
 			}

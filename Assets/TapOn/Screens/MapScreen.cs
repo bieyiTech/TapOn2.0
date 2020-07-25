@@ -124,20 +124,20 @@ namespace TapOn.Screens
 
         private async void updateMarks()
         {
-            QueryCallbackData<Marks> data = await BmobApi.queryFuzztMarksAsync(Prefabs.instance.mapController.GetCoordinate(), 3);
-            List<Mark> marks = new List<Mark>();
-            foreach (var mark in data.results)
-            {
-                marks.Add(new Mark { coordinate = new Coordinate(mark.coordinate.Latitude.Get(), mark.coordinate.Longitude.Get()),
-                    id = mark.objectId,
-                    date = mark.upLoadTime,
-                    url = mark.snapShot.url,
-                    fileName = mark.snapShot.filename
-                });
+            //QueryCallbackData<Marks> data = await BmobApi.queryFuzztMarksAsync(Prefabs.instance.mapController.GetCoordinate(), 3);
+            //List<Mark> marks = new List<Mark>();
+            //foreach (var mark in data.results)
+            //{
+            //    marks.Add(new Mark { coordinate = new Coordinate(mark.coordinate.Latitude.Get(), mark.coordinate.Longitude.Get()),
+            //        id = mark.objectId,
+            //        date = mark.upLoadTime,
+            //        url = mark.snapShot.url,
+            //        fileName = mark.snapShot.filename
+            //    });
 
-            }
-            this.widget.actionModel.addMarkJustLoading(marks);
-            this.widget.actionModel.changeMark();
+            //}
+            //this.widget.actionModel.addMarkJustLoading(marks);
+            //this.widget.actionModel.changeMark();
         }
 
         private IEnumerator wait_500()
