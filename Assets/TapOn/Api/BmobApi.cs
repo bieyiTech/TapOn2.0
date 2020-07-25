@@ -25,18 +25,14 @@ namespace TapOn.Api
             BmobQuery query = new BmobQuery();
             query.WhereNear("position", new BmobGeoPoint(coodinate.latitude, coodinate.lontitude));
             query.Limit(limit);
-            List<Mark> marks = new List<Mark>();
             return await Bmob.FindTaskAsync<Marks>(Marks.table_name, query);
-            /*Debug.LogError(333);
-            Debug.LogError(data.results.Count);
+        }
 
-            foreach (var mark in data.results)
-            {
-                marks.Add(new Mark { coordinate = new Coordinate(mark.coordinate.Latitude.Get(), mark.coordinate.Longitude.Get()), id = mark.objectId });
-            }
-            Debug.LogError(323);
-            resolve(marks);
-            Debug.LogError(334);*/
+        public static async Task<QueryCallbackData<BmobModel>> queryAllModelsMessage()
+        {
+            BmobQuery query = new BmobQuery();
+            query.Limit(100);
+            return await Bmob.FindTaskAsync<BmobModel>(BmobModel.table_name, query);
         }
 
         public static IPromise<List<Mark>> queryFuzzyMarks(Coordinate coodinate, int limit)

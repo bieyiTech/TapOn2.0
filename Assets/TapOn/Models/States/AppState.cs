@@ -35,14 +35,15 @@ namespace TapOn.Models.States
                 {
                     allIcons = new List<IconData>()
                     {
-                        MyIcons.text,
-                        MyIcons.picture,
-                        MyIcons.video,
-                        MyIcons.UnityLogo,
+                        MyIcons.word_mine,
+                        MyIcons.image_mine,
+                        MyIcons.video_mine,
+                        MyIcons.model_mine,
                     },
                     index = 0,
                     products = new Queue<Product>(),
                     objects = new List<GameObject>(),
+                    models = new List<Model>(),
                 }
             };
         }

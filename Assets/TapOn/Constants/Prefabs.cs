@@ -47,7 +47,9 @@ namespace TapOn.Constants {
         public GameObject arEffect;
         public GameObject arDisplay;
 
-        public List<GameObject> templet;
+
+        public List<GameObject> templetes;
+
         // Start is called before the first frame update
         void Start()
         {

@@ -32,10 +32,12 @@ namespace TapOn.Models.DataModels
     {
         public static List<string> typeNames = new List<string> { "全部", "场景", "人物" };
 
-        public ModelType type;
-        public Image picture;
+        public int modelType;
         public string id;
-        public string fileName;
-        public string url;
+        public string modelName;
+        public string previewFileName;
+        public string previewUrl;
+        public string modelFileName;
+        public string modelUrl;
     }
 }

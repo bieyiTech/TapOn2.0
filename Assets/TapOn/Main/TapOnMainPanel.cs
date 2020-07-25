@@ -19,6 +19,7 @@ using Unity.UIWidgets.ui;
 using Unity.UIWidgets.widgets;
 using UnityEngine;
 using AREffect;
+using Image = Unity.UIWidgets.widgets.Image;
 
 namespace TapOn.Main
 {
@@ -51,6 +52,7 @@ namespace TapOn.Main
             FontManager.instance.addFont(Resources.Load<Font>("font/PingFangSC-Semibold"), "PingFangSC-Semibold");
             FontManager.instance.addFont(Resources.Load<Font>("font/Menlo-Regular"), "Menlo");
             FontManager.instance.addFont(Resources.Load<Font>("font/iconFont"), "iconfont");
+            FontManager.instance.addFont(Resources.Load<Font>("font/myicon"), "myicon");
         }
 
         protected override Widget createWidget()
@@ -98,8 +100,11 @@ namespace TapOn.Main
     class MainScaffoldState : SingleTickerProviderStateMixin<MainScaffold>
     {
         int _currentIndex = 0;
+        PageController pc= new PageController(initialPage: 0);
+
         List<Widget> page = new List<Widget>()
         {
+            
             new StoreProvider<AppState>(
                 store: StoreProvider.store,
                 new MaterialApp(
@@ -112,7 +117,126 @@ namespace TapOn.Main
                     home: new MineScreen()
                 )
             ),
+            new StoreProvider<AppState>(
+                store: StoreProvider.store,
+                new MaterialApp(
+                    home: new MineScreen()
+                )
+            ),
+            new StoreProvider<AppState>(
+                store: StoreProvider.store,
+                new MaterialApp(
+                    home: new MineScreen()
+                )
+            ),
         };
+
+        public Widget _mineBottomBar()
+        {
+            return new Container(
+                height: 50,
+                decoration: new BoxDecoration(image: new DecorationImage(image: new AssetImage("texture/bottomframe"))),
+                child: new Row(
+                    mainAxisAlignment: Unity.UIWidgets.rendering.MainAxisAlignment.spaceAround,
+                    children: new List<Widget>
+                    {
+                        new Expanded( 
+                            flex: 5,
+                            child:  new Listener(
+                                onPointerDown: detail => 
+                                {
+                                    setState(()=>{if(_currentIndex != 0) _currentIndex = 0; });
+                                }, 
+                                child: new Column(children: new List<Widget>
+                                {
+                                    new Padding(padding: EdgeInsets.only(top: 15)),
+                                    new Icon(icon: MyIcons.word_mine, size: 16, color: _currentIndex == 0 ? CColors.SecondaryPink : CColors.Black),
+                                    new Padding(padding: EdgeInsets.only(top:5)),
+                                    new Text(data: "地图", style: new TextStyle(fontSize: 8)),
+                                })
+                            )
+                        ),
+                        //new Padding(padding: EdgeInsets.only(left: 15)),
+                        new Expanded( 
+                            flex: 4,
+                            child: new Listener(
+                                onPointerDown: detail =>
+                                {
+                                    setState(()=>{if(_currentIndex != 1) _currentIndex = 1; });
+                                },
+                                child: new Column(children: new List<Widget>
+                                {
+                                    new Padding(padding: EdgeInsets.only(top: 15)),
+                                    new Icon(icon: MyIcons.word_mine, size: 16, color: _currentIndex == 1 ? CColors.SecondaryPink : CColors.Black),
+                                    new Padding(padding: EdgeInsets.only(top:5)),
+                                    new Text(data: "树洞", style: new TextStyle(fontSize: 8)),
+                                })
+                            )
+                        ),
+                        new Expanded( 
+                            flex: 5,
+                            child: new FlatButton(
+                                onPressed: () =>
+                                {
+                                    Prefabs.instance.map.SetActive(false);
+                                    GameObject[] t = GameObject.FindGameObjectsWithTag("mark");
+                                    foreach (GameObject mark in t)
+                                        mark.SetActive(false);
+                                    Navigator.push(context, new MaterialPageRoute(builder: (_) =>
+                                    {
+                                        return new StoreProvider<AppState>(
+                                            store: StoreProvider.store,
+                                            new MaterialApp(
+                                                home: new SettingScreenConnector()
+                                            )
+                                        );
+                                    }));
+                                },
+                                shape: new CircleBorder(),
+                                color: CColors.WeChatGreen,
+                                disabledColor: CColors.WeChatGreen,
+                                child: new Text(
+                                    data: "埋下\n回忆", 
+                                    style: new TextStyle(fontSize: 10, color: CColors.White))
+                                )
+                            ),
+                        //new Padding(padding: EdgeInsets.only(left: -15)),
+                        new Expanded( 
+                            flex: 4,
+                            child: new Listener(
+                                onPointerDown: detail =>
+                                {
+                                    setState(()=>{if(_currentIndex != 2) _currentIndex = 2; });
+                                },
+                                child: new Column(children: new List<Widget>
+                                {
+                                    new Padding(padding: EdgeInsets.only(top: 15)),
+                                    new Icon(icon: MyIcons.word_mine, size: 16, color: _currentIndex == 2 ? CColors.SecondaryPink : CColors.Black),
+                                    new Padding(padding: EdgeInsets.only(top:5)),
+                                    new Text(data: "消息", style: new TextStyle(fontSize: 8)),
+                                })
+                            )
+                            ),
+                        //new Padding(padding: EdgeInsets.only(right: 5)),
+                        new Expanded(
+                            flex: 5,
+                            child: new Listener(
+                                onPointerDown: detail =>
+                                {
+                                    setState(()=>{if(_currentIndex != 3) _currentIndex = 3; });
+                                },
+                                child: new Column(children: new List<Widget>
+                                {
+                                    new Padding(padding: EdgeInsets.only(top: 15)),
+                                    new Icon(icon: MyIcons.word_mine, size: 16, color: _currentIndex == 3 ? CColors.SecondaryPink : CColors.Black),
+                                    new Padding(padding: EdgeInsets.only(top:5)),
+                                    new Text(data: "我的", style: new TextStyle(fontSize: 8)),
+                                })
+                            )
+                        ),
+                    })
+                );
+        }
 
         public Widget _bottomNavigationBar()
         {
@@ -174,8 +298,9 @@ namespace TapOn.Main
             Prefabs.instance.homeContext = context;
             return new Scaffold(
                 backgroundColor: CColors.Transparent,
-                floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+                /*floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
                 floatingActionButton: new FloatingActionButton(
+                    elevation: 0,
                     onPressed: ()=>
                     {
                         Prefabs.instance.map.SetActive(false);
@@ -199,11 +324,18 @@ namespace TapOn.Main
                     child: new Icon(
                         icon: MyIcons.camera_alt
                         )
-                    ),
+                    ),*/
                 //appBar: _appBar(),
-                body: page[_currentIndex],
+                body: new PageView(
+                    onPageChanged: value=> 
+                    {
+                        setState(() => { _currentIndex = value; });
+                    },
+                    controller: pc,
+                    children: page
+                    ),
                 //body: _currentIndex > 1 ? page[0] : page[_currentIndex],
-                bottomNavigationBar: _bottomNavigationBar()
+                bottomNavigationBar: _mineBottomBar()
             );
         }
     }

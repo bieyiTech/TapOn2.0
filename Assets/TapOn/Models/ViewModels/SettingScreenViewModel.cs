@@ -11,6 +11,7 @@ namespace TapOn.Models.ViewModels
         public Product[] products;
         public List<IconData> allIcons;
         public List<GameObject> objects;
+        public List<Model> models;
         public int index;
         public bool isScanning;
     }

@@ -14,4 +14,24 @@ namespace TapOn.Redux.Actions
     {
         public Product product;
     }
+
+    public class AddTextProductAction
+    {
+        public string text;
+    }
+
+    public class AddImageProductAction
+    {
+        public Texture2D texture;
+    }
+
+    public class AddVideoProductAction
+    {
+        public string path;
+    }
+
+    public class SetModelsMessageAction
+    {
+        public List<Model> models;
+    }
 }

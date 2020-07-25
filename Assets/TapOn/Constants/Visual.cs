@@ -92,6 +92,18 @@ namespace TapOn.Constants {
         public static readonly IconData text = new IconData(0xe8e2, "Material Icons");
 
         public static IconData mark_icon = new IconData(0xe55f, "Material Icons");
+
+
+        public static IconData model_mine = new IconData(0xe605, "myicon");
+        public static IconData add_mine = new IconData(0xe608, "myicon");
+        public static IconData cancel_mine = new IconData(0xe609, "myicon");
+        public static IconData back_mine = new IconData(0xe60a, "myicon");
+        public static IconData add_little_mine = new IconData(0xe60b, "myicon");
+        public static IconData delete_mine = new IconData(0xe60c, "myicon");
+        public static IconData video_mine = new IconData(0xe60f, "myicon");
+        public static IconData word_mine = new IconData(0xe610, "myicon");
+        public static IconData image_mine = new IconData(0xe611, "myicon");
+        public static IconData camera_button_mine = new IconData(0xe612, "myicon");
         //public static readonly IconData home = new IconData(0xe7a5, "Material Icons");
     }
 
@@ -99,14 +111,16 @@ namespace TapOn.Constants {
         public static readonly TextStyle normal = new TextStyle(
             fontSize: 18,
             fontFamily: "Roboto-Bold",
-            color: CColors.White
+            color: CColors.White, 
+            decoration: TextDecoration.none
         );
 
         public static readonly TextStyle strength = new TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             fontFamily: "Roboto-Bold",
-            color: CColors.White
+            color: CColors.White,
+            decoration: TextDecoration.none
         );
 
 

@@ -38,4 +38,22 @@ namespace TapOn.Models
             output.Put("snapShot", snapShot);
         }
     }
+
+    public class BmobModel : BmobTable
+    {
+        public static string table_name = "Model";
+
+        public string modelName;
+        public BmobFile preview;
+        public BmobInt modelType;
+
+        public override void readFields(BmobInput input)
+        {
+            base.readFields(input);
+
+            modelType = input.getInt("modelType");
+            modelName = input.getString("modelName");
+            preview = input.getFile("preview");
+        }
+    }
 }

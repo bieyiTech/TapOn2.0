@@ -150,6 +150,10 @@ MonoBehaviour:
   spriteMask: {fileID: 0}
   arEffect: {fileID: 329550175}
   arDisplay: {fileID: 686237198}
+  templetes:
+  - {fileID: 1458751586281840, guid: 4b40996dfcb17384a8c7865f780ad088, type: 3}
+  - {fileID: 1247814007805120, guid: 3ff337bfe39445e4bb1f8cac5f3d3692, type: 3}
+
 --- !u!4 &9483758
 Transform:
   m_ObjectHideFlags: 0
@@ -1182,7 +1186,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 126508, guid: 8b871b89dff724c34b3d81b3162412b0, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 426508, guid: 8b871b89dff724c34b3d81b3162412b0, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1566,6 +1570,10 @@ PrefabInstance:
     - target: {fileID: 132536, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_Name
       value: IngameDebugConsole
+      objectReference: {fileID: 0}
+    - target: {fileID: 132536, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11414302, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_Size
