@@ -43,6 +43,9 @@ namespace TapOn.Constants {
 
         public MarkManager markManager;
         public SpriteMask spriteMask;
+
+        public List<GameObject> templetes;
+
         // Start is called before the first frame update
         void Start()
         {

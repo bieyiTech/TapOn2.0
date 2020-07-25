@@ -4,10 +4,12 @@ using TapOn.Constants;
 using TapOn.Models.ActionModels;
 using TapOn.Models.States;
 using TapOn.Models.ViewModels;
+using Unity.UIWidgets.animation;
 using Unity.UIWidgets.foundation;
 using Unity.UIWidgets.material;
 using Unity.UIWidgets.painting;
 using Unity.UIWidgets.Redux;
+using Unity.UIWidgets.rendering;
 using Unity.UIWidgets.widgets;
 using UnityEngine;
 
@@ -66,66 +68,95 @@ namespace TapOn.Screens
     {
         bool preview = false;
 
+        bool camera_pic = true;
+
         private Widget imagePreview()
         {
             if(preview)
                 return new Container(width: 300, height: 300, color: CColors.Blue);
             return new Container();
         }
+
         public override Widget build(BuildContext context)
         {
             return new Container(
-                color: CColors.White, 
+                color: CColors.Transparent, 
                 child: new Unity.UIWidgets.widgets.Stack(
                     children: new List<Widget>
                     {
                         new Align(
                             alignment: Alignment.topLeft,
-                            child: new IconButton(
-                                onPressed: () =>
-                                {
-                                    Navigator.pop(Prefabs.instance.homeContext);
-                                },
-                                icon: new Icon(
-                                    size: 60,
-                                    icon: MyIcons.tab_home_fill
-                                )
-                            )
+                            child: new BackButton()
+                        ),
+                        new Align(
+                            alignment: new Alignment(0.95f, -0.98f),
+                            child: new OutlineButton(
+                                disabledBorderColor: CColors.White,
+                                borderSide: new BorderSide(color: CColors.White, width: 5),
+                                //color: CColors.Transparent,
+                                child: new Text(data:"二次创作", style: new TextStyle(color: CColors.White, fontSize:16)))
                         ),
                         new Align(
                             alignment: Alignment.bottomCenter,
-                            child: new Column(
-                                verticalDirection: VerticalDirection.up,
-                                children: new List<Widget>
+                            child: new GestureDetector(
+                                onPanEnd: detail =>
                                 {
-                                    new GestureDetector(
-                                        onTapDown: detail =>
+                                    if (detail.velocity.pixelsPerSecond.dx < 0 && camera_pic)
+                                        setState(()=>{camera_pic = false; });
+                                    if (detail.velocity.pixelsPerSecond.dx > 0 && !camera_pic)
+                                        setState(()=>{camera_pic = true; });
+                                },
+                                child: new Container(
+                                    width: 100,
+                                    height: 200,
+                                    child: new Column(
+                                        //verticalDirection: VerticalDirection.up,
+                                        children: new List<Widget>
                                         {
-                                            setState(()=>{preview = true; });
-                                        },
-                                        onTapCancel: () =>
-                                        {
-                                            setState(()=>{preview = false; });
-                                        },
-                                        onTapUp: detail =>
-                                        {
-                                            setState(()=>{preview = false; });
-                                        },
-                                        child:new Container(
-                                            decoration: new BoxDecoration(
-                                                color: CColors.Red,
-                                                borderRadius: BorderRadius.all(90)
+                                            new AnimatedPadding(
+                                                padding: camera_pic ? EdgeInsets.fromLTRB(25, 0, -25, 0) : EdgeInsets.fromLTRB(-25, 0, 25, 0),
+                                                duration: new System.TimeSpan(0,0,0,0,300),
+                                                curve: Curves.easeInOut,
+                                                child: new Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                    children: new List<Widget>
+                                                    {
+                                                        new Text(data: "照片", style: camera_pic ? CTextStyle.strength: CTextStyle.normal),
+                                                        new Text(data: "视频", style: !camera_pic ? CTextStyle.strength: CTextStyle.normal),
+                                                    })
                                                 ),
-                                            child: new Icon(
-                                                icon: MyIcons.eye,
-                                                size: 90
-                                                )
-                                            )
-                                        ),
-                                    imagePreview(),
-                                }
-                            )
-                        )       
+                                            new Padding(padding: EdgeInsets.only(top: 10)),
+                                            new Align(
+                                                child: new Listener(
+                                                    onPointerDown: detail=>
+                                                    {
+                                                    },
+                                                    child: new RaisedButton(
+                                                        shape: new CircleBorder(new BorderSide(color: CColors.White, width: 8)),
+                                                        elevation: 0,
+                                                        color: CColors.Transparent,
+                                                        child: new IconButton(
+                                                                iconSize: 48,
+                                                                icon: new Icon(
+                                                                    color: CColors.White,
+                                                                    size: 36,
+                                                                    icon: MyIcons.upload
+                                                                )
+                                                            )
+                                                        )
+                                                    )
+                                                ),
+                                            new Padding(padding: EdgeInsets.only(top: 30)),
+                                            new OutlineButton(
+                                                disabledBorderColor: CColors.White,
+                                                borderSide: new BorderSide(color: CColors.White, width: 5),
+                                                //color: CColors.Transparent,
+                                                child: new Text(data:"评论", style: new TextStyle(color: CColors.White, fontSize:14)))
+
+                                        })
+                                    )
+                                )
+                            ),       
                     }
                 ) 
             );

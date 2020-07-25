@@ -128,7 +128,9 @@ namespace TapOn.Screens
             List<Mark> marks = new List<Mark>();
             foreach (var mark in data.results)
             {
-                marks.Add(new Mark { coordinate = new Coordinate(mark.coordinate.Latitude.Get(), mark.coordinate.Longitude.Get()),
+                marks.Add(new Mark
+                {
+                    coordinate = new Coordinate(mark.coordinate.Latitude.Get(), mark.coordinate.Longitude.Get()),
                     id = mark.objectId,
                     date = mark.upLoadTime,
                     url = mark.snapShot.url,

@@ -19,6 +19,11 @@ using Unity.UIWidgets.widgets;
 using UnityEngine;
 using Stack = Unity.UIWidgets.widgets.Stack;
 using DialogUtils = Unity.UIWidgets.material.DialogUtils;
+using cn.bmob.response;
+using TapOn.Models;
+using TapOn.Api;
+using com.unity.uiwidgets.Runtime.rendering;
+using TapOn.Redux;
 
 namespace TapOn.Screens
 {
@@ -39,6 +44,7 @@ namespace TapOn.Screens
                         products = state.settingState.products.ToArray(),
                         allIcons = state.settingState.allIcons,
                         objects = state.settingState.objects,
+                        models = state.settingState.models,
                     };
                 },
                 builder: (context1, viewModel, dispatcher) =>
@@ -47,6 +53,12 @@ namespace TapOn.Screens
                     {
                         ChangeIndex = (value) =>
                         { dispatcher.dispatch(new ChangeIndexAction() { index = value, }); },
+                        AddTextProduct = (value) =>
+                        { dispatcher.dispatch(new AddTextProductAction() { text = value, }); },
+                        AddImageProduct = (value) =>
+                        { dispatcher.dispatch(new AddImageProductAction() { texture = value, }); },
+                        SetModelsMessage = (models) =>
+                        { dispatcher.dispatch(new SetModelsMessageAction() { models = models, }); },
                     };
                     return new SettingScreen(viewModel: viewModel, actionModel: actionModel);
                 }
@@ -97,6 +109,10 @@ namespace TapOn.Screens
         bool span = true;
         bool show = true;
 
+        List<bool> drag = new List<bool> {false, false, false };
+        float circleDragLeft = 0;
+        float circleDragBottom = 0;
+
         /// <summary>
         /// 转盘移动的参数
         /// </summary>
@@ -116,7 +132,14 @@ namespace TapOn.Screens
         List<AnimationController> ac_0_bottom = new List<AnimationController>();
         List<AnimationController> ac_1_bottom = new List<AnimationController>();
 
-        bool bottomShow = false;
+        PageController modelsPc = new PageController(initialPage: 0);
+
+        int modelIndex = 0;
+
+        bool modelsMessageReady = false;
+        bool modelsPreviewReady = false;
+
+        BuildContext bottomSheetContext;
 
         public override void initState()
         {
@@ -135,6 +158,37 @@ namespace TapOn.Screens
             {
                 setState(() => { });
             });
+            if (widget.viewModel.models.Count == 0)
+                getModelsMessage();
+        }
+
+        private async void getModelsMessage()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                QueryCallbackData<BmobModel> data = await BmobApi.queryAllModelsMessage();
+                Debug.Log(data.ToString());
+                if (data != null)
+                {
+                    List<Model> models = new List<Model>();
+                    foreach (var model in data.results)
+                    {
+                        models.Add(new Model
+                        {
+                            modelName = model.modelName,
+                            modelType = model.modelType.Get(),
+                            previewFileName = model.preview.filename,
+                            previewUrl = model.preview.url,
+                        });
+                    }
+                    this.widget.actionModel.SetModelsMessage(models);
+                    modelsMessageReady = true;
+                    if (bottomSheetContext != null)
+                        ((StatefulElement)bottomSheetContext).markNeedsBuild();
+                    break;
+                }
+            }
+            
         }
 
         private void changeIndex()
@@ -269,6 +323,36 @@ namespace TapOn.Screens
             return all;
         }
 
+        private Widget _modelsPreview(int index)
+        {
+            List<Model> models = new List<Model>();
+            if (index == 0)
+                models = widget.viewModel.models;
+            else
+            {
+                foreach(Model m in widget.viewModel.models)
+                {
+                    if (m.modelType == index)
+                        models.Add(m);
+                }
+            }
+            if (modelsMessageReady)
+                return GridView.builder(
+                    gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 4,
+                        childAspectRatio: 1.0f
+                        ),
+                    itemCount: models.Count,
+                    itemBuilder: (context_grid, ind) =>
+                    {
+                        return new GestureDetector(
+                            child: new Unity.UIWidgets.widgets.Image(
+                                image: new NetworkImage(url: models[ind].previewUrl)));
+                    });
+            else
+                return new SizedBox(width: 40, height: 40, child: new CircularProgressIndicator());
+}
+
         private IPromise<object> showTextDialog()
         {
             return DialogUtils.showDialog(
@@ -325,23 +409,13 @@ namespace TapOn.Screens
                 });
         }
 
-        private List<Widget> _labels()
-        {
-            List<Widget> t = new List<Widget>();
-            foreach (string s in Model.typeNames)
-                t.Add(new RaisedButton(
-                    child: new Text(
-                        data: s
-                        )
-                    ));
-            return t;
-        }
         private IPromise<object> showModelBottomSheet(BuildContext cont)
         {
             return BottomSheetUtils.showBottomSheet(
                 context: cont,
                 builder: (context) =>
                 {
+                    bottomSheetContext = context;
                     PageController pc = new PageController(Model.typeNames.Count);
                     return new Container(
                         color: CColors.White,
@@ -351,22 +425,129 @@ namespace TapOn.Screens
                             {
                                 new Align(
                                     alignment: Alignment.topRight, 
-                                    child: new IconButton(
-                                        onPressed: () =>
-                                        {
-                                            Navigator.of(context).pop(null);
-                                        },
-                                        icon:new Icon(
-                                            color: CColors.Black,
-                                            icon: MyIcons.close
+                                    child: new Container(
+                                        height: 20,
+                                        width: 30,
+                                        color: CColors.Transparent,
+                                        child: new IconButton(
+                                            color: CColors.Transparent,
+                                            iconSize: 16,
+                                            onPressed: () =>
+                                            {
+                                                Navigator.of(context).pop(null);
+                                            },
+                                            icon: new Icon(
+                                                icon: MyIcons.close,
+                                                color: CColors.Black
+                                                )
                                             )
                                         )
                                     ),
-                                new Column(
-                                    children: new List<Widget>
-                                    {
-                                        new Row(children: _labels()),
-                                    })
+                                new Align(alignment: Alignment.topCenter, child:
+                                    new Column(
+                                        children: new List<Widget>
+                                        {
+                                            new Row(
+                                                children: new List<Widget>
+                                                {
+                                                    new GestureDetector(
+                                                        onTap: () => 
+                                                        {
+                                                            if (modelIndex!=0)
+                                                            {
+                                                                modelIndex = 0;
+                                                                ((StatefulElement)context).markNeedsBuild();
+                                                                modelsPc.jumpToPage(0);
+                                                            }
+                                                        },
+                                                        child: new Container(
+                                                            decoration: modelIndex == 0 ? new BoxDecoration(borderRadius: BorderRadius.all(10), color: CColors.Grey) : null,
+                                                            padding: EdgeInsets.fromLTRB(5,5,5,5),
+                                                            child: new Text(
+                                                                style: new TextStyle(
+                                                                    color: CColors.Black,
+                                                                    fontSize: 16,
+                                                                    fontWeight: modelIndex==0 ? FontWeight.w900 : FontWeight.w300
+                                                                    ),
+                                                                data: "全部"
+                                                                )
+                                                            )
+                                                        ),
+                                                    new GestureDetector(
+                                                        onTap: () =>
+                                                        {
+                                                            if (modelIndex!=1)
+                                                            {
+                                                                modelIndex = 1;
+                                                                ((StatefulElement)context).markNeedsBuild();
+                                                                modelsPc.jumpToPage(1);
+                                                            }
+                                                        },
+                                                        child: new Container(
+                                                            decoration: modelIndex == 1 ? new BoxDecoration(borderRadius: BorderRadius.all(10), color: CColors.Grey) : null,
+                                                            padding: EdgeInsets.fromLTRB(5,5,5,5),
+                                                            child: new Text(
+                                                                style: new TextStyle(
+                                                                    color: CColors.Black,
+                                                                    fontSize: 16,
+                                                                    fontWeight: modelIndex==1 ? FontWeight.w900 : FontWeight.w300
+                                                                    ),
+                                                                data: "场景"
+                                                                )
+                                                            )
+                                                        ),
+                                                    new GestureDetector(
+                                                        onTap: () =>
+                                                        {
+                                                            if (modelIndex!=2)
+                                                            {
+                                                                modelIndex = 2;
+                                                                ((StatefulElement)context).markNeedsBuild();
+                                                                modelsPc.jumpToPage(2);
+                                                            }
+                                                        },
+                                                        child: new Container(
+                                                            decoration: modelIndex == 2 ? new BoxDecoration(borderRadius: BorderRadius.all(10), color: CColors.Grey) : null,
+                                                            padding: EdgeInsets.fromLTRB(5,5,5,5),
+                                                            child: new Text(
+                                                                style: new TextStyle(
+                                                                    color: CColors.Black,
+                                                                    fontSize: 16,
+                                                                    fontWeight: modelIndex==2 ? FontWeight.w900 : FontWeight.w300
+                                                                    ),
+                                                                data: "人物"
+                                                                )
+                                                            )
+                                                        ),
+                                                }),
+                                            new Expanded(flex: 1, child:
+                                                new Container(
+                                                    child: new PageView(
+                                                        onPageChanged: value =>
+                                                        {
+                                                            modelIndex = value;
+                                                            ((StatefulElement)context).markNeedsBuild();
+                                                        },
+                                                        controller: modelsPc,
+                                                        children: new List<Widget>
+                                                        {
+                                                            new Container(
+                                                                alignment: Alignment.center,
+                                                                child: _modelsPreview(0)
+                                                                ),
+                                                            new Container(
+                                                                alignment: Alignment.center,
+                                                                child: _modelsPreview(1)
+                                                                ),
+                                                            new Container(
+                                                                alignment: Alignment.center,
+                                                                child: _modelsPreview(2)
+                                                                ),
+                                                        })
+                                                    )
+                                                ),
+                                        })
+                                    )
                             })
                         );
                 })._completer;
@@ -387,92 +568,81 @@ namespace TapOn.Screens
         {
             if (!show) return null;
             if (widget.viewModel.products.Length <= index) return null;
-            return new AnimatedOpacity(
-                opacity: appear[productIndex[index]] ? 1 : 0,
-                duration: new System.TimeSpan(0,0,0,0,300),
-                child: new RaisedButton(
-                    shape: new CircleBorder(),
-                    color: CColors.Transparent,
-                    child: new IconButton(
-                        icon: new Icon(
-                            size: 28,
-                            icon: widget.viewModel.allIcons[(int)widget.viewModel.products[productIndex[index]].type]
+            return new GestureDetector(
+                onPanStart: detail =>
+                {
+                    setState(() =>
+                    {
+                        circleDragLeft = left[productIndex[index]];
+                        circleDragBottom = bottom[productIndex[index]];
+                        drag[index] = true;
+                    });
+                },
+                onPanEnd: detail =>
+                {
+                    setState(() =>
+                    {
+                        drag[index] = false;
+                    });
+                },
+                onPanUpdate: detail =>
+                {
+                    setState(() =>
+                    {
+                        circleDragLeft += detail.delta.dx;
+                        circleDragBottom -= detail.delta.dy;
+                    });
+                },
+                child: new AnimatedOpacity(
+                    opacity: appear[productIndex[index]] ? 1 : 0,
+                    duration: new System.TimeSpan(0,0,0,0,300),
+                    child: new RaisedButton(
+                        shape: new CircleBorder(),
+                        color: CColors.Transparent,
+                        child: new IconButton(
+                            icon: new Icon(
+                                size: 28,
+                                icon: widget.viewModel.allIcons[(int)widget.viewModel.products[productIndex[index]].type]
+                                )
                             )
                         )
                     )
                 );
         }
 
-        private Widget runningCirclePosition(int index)
+        private Widget stopCircle(int index)
         {
-            Widget normal =
-                new AnimatedPositioned(
-                    curve: Curves.easeIn,
-                    duration: new System.TimeSpan(0, 0, 0, 0, 300),
-                    left: span ? left[productIndex[index]] : 0,
-                    bottom: span ? bottom[productIndex[index]] : 0,
-                    child: runningCircle(index)
-                    );
-            float l = 0, b = 0;
-            
-            return normal;
+            return new Positioned(
+                left: left[productIndex[index]],
+                bottom: bottom[productIndex[index]],
+                child: runningCircle(index)
+                );
         }
 
-        public Widget _buildBottomList()
+        private Widget runningCirclePosition(int index)
         {
-            PageController pc = new PageController(Model.typeNames.Count);
-            return new Container(
-                        child: new Column(
-                            children: new List<Widget>
-                            {
-                                    new Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        children: new List<Widget>
-                                        {
-                                            new Expanded(flex: 2, child: new Row(children: _labels())),
-                                            new Expanded(
-                                                child: new IconButton(
-                                                    iconSize: 18,
-                                                    icon: new Icon(icon: MyIcons.cancel)
-                                                    )
-                                                )
-                                            ,
-                                        }
-                                        ),
-                                    PageView.builder(
-                                        controller: pc,
-                                        itemBuilder: (con, index) =>
-                                        {
-                                            return new Text(index.ToString());
-                                        })
-                            }
-                            )
-                        );
+            return new AnimatedPositioned(
+                curve: Curves.easeIn,
+                duration: drag[index] ? new System.TimeSpan(0, 0, 0, 0, 0) : new System.TimeSpan(0, 0, 0, 0, 300),
+                left: drag[index] ? circleDragLeft : span ? left[productIndex[index]] : 0,
+                bottom: drag[index] ? circleDragBottom : span ? bottom[productIndex[index]] : 0,
+                child: runningCircle(index)
+                );
         }
 
         public Widget _buildBottom()
         {
             return new Scaffold(
                 backgroundColor: CColors.Transparent,
-                //floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-                //floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-                /*floatingActionButton: new FloatingActionButton(
-                    elevation: 0,
-                    shape: new CircleBorder(new BorderSide(color: CColors.White, width: 3)),
-                    backgroundColor: CColors.Transparent,
-                    child: new IconButton(
-                            icon: new Icon(
-                                color: CColors.White,
-                                //size: 30,
-                                icon: MyIcons.upload
-                            )
-                        )
-                    ),*/
                 bottomNavigationBar: new Builder(builder: context=> {
                     return new BottomNavigationBar(
                         type: BottomNavigationBarType.fix,
-                        selectedItemColor: CColors.Black,
-                        unselectedItemColor: CColors.Black,
+                        elevation: 0,
+                        backgroundColor: CColors.Transparent,
+                        selectedItemColor: CColors.White,
+                        unselectedItemColor: CColors.White,
+                        selectedFontSize: 14,
+                        unselectedFontSize: 14,
                         onTap: (value) =>
                         {
                             int nowLength = widget.viewModel.products.Length;
@@ -485,13 +655,14 @@ namespace TapOn.Screens
                                         string data = (string)content;
                                         if (data != null)
                                         {
-                                            this.widget.actionModel.ChangeIndex(0);
+                                            if (data.Length == 0)
+                                                return;
+                                            this.widget.actionModel.AddTextProduct(data);
+                                            //this.widget.actionModel.ChangeIndex(0);
                                             if (nowLength < 3)
-                                            Window.instance.startCoroutine(wait_100_opacity(nowLength));
+                                                Window.instance.startCoroutine(wait_100_opacity(nowLength));
                                             else
-                                            {
                                                 updateCircle();
-                                            }
                                         }
                                     });
                                 break;
@@ -502,9 +673,19 @@ namespace TapOn.Screens
                                     {
                                         bool data = (bool)content;
                                         if (data)
-                                            this.widget.actionModel.ChangeIndex(1);
+                                        {
+                                            NativeCall.OpenPhoto((Texture2D tex) =>
+                                            {
+                                                widget.actionModel.AddImageProduct(tex);
+                                            });
+                                        }
                                         else
-                                            this.widget.actionModel.ChangeIndex(11);
+                                        {
+                                            NativeCall.OpenCamera((Texture2D tex) =>
+                                            {
+                                                widget.actionModel.AddImageProduct(tex);
+                                            });
+                                        }
                                         if (nowLength < 3)
                                             Window.instance.startCoroutine(wait_100_opacity(nowLength));
                                         else
@@ -523,27 +704,27 @@ namespace TapOn.Screens
                         items: new List<BottomNavigationBarItem>
                         {
                             new BottomNavigationBarItem(
-                                    icon: new Icon(icon: this.widget.viewModel.allIcons[0], size: 30, color: CColors.Black),
-                                    title: new Text("文字")
+                                    icon: new Icon(icon: this.widget.viewModel.allIcons[0], size: 30, color: CColors.White),
+                                    title: new Padding(padding: EdgeInsets.only(top: 5), child: new Text(data: "文字", style: new TextStyle(fontSize: 14)))
                                 ),
                             new BottomNavigationBarItem(
-                                    icon: new Icon(icon: this.widget.viewModel.allIcons[1], size: 30, color: CColors.Black),
-                                    title: new Text("图片")
+                                    icon: new Icon(icon: this.widget.viewModel.allIcons[1], size: 30, color: CColors.White),
+                                    title: new Padding(padding: EdgeInsets.only(top: 5), child: new Text(data: "图片", style: new TextStyle(fontSize: 14)))
                                 ),
                             new BottomNavigationBarItem(
-                                    icon: new Icon(icon: this.widget.viewModel.allIcons[2], size: 30, color: CColors.Black),
-                                    title: new Text("视频")
+                                    icon: new Icon(icon: this.widget.viewModel.allIcons[2], size: 30, color: CColors.White),
+                                    title: new Padding(padding: EdgeInsets.only(top: 5), child: new Text(data: "视频", style: new TextStyle(fontSize: 14)))
                                 ),
                             new BottomNavigationBarItem(
-                                    icon: new Icon(icon: this.widget.viewModel.allIcons[3], size: 30, color: CColors.Black),
-                                    title: new Text("模型")
+                                    icon: new Icon(icon: this.widget.viewModel.allIcons[3], size: 30, color: CColors.White),
+                                    title: new Padding(padding: EdgeInsets.only(top: 5), child: new Text(data: "模型", style: new TextStyle(fontSize: 14)))
                                 ),
                         });
                     }),
                 body: new GestureDetector(
                         onPanEnd: detail =>
                         {
-                            if (detail.velocity.pixelsPerSecond.dx < 0)
+                            if (detail.velocity.pixelsPerSecond.dx > 0)
                             {
                                 if (cameraType == 0)
                                 {
@@ -558,7 +739,7 @@ namespace TapOn.Screens
                                     animationController_second.forward();
                                 }
                             }
-                            else if(detail.velocity.pixelsPerSecond.dx > 0)
+                            else if(detail.velocity.pixelsPerSecond.dx < 0)
                             {
                                 if(cameraType == 1)
                                 {
@@ -574,6 +755,7 @@ namespace TapOn.Screens
                                 }
                             }
                         },
+                        onTap: () => { Debug.Log("ontap"); },
                         child: new Container(
                             color: CColors.Transparent,
                             child: new Stack(
@@ -601,16 +783,39 @@ namespace TapOn.Screens
                                             ),
                                     new Align(
                                         alignment: new Alignment(0, 0.5f),
-                                        child: new RaisedButton(
-                                            shape: new CircleBorder(new BorderSide(color: CColors.White, width: 8)),
-                                            elevation: 0,
-                                            color: CColors.Transparent,
-                                            child: new IconButton(
-                                                    iconSize: 48,
-                                                    icon: new Icon(
-                                                        color: CColors.White,
-                                                        size: 36,
-                                                        icon: MyIcons.upload
+                                        child: new Listener(
+                                            onPointerDown: detail=>
+                                            {
+                                                Debug.Log("onpointerdown");
+                                                Navigator.push(context, new MaterialPageRoute(builder: (_) =>
+                                                    {
+                                                        return new StoreProvider<AppState>(
+                                                            store: StoreProvider.store,
+                                                            new MaterialApp(
+                                                                home: new UploadScreenConnector()
+                                                            )
+                                                        );
+                                                    }));
+                                            },
+                                            child: new SizedBox(
+                                                width: 72, height:72, child:
+                                            new RaisedButton(
+                                                shape: new CircleBorder(new BorderSide(color: CColors.White, width: 8)),
+                                                elevation: 0,
+                                                color: CColors.Transparent,
+                                                disabledColor: CColors.Transparent,
+                                                child: cameraType == 0 ? 
+                                                        new Icon(
+                                                            color: CColors.White,
+                                                            size: 36,
+                                                            icon: MyIcons.upload
+                                                        ) : (cameraType == 1 ? 
+                                                        new Icon(
+                                                            color: CColors.WeChatGreen,
+                                                            size: 24,
+                                                            icon: MyIcons.camera_button_mine
+                                                            ) : null
+                                                        )
                                                     )
                                                 )
                                             )
@@ -633,7 +838,7 @@ namespace TapOn.Screens
                         child: _buildBottom()
                         ),
                     new Container(
-                        height: 400,
+                        height: 800,
                         child:new Stack(
                             children: new List<Widget>
                             {
@@ -657,10 +862,10 @@ namespace TapOn.Screens
                                             },
                                             icon: span ? new Icon(
                                                 size: 28,
-                                                icon: MyIcons.delete
+                                                icon: MyIcons.delete_mine
                                                 ) : new Icon(
                                                 size: 28,
-                                                icon: MyIcons.add
+                                                icon: MyIcons.add_mine
                                                 )
                                             )
                                         )
@@ -678,7 +883,7 @@ namespace TapOn.Screens
         public override Widget build(BuildContext context)
         {
             return new Container(
-                color: CColors.Transparent,
+                color: CColors.Grey80,
                 child: new Stack(
                     fit: StackFit.loose,
                     children: new List<Widget>
@@ -687,6 +892,7 @@ namespace TapOn.Screens
                             alignment: Alignment.topLeft,
                             child: new IconButton(
                                 color: CColors.Transparent,
+                                iconSize: 24,
                                 onPressed: () =>
                                 {
                                     Navigator.pop(Prefabs.instance.homeContext);
@@ -699,27 +905,6 @@ namespace TapOn.Screens
                                 )
                             ),
                         new Align(alignment: Alignment.bottomCenter, child: _buildMain()),
-                        new AnimatedPositioned(
-                            duration: new System.TimeSpan(0,0,0,0,300),
-                            curve: Curves.bounceIn,
-                            bottom: bottomShow ? 0: -280,
-                            //child: new Container(color: CColors.Transparent, width: 1000, height: 280, child: _buildBottomList())
-                            child: new Container(
-                                color: CColors.White, 
-                                width: 1000,
-                                height: 280, 
-                                child: _buildBottomList())
-                            )
-                        //new Align(alignment: Alignment.bottomCenter, child: new Container(color: CColors.White, width: 1000, height: 280, child: _buildBottomList()))
-                        /*child: new RaisedButton(
-                                        shape: new CircleBorder(),
-                                        elevation: 0,
-                                        disabledColor: CColors.Transparent,
-                                        disabledElevation: 0,
-                                        splashColor: CColors.Transparent,
-                                        highlightColor: CColors.Transparent,
-                                        color: CColors.Transparent,
-                                    child:*/
                     }
                     )
                 );

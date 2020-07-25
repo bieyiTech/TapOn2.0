@@ -8,14 +8,18 @@ namespace TapOn.Models.States
 {
     public class SettingState
     {
+        /// <summary>
+        /// 文字 图片 视频 模型 图标映射
+        /// </summary>
         public List<IconData> allIcons;
+        /// <summary>
+        /// 完成品队列，长度为3
+        /// </summary>
         public Queue<Product> products;
+
+        public List<Model> models;
+
         public List<GameObject> objects;
-        //public List<MyIcon> icons;
-        //public Texture2D sourceImage;
-        //public string text;
-        //public string videoPath;
         public int index;
-        //public short rawIndex;
     }
 }

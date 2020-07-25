@@ -76,6 +76,28 @@ namespace TapOn.Redux.Reducers {
                         state.settingState.products.Enqueue(new Product() { type = (ProductType)(ind) });
                         break;
                     }
+                case AddTextProductAction action:
+                    {
+                        GameObject instance = Prefabs.instance.templetes[0];
+                        TextMesh tm = instance.GetComponentInChildren<TextMesh>();
+                        tm.text = action.text;
+                        Product product = new Product { type = ProductType.Text, instance = instance };
+                        if (state.settingState.products.Count >= 3)
+                            state.settingState.products.Dequeue();
+                        state.settingState.products.Enqueue(product);
+                        break;
+                    }
+                case AddImageProductAction action:
+                    {
+                        GameObject instance = Prefabs.instance.templetes[1];
+                        Renderer rd = instance.GetComponentInChildren<Renderer>();
+                        rd.material.mainTexture = action.texture;
+                        Product product = new Product { type = ProductType.Text, instance = instance };
+                        if (state.settingState.products.Count >= 3)
+                            state.settingState.products.Dequeue();
+                        state.settingState.products.Enqueue(product);
+                        break;
+                    }
                 case AddMarkInViewAction action:
                     {
                         foreach(Mark mark in action.newMarks)
@@ -129,6 +151,11 @@ namespace TapOn.Redux.Reducers {
                                 }));
                             }
                         }
+                        break;
+                    }
+                case SetModelsMessageAction action:
+                    {
+                        state.settingState.models = action.models;
                         break;
                     }
             }
