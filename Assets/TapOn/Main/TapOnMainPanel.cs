@@ -73,17 +73,6 @@ namespace TapOn.Main
             }
         }
     }
-
-    /*class MainConnector: StatelessWidget
-    {
-        public override Widget build(BuildContext context)
-        {
-            return new StoreConnector<AppState, MapScreenViewModel>
-            (
-
-            )
-        }
-    }*/
     class MainScaffold : StatefulWidget
     {
         public MainScaffold(Key key = null) : base(key)
@@ -192,8 +181,8 @@ namespace TapOn.Main
                                         );
                                     }));
 
-                                    Prefabs.instance.arEffect.SetActive(true);
-                                    Prefabs.instance.arEffect.GetComponent<AREffectManager>().CreateAndEditMap();
+                                    Globals.instance.arEffect.SetActive(true);
+                                    Globals.instance.arEffect.GetComponent<AREffectManager>().CreateAndEditMap();
                                 },
                                 shape: new CircleBorder(),
                                 color: CColors.WeChatGreen,

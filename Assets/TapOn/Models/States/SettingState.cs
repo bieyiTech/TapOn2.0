@@ -15,7 +15,7 @@ namespace TapOn.Models.States
         /// <summary>
         /// 完成品队列，长度为3
         /// </summary>
-        public Queue<Product> products;
+        public Queue<Prop> products;
 
         public List<Model> models;
 

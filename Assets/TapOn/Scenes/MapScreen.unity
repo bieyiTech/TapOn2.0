@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4510507, g: 0.5008825, b: 0.5741865, a: 1}
+  m_IndirectSpecularColor: {r: 0.45105135, g: 0.5008831, b: 0.5741877, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -149,7 +149,7 @@ MonoBehaviour:
   markManager: {fileID: 1404705978}
   spriteMask: {fileID: 0}
   arEffect: {fileID: 329550175}
-  arDisplay: {fileID: 686237198}
+  arDisplay: {fileID: 1836113505}
   templetes:
   - {fileID: 1458751586281840, guid: 4b40996dfcb17384a8c7865f780ad088, type: 3}
   - {fileID: 1247814007805120, guid: 3ff337bfe39445e4bb1f8cac5f3d3692, type: 3}

@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace TapOn.Models
+namespace TapOn.Models.DataModels
 {
-    public class BmobMark : BmobTable
+    /*public class BmobMark : BmobTable
     {
         public static string table_name = "Mark";
 
@@ -43,7 +43,7 @@ namespace TapOn.Models
             output.Put("createdAt", upLoadTime);
             output.Put("snapShot", snapShot);
         }
-    }
+    }*/
 
     public class BmobModel : BmobTable
     {
@@ -65,7 +65,7 @@ namespace TapOn.Models
         }
     }
 
-    public class BmobProp : BmobTable
+    public class Prop : BmobTable
     {
         public static string table_name = "Prop";
 
@@ -87,10 +87,11 @@ namespace TapOn.Models
         public BmobInt type;
         public string text;
         public BmobFile texture;
+        public byte[] texture_byte;
         public BmobFile video;
         public BmobPointer<BmobModel> model;
 
-        public BmobPointer<BmobMark> mark;
+        public BmobPointer<Mark> mark;
 
         public BmobInt version;
 
@@ -115,7 +116,7 @@ namespace TapOn.Models
             video = input.getFile("video");
 
             model = input.Get<BmobPointer<BmobModel>>("model");
-            mark = input.Get<BmobPointer<BmobMark>>("mark");
+            mark = input.Get<BmobPointer<Mark>>("mark");
 
             version = input.getInt("version");
         }

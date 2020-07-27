@@ -53,7 +53,7 @@ namespace TapOn.Api
 
             foreach(Mark mark in marks)
             {
-                Globals.instance.markManager.AddMark(mark);
+                m.Add(Globals.instance.markManager.AddMark(mark));
             }
             
             promise.Resolve(value: m);

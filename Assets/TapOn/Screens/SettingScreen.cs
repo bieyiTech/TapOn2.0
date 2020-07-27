@@ -310,12 +310,12 @@ namespace TapOn.Screens
         private List<Widget> _products()
         {
             List<Widget> all = new List<Widget>();
-            foreach(Product product in this.widget.viewModel.products)
+            foreach(Prop product in this.widget.viewModel.products)
             {
                 all.Add(
                     new IconButton(
                         icon: new Icon(
-                            icon: this.widget.viewModel.allIcons[(int)product.type]
+                            icon: this.widget.viewModel.allIcons[product.type.Get()]
                             )
                         )
                     );
@@ -579,7 +579,7 @@ namespace TapOn.Screens
                         drag[index] = true;
                     });
                     Debug.Log("onPanStart");
-                    Prefabs.instance.dragger.StartCreate(widget.viewModel.products[index].instance);
+                    Globals.instance.dragger.StartCreate(widget.viewModel.products[index].instance);
                 },
                 onPanEnd: detail =>
                 {
@@ -588,7 +588,7 @@ namespace TapOn.Screens
                         drag[index] = false;
                     });
                     Debug.Log("onPanEnd");
-                    Prefabs.instance.dragger.StopCreate();
+                    Globals.instance.dragger.StopCreate();
                 },
                 onPanUpdate: detail =>
                 {
@@ -609,7 +609,7 @@ namespace TapOn.Screens
                         child: new IconButton(
                             icon: new Icon(
                                 size: 28,
-                                icon: widget.viewModel.allIcons[(int)widget.viewModel.products[productIndex[index]].type]
+                                icon: widget.viewModel.allIcons[widget.viewModel.products[productIndex[index]].type.Get()]
                                 )
                             )
                         )
