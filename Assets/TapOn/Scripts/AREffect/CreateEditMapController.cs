@@ -96,6 +96,42 @@ namespace AREffect
         /// <summary>
         /// 保存创作
         /// </summary>
+        public void SaveEdit()
+        {
+            Snapshot();
+            // mapData.Props
+            if (mapData == null)
+            {
+                return;
+            }
+
+            var propInfos = new List<MapMeta.PropInfo>();
+
+            foreach (var prop in mapData.Props)
+            {
+                var position = prop.transform.localPosition;
+                var rotation = prop.transform.localRotation;
+                var scale = prop.transform.localScale;
+
+                propInfos.Add(new MapMeta.PropInfo()
+                {
+                    Name = prop.name,
+                    Position = new float[3] { position.x, position.y, position.z },
+                    Rotation = new float[4] { rotation.x, rotation.y, rotation.z, rotation.w },
+                    Scale = new float[3] { scale.x, scale.y, scale.z }
+                });
+            }
+            mapData.Meta.Props = propInfos;
+            // 保存到本地
+            MapMetaManager.Save(mapData.Meta);
+            // 保存到云端
+            // (图片)capturedImage
+            // (ID)mapData.Meta.Map.ID
+            // (time) DateTime.Now.ToString("yyyy-MM-dd_HHmmss")
+            // (Meta) mapData.Meta
+            // GPS
+
+        }
         
         public void Snapshot()
         {

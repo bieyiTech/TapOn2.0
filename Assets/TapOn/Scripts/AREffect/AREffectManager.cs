@@ -29,12 +29,6 @@ namespace AREffect
             Instance = this;
         }
 
-        // Start is called before the first frame update
-        private void Start()
-        {
-
-        }
-
         // Update is called once per frame
         private void Update()
         {
@@ -76,13 +70,22 @@ namespace AREffect
             createEdit.SetMapSession(mapSession);
             Prefabs.instance.arDisplay.SetActive(true);
             ShowParticle(true);
-            
         }
 
-        public void PreviewMap()
+        public void SecondEditMap()
         {
             CreateSession();
+
+        }
+
+        public void PreviewMap(List<String> mapIDs)
+        {
+            // 根据IDs到bmob数据库查找对应metas
+            // foreach(meta in metas)
+            // selectedMaps.Add(meta);
+            CreateSession();
             mapSession.LoadMapMeta(MapControllerPrefab, false);
+            
 
         }
 
