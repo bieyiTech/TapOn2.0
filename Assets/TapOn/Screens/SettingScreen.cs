@@ -895,8 +895,9 @@ namespace TapOn.Screens
                                 iconSize: 24,
                                 onPressed: () =>
                                 {
-                                    Navigator.pop(Prefabs.instance.homeContext);
-                                    Prefabs.instance.map.SetActive(true);
+                                    BuildContext lastContext = Globals.instance.contextStack.Pop();
+                                    Navigator.pop(lastContext);
+                                    Globals.instance.map.SetActive(true);
                                 },
                                 icon: new Icon(
                                     icon: MyIcons.arrow_back,

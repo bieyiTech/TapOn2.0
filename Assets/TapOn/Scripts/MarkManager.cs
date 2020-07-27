@@ -14,9 +14,9 @@ public class MarkManager : MonoBehaviour
 
     public void AddMark(Mark mark)
     {
-        Vector3 pos = Prefabs.instance.mapController.ConvertCoordinateToWorld(mark.coordinate);
+        Vector3 pos = Globals.instance.mapController.ConvertCoordinateToWorld(mark.coordinate);
 
-        GameObject tempMark = (GameObject)Instantiate(Prefabs.instance.marker, GetComponent<MarkManager>().transform, true);
+        GameObject tempMark = (GameObject)Instantiate(Globals.instance.marker, GetComponent<MarkManager>().transform, true);
         tempMark.transform.position = pos + 0.5f * new Vector3(0, 0, tempMark.transform.localScale.y * tempMark.GetComponent<SpriteRenderer>().bounds.size.y);
         tempMark.GetComponent<Renderer>().sortingOrder = 1;
 

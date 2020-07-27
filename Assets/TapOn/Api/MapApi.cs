@@ -14,7 +14,7 @@ namespace TapOn.Api
 {
     public static class MapApi
     {
-        public static MapController map { get { return Prefabs.instance.mapController; } }
+        public static MapController map { get { return Globals.instance.mapController; } }
 
         public static MapEnd mapEnd;
         public static Camera camera;
@@ -53,7 +53,7 @@ namespace TapOn.Api
 
             foreach(Mark mark in marks)
             {
-                Prefabs.instance.markManager.AddMark(mark);
+                Globals.instance.markManager.AddMark(mark);
             }
             
             promise.Resolve(value: m);

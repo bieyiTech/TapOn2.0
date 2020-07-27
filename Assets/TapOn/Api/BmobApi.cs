@@ -18,14 +18,14 @@ namespace TapOn.Api
 {
     public class BmobApi
     {
-        public static BmobUnity Bmob { get { return Prefabs.instance.bmob; } }
+        public static BmobUnity Bmob { get { return Globals.instance.bmob; } }
 
-        public static async Task<QueryCallbackData<Marks>> queryFuzztMarksAsync(Coordinate coodinate, int limit)
+        public static async Task<QueryCallbackData<BmobMark>> queryFuzztMarksAsync(Coordinate coodinate, int limit)
         {
             BmobQuery query = new BmobQuery();
             query.WhereNear("position", new BmobGeoPoint(coodinate.latitude, coodinate.lontitude));
             query.Limit(limit);
-            return await Bmob.FindTaskAsync<Marks>(Marks.table_name, query);
+            return await Bmob.FindTaskAsync<BmobMark>(BmobMark.table_name, query);
         }
 
         public static async Task<QueryCallbackData<BmobModel>> queryAllModelsMessage()
@@ -33,6 +33,51 @@ namespace TapOn.Api
             BmobQuery query = new BmobQuery();
             query.Limit(100);
             return await Bmob.FindTaskAsync<BmobModel>(BmobModel.table_name, query);
+        }
+
+        public static Task<List<BmobProp>> getPropsInMark(BmobMark mark)
+        {
+            return Task.Run(
+                async () =>
+                {
+                    BmobQuery query = new BmobQuery();
+                    query.WhereEqualTo("mark", new BmobPointer<BmobMark>(mark));
+                    QueryCallbackData<BmobProp> data = await Bmob.FindTaskAsync<BmobProp>(BmobProp.table_name, query);
+                    List<BmobProp> props = new List<BmobProp>();
+                    foreach(BmobProp prop in data.results)
+                    {
+                        /*Vector3 pos = new Vector3((float)prop.pos_x.Get(), (float)prop.pos_y.Get(), (float)prop.pos_z.Get());
+                        Vector4 rot = new Vector4((float)prop.rot_x.Get(), (float)prop.rot_y.Get(), (float)prop.rot_z.Get(), (float)prop.rot_w.Get());
+                        Vector3 sca = new Vector3((float)prop.scale_x.Get(), (float)prop.scale_y.Get(), (float)prop.scale_z.Get());
+                        if (prop.type.Get() == 0)
+                            props.Add(new TextProp { text = prop.text, type = 0, position = pos, rotation = rot, scale = sca, });
+                        if (prop.type.Get() == 1)
+                            props.Add(new ImageProp { fileName = prop.texture.filename, url = prop.texture.url, type = 1, position = pos, rotation = rot, scale = sca, });
+                        if (prop.type.Get() == 2)
+                            props.Add(new VideoProp { fileName = prop.video.filename, url = prop.video.url, type = 2 position = pos, rotation = rot, scale = sca, });
+                        if (prop.type.Get() == 3)
+                            props.Add(new ModelProp { fileName = prop.model.reference.model.filename, url = prop.model.reference.model.url, type = 3, position = pos, rotation = rot, scale = sca, });*/
+                        props.Add(prop);
+                    }
+                    return props;
+                });
+        }
+
+        public static Task<bool> addMarktoServer(BmobMark mark)
+        {
+            return Task.Run(
+                async () =>
+                {
+                    CreateCallbackData callback_mark = await Bmob.CreateTaskAsync(BmobMark.table_name, mark);
+                    if (callback_mark == null || callback_mark.objectId == null || callback_mark.objectId.Length == 0)
+                        return false;
+                    foreach(BmobProp prop in mark.props)
+                    {
+                        prop.mark = mark;
+                        CreateCallbackData callback_prop = await Bmob.CreateTaskAsync(BmobProp.table_name, prop);
+                    }
+                    return true;
+                });
         }
 
         public static IPromise<List<Mark>> queryFuzzyMarks(Coordinate coodinate, int limit)
@@ -45,7 +90,7 @@ namespace TapOn.Api
             Promise<List<Mark>> p =  new Promise<List<Mark>>(async (resolve, reject) =>
             {
                 Debug.LogError(2);
-                QueryCallbackData<Marks> data = await Bmob.FindTaskAsync<Marks>(Marks.table_name, query);
+                QueryCallbackData<BmobMark> data = await Bmob.FindTaskAsync<BmobMark>(BmobMark.table_name, query);
                 Debug.LogError(333);
                 Debug.LogError(data.results.Count);
                 
@@ -81,7 +126,7 @@ namespace TapOn.Api
         {
             List<Mark> marks = new List<Mark>();
             Exception ex = new Exception();
-            Bmob.Find<Marks>(Marks.table_name, query, (resp, exception) =>
+            Bmob.Find<BmobMark>(BmobMark.table_name, query, (resp, exception) =>
             {
                 if (exception != null)
                 {
@@ -90,7 +135,7 @@ namespace TapOn.Api
                     return;
                 }
 
-                List<Marks> list = resp.results;
+                List<BmobMark> list = resp.results;
                 Debug.LogError(6);
                 Debug.LogError("list: " + list.Count);
                 foreach (var mark in list)
@@ -107,15 +152,15 @@ namespace TapOn.Api
         public static IPromise<string> createMark(Coordinate coordinate)
         {
             Promise<string> promise = new Promise<string>();
-            Marks m = new Marks { coordinate = new BmobGeoPoint(coordinate.latitude, coordinate.lontitude) };
+            BmobMark m = new BmobMark { coordinate = new BmobGeoPoint(coordinate.latitude, coordinate.lontitude) };
             Window.instance.startCoroutine(addMark(promise, m));
             return promise;
         }
 
-        public static IEnumerator addMark(Promise<string> promise, Marks m)
+        public static IEnumerator addMark(Promise<string> promise, BmobMark m)
         {
             yield return null;
-            Bmob.Create(Marks.table_name, m, (resp, exception) =>
+            Bmob.Create(BmobMark.table_name, m, (resp, exception) =>
             {
                 if (exception != null)
                 {

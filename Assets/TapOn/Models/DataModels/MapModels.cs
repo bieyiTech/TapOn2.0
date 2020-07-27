@@ -19,6 +19,9 @@ namespace TapOn.Models.DataModels
     /// </summary>
     public class Mark
     {
+        public string mapId;
+        public string mapName;
+        public List<BaseProp> props;
         public string id;
         public Coordinate coordinate;
         public string date;

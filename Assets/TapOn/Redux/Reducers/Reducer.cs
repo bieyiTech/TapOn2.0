@@ -41,44 +41,9 @@ namespace TapOn.Redux.Reducers {
                         state.mapState.zoomLevel = action.zoomLevel;
                         break;
                     }
-                case ChangeIndexAction action:
-                    {
-                        state.settingState.index = action.index;
-                        int ind = action.index;
-                        switch(action.index)
-                        {
-                            case 0:
-                                {
-                                    break;
-                                }
-                            case 1:
-                                {
-                                    NativeCall.OpenPhoto((Texture2D tex) =>
-                                    {
-                                        //rawImage.texture = tex;
-                                        //rawImage.rectTransform.sizeDelta = new Vector2(tex.width / 5, tex.height / 5);
-                                    });
-                                    break;
-                                }
-                            case 11:
-                                {
-                                    ind = 1;
-                                    NativeCall.OpenCamera((Texture2D tex) =>
-                                    {
-                                        //rawImage.texture = tex;
-                                        //rawImage.rectTransform.sizeDelta = new Vector2(tex.width/5, tex.height/5);
-                                    });
-                                    break;
-                                }
-                        }
-                        if (state.settingState.products.Count >= 3)
-                            state.settingState.products.Dequeue();
-                        state.settingState.products.Enqueue(new Product() { type = (ProductType)(ind) });
-                        break;
-                    }
                 case AddTextProductAction action:
                     {
-                        GameObject instance = Prefabs.instance.templetes[0];
+                        GameObject instance = Globals.instance.templetes[0];
                         TextMesh tm = instance.GetComponentInChildren<TextMesh>();
                         tm.text = action.text;
                         Product product = new Product { type = ProductType.Text, instance = instance };
@@ -89,7 +54,7 @@ namespace TapOn.Redux.Reducers {
                     }
                 case AddImageProductAction action:
                     {
-                        GameObject instance = Prefabs.instance.templetes[1];
+                        GameObject instance = Globals.instance.templetes[1];
                         Renderer rd = instance.GetComponentInChildren<Renderer>();
                         rd.material.mainTexture = action.texture;
                         Product product = new Product { type = ProductType.Text, instance = instance };
@@ -130,17 +95,15 @@ namespace TapOn.Redux.Reducers {
                     }
                 case SelectMarkAction action:
                     {
-                        //Debug.LogError("pos: " + action.pos.x + " " + action.pos.y);
-                        //Debug.LogError("pos2: " + Input.mousePosition.x + " " + Input.mousePosition.y);
                         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                         RaycastHit hit;
                         if (Physics.Raycast(ray, out hit))
                         {
-                            //Debug.DrawLine(ray.origin, hit.point);
                             GameObject gameobj = hit.collider.gameObject;;
                             if (gameobj.tag == "mark")
                             {
-                                Navigator.push(Prefabs.instance.homeContext, new MaterialPageRoute(builder: (_) =>
+                                Globals.instance.contextStack.Push(Globals.instance.homeContext);
+                                Navigator.push(Globals.instance.homeContext, new MaterialPageRoute(builder: (_) =>
                                 {
                                     return new StoreProvider<AppState>(
                                         store: StoreProvider.store,

@@ -40,8 +40,6 @@ namespace TapOn.Screens
             return new StoreConnector<AppState, MapScreenViewModel>(
                 converter: state =>
                 {
-                    //Debug.LogError("update time: " + Time.realtimeSinceStartup);
-
                     return new MapScreenViewModel
                     {
                         zoomLevel = state.mapState.zoomLevel,
@@ -118,13 +116,13 @@ namespace TapOn.Screens
         public override void initState()
         {
             base.initState();
+            Globals.instance.models = new List<GameObject>();
             update();
-            //updateMarks();
         }
 
         private async void updateMarks()
         {
-            QueryCallbackData<Marks> data = await BmobApi.queryFuzztMarksAsync(Prefabs.instance.mapController.GetCoordinate(), 3);
+            QueryCallbackData<BmobMark> data = await BmobApi.queryFuzztMarksAsync(Globals.instance.mapController.GetCoordinate(), 3);
             List<Mark> marks = new List<Mark>();
             foreach (var mark in data.results)
             {
@@ -154,7 +152,7 @@ namespace TapOn.Screens
                 () =>
                 {
                     for (int i = 0; i < 100000; i++)
-                        if(Prefabs.instance.mapController!=null)
+                        if(Globals.instance.mapController!=null)
                         {
                             return true;
                         }
@@ -196,7 +194,6 @@ namespace TapOn.Screens
                         ),
                     onTapDown: detail => 
                     {
-                        //showBottomSheet();
                         Vector2 t = new Vector2(detail.globalPosition.dx, detail.globalPosition.dy);
                         this.widget.actionModel.selectMark(t);
                     },
@@ -240,15 +237,15 @@ namespace TapOn.Screens
                     {
                         this.widget.actionModel.mapZoom(details.scale);
                         this.widget.actionModel.zoomMap();
-                        if ((int)(this.widget.viewModel.zoomLevel) != (int)(Prefabs.instance.mapController.GetZoomLevel()))
+                        if ((int)(this.widget.viewModel.zoomLevel) != (int)(Globals.instance.mapController.GetZoomLevel()))
                         {
-                            this.widget.actionModel.changeZoomLevel(Prefabs.instance.mapController.GetZoomLevel());
+                            this.widget.actionModel.changeZoomLevel(Globals.instance.mapController.GetZoomLevel());
                             Debug.Log("zoomlevel change!");
                         }
                     },
                     onScaleStart: detail =>
                     {
-                        this.widget.actionModel.changeZoomLevel(Prefabs.instance.mapController.GetZoomLevel());
+                        this.widget.actionModel.changeZoomLevel(Globals.instance.mapController.GetZoomLevel());
                     },
                     onScaleEnd: detail =>
                     {

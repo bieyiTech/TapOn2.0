@@ -25,7 +25,7 @@ namespace TapOn.Main
     public class TapOnMainPanel : UIWidgetsPanel
     {
         public MapController map;
-        public Prefabs prefabs;
+        public Globals prefabs;
         protected override void OnEnable()
         {
             base.OnEnable();
@@ -176,7 +176,8 @@ namespace TapOn.Main
                             child: new FlatButton(
                                 onPressed: () =>
                                 {
-                                    Prefabs.instance.map.SetActive(false);
+                                    Globals.instance.contextStack.Push(context);
+                                    //Globals.instance.map.SetActive(false);
                                     GameObject[] t = GameObject.FindGameObjectsWithTag("mark");
                                     foreach (GameObject mark in t)
                                         mark.SetActive(false);
@@ -293,7 +294,7 @@ namespace TapOn.Main
 
         public override Widget build(BuildContext context)
         {
-            Prefabs.instance.homeContext = context;
+            Globals.instance.homeContext = context;
             return new Scaffold(
                 backgroundColor: CColors.Transparent,
                 /*floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
