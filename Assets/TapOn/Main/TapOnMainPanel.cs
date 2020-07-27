@@ -191,6 +191,9 @@ namespace TapOn.Main
                                             )
                                         );
                                     }));
+
+                                    Prefabs.instance.arEffect.SetActive(true);
+                                    Prefabs.instance.arEffect.GetComponent<AREffectManager>().CreateAndEditMap();
                                 },
                                 shape: new CircleBorder(),
                                 color: CColors.WeChatGreen,

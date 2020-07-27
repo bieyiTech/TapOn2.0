@@ -15,7 +15,7 @@ namespace AREffect
         public SparseSpatialMapController MapControllerPrefab;
         public Text Status;
         public Toggle PointCloudUI;
-        public Text RecycleBinText;
+        public CreateEditMapController createEdit;
 
         private GameObject easyarObject;
         private ARSession session;
@@ -73,6 +73,7 @@ namespace AREffect
         {
             CreateSession();
             mapSession.SetupMapBuilder(MapControllerPrefab);
+            createEdit.SetMapSession(mapSession);
             Prefabs.instance.arDisplay.SetActive(true);
             ShowParticle(true);
             

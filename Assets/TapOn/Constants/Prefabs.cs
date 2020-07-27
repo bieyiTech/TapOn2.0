@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TencentMap.API;
 using Unity.UIWidgets.widgets;
 using UnityEngine;
+using AREffect;
 
 namespace TapOn.Constants {
     public class Prefabs : MonoBehaviour
@@ -46,9 +47,9 @@ namespace TapOn.Constants {
 
         public GameObject arEffect;
         public GameObject arDisplay;
-
-
+        
         public List<GameObject> templetes;
+        public PropsController dragger;
 
         // Start is called before the first frame update
         void Start()

@@ -9,7 +9,7 @@ namespace AREffect
 {
     public class CreateEditMapController : MonoBehaviour
     {
-        public Dragger PropDragger;
+        public PropsController PropDragger;
         public Button SaveButton;
         public RawImage PreviewImage;
         public SparseSpatialMapController MapControllerPrefab;
@@ -92,6 +92,10 @@ namespace AREffect
             StartCoroutine(SavingStatus());
             StartCoroutine(Saving());
         }
+
+        /// <summary>
+        /// 保存创作
+        /// </summary>
         
         public void Snapshot()
         {

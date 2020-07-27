@@ -118,7 +118,7 @@ namespace TapOn.Screens
         public override void initState()
         {
             base.initState();
-            update();
+            //update();
             //updateMarks();
         }
 
