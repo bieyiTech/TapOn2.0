@@ -90,7 +90,7 @@ namespace TapOn.Screens
 
     public class _SettingScreenState : SingleTickerProviderStateMixin<SettingScreen>
     {
-
+        byte[] snapChatForCza;
         //TabController _tabController;
         //ScrollController _scrollController;
         Animation<int> animation_first;
@@ -409,6 +409,7 @@ namespace TapOn.Screens
                 });
         }
 
+
         private IPromise<object> showModelBottomSheet(BuildContext cont)
         {
             return BottomSheetUtils.showBottomSheet(
@@ -577,6 +578,8 @@ namespace TapOn.Screens
                         circleDragBottom = bottom[productIndex[index]];
                         drag[index] = true;
                     });
+                    Debug.Log("onPanStart");
+                    Prefabs.instance.dragger.StartCreate(widget.viewModel.products[index].instance);
                 },
                 onPanEnd: detail =>
                 {
@@ -584,6 +587,8 @@ namespace TapOn.Screens
                     {
                         drag[index] = false;
                     });
+                    Debug.Log("onPanEnd");
+                    Prefabs.instance.dragger.StopCreate();
                 },
                 onPanUpdate: detail =>
                 {
@@ -592,6 +597,8 @@ namespace TapOn.Screens
                         circleDragLeft += detail.delta.dx;
                         circleDragBottom -= detail.delta.dy;
                     });
+                    
+                    //widget.viewModel.products
                 },
                 child: new AnimatedOpacity(
                     opacity: appear[productIndex[index]] ? 1 : 0,
@@ -693,6 +700,13 @@ namespace TapOn.Screens
                                     });
                                     break;
                                 }
+                                case 2:
+                                    {
+
+                                        //to do after
+                                        //showUploadDialog().Then(message => { });
+                                        break;
+                                    }
                                 case 3:
                                 {
                                         //setState(() => { bottomShow = true; });
@@ -783,6 +797,7 @@ namespace TapOn.Screens
                                             ),
                                     new Align(
                                         alignment: new Alignment(0, 0.5f),
+
                                         child: new Listener(
                                             onPointerDown: detail=>
                                             {
@@ -883,7 +898,7 @@ namespace TapOn.Screens
         public override Widget build(BuildContext context)
         {
             return new Container(
-                color: CColors.Grey80,
+                color: CColors.Transparent,
                 child: new Stack(
                     fit: StackFit.loose,
                     children: new List<Widget>

@@ -18,6 +18,7 @@ using Unity.UIWidgets.Redux;
 using Unity.UIWidgets.ui;
 using Unity.UIWidgets.widgets;
 using UnityEngine;
+using AREffect;
 using Image = Unity.UIWidgets.widgets.Image;
 
 namespace TapOn.Main
@@ -190,6 +191,9 @@ namespace TapOn.Main
                                             )
                                         );
                                     }));
+
+                                    Prefabs.instance.arEffect.SetActive(true);
+                                    Prefabs.instance.arEffect.GetComponent<AREffectManager>().CreateAndEditMap();
                                 },
                                 shape: new CircleBorder(),
                                 color: CColors.WeChatGreen,
@@ -315,6 +319,9 @@ namespace TapOn.Main
                                 )
                             );
                         }));
+                        //运行create部分代码和edit代码
+                        Prefabs.instance.arEffect.SetActive(true);
+                        Prefabs.instance.arEffect.GetComponent<AREffectManager>().CreateAndEditMap();
                     },
                     backgroundColor: CColors.Red,
                     child: new Icon(
