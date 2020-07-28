@@ -26,8 +26,7 @@ namespace TapOn.Main
     public class TapOnMainPanel : UIWidgetsPanel
     {
         public MapController map;
-        public Prefabs prefabs;
-
+        public Globals prefabs;
         protected override void OnEnable()
         {
             base.OnEnable();
@@ -74,17 +73,6 @@ namespace TapOn.Main
             }
         }
     }
-
-    /*class MainConnector: StatelessWidget
-    {
-        public override Widget build(BuildContext context)
-        {
-            return new StoreConnector<AppState, MapScreenViewModel>
-            (
-
-            )
-        }
-    }*/
     class MainScaffold : StatefulWidget
     {
         public MainScaffold(Key key = null) : base(key)
@@ -178,7 +166,8 @@ namespace TapOn.Main
                             child: new FlatButton(
                                 onPressed: () =>
                                 {
-                                    Prefabs.instance.map.SetActive(false);
+                                    Globals.instance.contextStack.Push(context);
+                                    //Globals.instance.map.SetActive(false);
                                     GameObject[] t = GameObject.FindGameObjectsWithTag("mark");
                                     foreach (GameObject mark in t)
                                         mark.SetActive(false);
@@ -192,8 +181,8 @@ namespace TapOn.Main
                                         );
                                     }));
 
-                                    Prefabs.instance.arEffect.SetActive(true);
-                                    Prefabs.instance.arEffect.GetComponent<AREffectManager>().CreateAndEditMap();
+                                    Globals.instance.arEffect.SetActive(true);
+                                    Globals.instance.arEffect.GetComponent<AREffectManager>().CreateAndEditMap();
                                 },
                                 shape: new CircleBorder(),
                                 color: CColors.WeChatGreen,
@@ -298,7 +287,7 @@ namespace TapOn.Main
 
         public override Widget build(BuildContext context)
         {
-            Prefabs.instance.homeContext = context;
+            Globals.instance.homeContext = context;
             return new Scaffold(
                 backgroundColor: CColors.Transparent,
                 /*floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

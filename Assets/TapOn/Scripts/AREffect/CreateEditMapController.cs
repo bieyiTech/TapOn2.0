@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using easyar;
 using System;
+using TapOn.Models.DataModels;
+using TapOn.Api;
 
 namespace AREffect
 {
@@ -96,7 +98,7 @@ namespace AREffect
         /// <summary>
         /// 保存创作
         /// </summary>
-        public void SaveEdit()
+        public async void SaveEdit()
         {
             Snapshot();
             // mapData.Props
@@ -130,7 +132,15 @@ namespace AREffect
             // (time) DateTime.Now.ToString("yyyy-MM-dd_HHmmss")
             // (Meta) mapData.Meta
             // GPS
-
+            Mark mark = new Mark
+            {
+                coordinate = new cn.bmob.io.BmobGeoPoint(116.314, 39.986),
+                snapShot_byte =capturedImage.EncodeToJPG(),
+                MapId = mapData.Meta.Map.ID,
+                MapName = mapData.Meta.Map.Name,
+            };
+            bool success = await BmobApi.addMarktoServer(mark);
+            if (!success) Debug.LogError("Upload Error: Mark hasn't uploaded!");
         }
         
         public void Snapshot()

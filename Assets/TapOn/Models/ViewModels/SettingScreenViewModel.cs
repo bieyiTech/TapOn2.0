@@ -8,7 +8,7 @@ namespace TapOn.Models.ViewModels
 {
     public class SettingScreenViewModel
     {
-        public Product[] products;
+        public Prop[] products;
         public List<IconData> allIcons;
         public List<GameObject> objects;
         public List<Model> models;

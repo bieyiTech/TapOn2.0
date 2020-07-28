@@ -41,7 +41,7 @@ namespace TapOn.Models.States
                         MyIcons.model_mine,
                     },
                     index = 0,
-                    products = new Queue<Product>(),
+                    products = new Queue<Prop>(),
                     objects = new List<GameObject>(),
                     models = new List<Model>(),
                 }

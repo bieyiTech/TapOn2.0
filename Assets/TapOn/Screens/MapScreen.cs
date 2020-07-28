@@ -40,8 +40,6 @@ namespace TapOn.Screens
             return new StoreConnector<AppState, MapScreenViewModel>(
                 converter: state =>
                 {
-                    //Debug.LogError("update time: " + Time.realtimeSinceStartup);
-
                     return new MapScreenViewModel
                     {
                         zoomLevel = state.mapState.zoomLevel,
@@ -69,7 +67,6 @@ namespace TapOn.Screens
                         moveMap = () => dispatcher.dispatch<object>(Actions.moveMap()),
                         zoomMap = () => dispatcher.dispatch<object>(Actions.zoomMap()),
                         changeMark = () => dispatcher.dispatch<object>(Actions.changeMark()),
-                        loadMark = () => dispatcher.dispatch<object>(Actions.loadMark()),
                     };
                     return new MapScreen(viewModel: viewModel, actionModel: actionModel);
                 }
@@ -118,26 +115,15 @@ namespace TapOn.Screens
         public override void initState()
         {
             base.initState();
-            //update();
-            //updateMarks();
+            Globals.instance.models = new List<GameObject>();
+            update();
         }
 
         private async void updateMarks()
         {
-            //QueryCallbackData<Marks> data = await BmobApi.queryFuzztMarksAsync(Prefabs.instance.mapController.GetCoordinate(), 3);
-            //List<Mark> marks = new List<Mark>();
-            //foreach (var mark in data.results)
-            //{
-            //    marks.Add(new Mark { coordinate = new Coordinate(mark.coordinate.Latitude.Get(), mark.coordinate.Longitude.Get()),
-            //        id = mark.objectId,
-            //        date = mark.upLoadTime,
-            //        url = mark.snapShot.url,
-            //        fileName = mark.snapShot.filename
-            //    });
-
-            //}
-            //this.widget.actionModel.addMarkJustLoading(marks);
-            //this.widget.actionModel.changeMark();
+            QueryCallbackData<Mark> data = await BmobApi.queryFuzztMarksAsync(Globals.instance.mapController.GetCoordinate(), 3);
+            this.widget.actionModel.addMarkJustLoading(data.results);
+            this.widget.actionModel.changeMark();
         }
 
         private IEnumerator wait_500()
@@ -152,7 +138,7 @@ namespace TapOn.Screens
                 () =>
                 {
                     for (int i = 0; i < 100000; i++)
-                        if(Prefabs.instance.mapController!=null)
+                        if(Globals.instance.mapController!=null)
                         {
                             return true;
                         }
@@ -194,7 +180,6 @@ namespace TapOn.Screens
                         ),
                     onTapDown: detail => 
                     {
-                        //showBottomSheet();
                         Vector2 t = new Vector2(detail.globalPosition.dx, detail.globalPosition.dy);
                         this.widget.actionModel.selectMark(t);
                     },
@@ -238,15 +223,15 @@ namespace TapOn.Screens
                     {
                         this.widget.actionModel.mapZoom(details.scale);
                         this.widget.actionModel.zoomMap();
-                        if ((int)(this.widget.viewModel.zoomLevel) != (int)(Prefabs.instance.mapController.GetZoomLevel()))
+                        if ((int)(this.widget.viewModel.zoomLevel) != (int)(Globals.instance.mapController.GetZoomLevel()))
                         {
-                            this.widget.actionModel.changeZoomLevel(Prefabs.instance.mapController.GetZoomLevel());
+                            this.widget.actionModel.changeZoomLevel(Globals.instance.mapController.GetZoomLevel());
                             Debug.Log("zoomlevel change!");
                         }
                     },
                     onScaleStart: detail =>
                     {
-                        this.widget.actionModel.changeZoomLevel(Prefabs.instance.mapController.GetZoomLevel());
+                        this.widget.actionModel.changeZoomLevel(Globals.instance.mapController.GetZoomLevel());
                     },
                     onScaleEnd: detail =>
                     {

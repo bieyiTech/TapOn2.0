@@ -81,7 +81,7 @@ namespace TapOn.Redux.Actions
                     bool isNew = true;
                     foreach(Mark mark in getState().mapState.marks)
                     {
-                        if (_mark.id.Equals(mark.id))                        {
+                        if (_mark.objectId.Equals(mark.objectId))                        {
                             isNew = false;
                             break;
                         }
@@ -91,32 +91,20 @@ namespace TapOn.Redux.Actions
                         newMarks.Add(_mark);
                     }
                 }
-                dispatcher.dispatch(new AddMarkInViewAction { newMarks = newMarks });
                 return MapApi.AddMark(newMarks).Then((list) =>
                 {
                     dispatcher.dispatch(new AddMarkOnMapAction { newMarks = list });
+                    for(int i = 0;i < newMarks.Count; i++)
+                    {
+                        newMarks[i].logoInstance = list[i];
+                    }
+                    dispatcher.dispatch(new AddMarkInViewAction { newMarks = newMarks });
                 }).Catch((ex) =>
                 {
                     Debug.LogError(ex.Message);
                 });
             });
             
-        }
-
-        public static object loadMark()
-        {
-            return new ThunkAction<AppState>((dispatcher, getState) =>
-            {
-                //QueryCallbackData<Marks> data = await BmobApi.queryFuzztMarksAsync(MapApi.map.GetCoordinate(), 3);
-                List<Mark> mapMarks = new List<Mark>();
-                return BmobApi.queryFuzzyMarks(MapApi.map.GetCoordinate(), 3).Then((list) =>
-                {
-                    Debug.LogError("mark count: " + list.Count);
-                    mapMarks = list;
-                    dispatcher.dispatch(new AddMarkJustLoadingAction { newMarks = mapMarks });
-                    dispatcher.dispatch(changeMark());
-                });
-            });
         }
     }
 }

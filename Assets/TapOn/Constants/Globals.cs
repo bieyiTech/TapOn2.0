@@ -7,10 +7,10 @@ using UnityEngine;
 using AREffect;
 
 namespace TapOn.Constants {
-    public class Prefabs : MonoBehaviour
+    public class Globals : MonoBehaviour
     {
-        private static Prefabs _instance;
-        public static Prefabs instance
+        private static Globals _instance;
+        public static Globals instance
         {
             get
             {
@@ -21,14 +21,14 @@ namespace TapOn.Constants {
                     {
                         GameObject go = new GameObject("_globals"); // 创建一个新的GameObject
                                                                     //DontDestroyOnLoad(go);  // 防止被销毁
-                        _instance = go.AddComponent<Prefabs>(); // 将实例挂载到GameObject上
+                        _instance = go.AddComponent<Globals>(); // 将实例挂载到GameObject上
                     }
-                    else if (t.GetComponent<Prefabs>() == null)
+                    else if (t.GetComponent<Globals>() == null)
                     {
-                        _instance = t.AddComponent<Prefabs>();
+                        _instance = t.AddComponent<Globals>();
                     }
                     else
-                        _instance = t.GetComponent<Prefabs>();
+                        _instance = t.GetComponent<Globals>();
                 }
                 return _instance;
             }
@@ -37,6 +37,8 @@ namespace TapOn.Constants {
         public List<GameObject> models;
         public GameObject marker;
         public GameObject map;
+
+        public Stack<BuildContext> contextStack = new Stack<BuildContext>();
         public BuildContext homeContext;
 
         public BmobUnity bmob;

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using cn.bmob.io;
+using System.Collections;
 using System.Collections.Generic;
 using TencentMap.CoordinateSystem;
 using Unity.UIWidgets.widgets;
@@ -17,13 +18,46 @@ namespace TapOn.Models.DataModels
     /// <summary>
     /// the user's mark on map
     /// </summary>
-    public class Mark
+    public class Mark : BmobTable
     {
-        public string id;
-        public Coordinate coordinate;
-        public string date;
-        public string url;
-        public string fileName;
+        public static string table_name = "Mark";
+
+        public string MapId;
+        public string MapName;
+
+        public List<Prop> props;
+        public GameObject logoInstance;
+
+        public BmobGeoPoint coordinate;
+        //public string userId;
+
+        public BmobFile snapShot;
+        public byte[] snapShot_byte;
+        public string upLoadTime;
+
+        public override void readFields(BmobInput input)
+        {
+            base.readFields(input);
+
+            props = new List<Prop>();
+
+            MapId = input.getString("mapID");
+            MapName = input.getString("mapName");
+            coordinate = input.getGeoPoint("position");
+            //userId = input.getString("userId");
+            upLoadTime = input.getString("createdAt");
+            snapShot = input.getFile("snapShot");
+        }
+
+        public override void write(BmobOutput output, bool all)
+        {
+            base.write(output, all);
+
+            output.Put("position", coordinate);
+            //output.Put("userId", userId);
+            output.Put("createdAt", upLoadTime);
+            output.Put("snapShot", snapShot);
+        }
     }
 
     public class Position

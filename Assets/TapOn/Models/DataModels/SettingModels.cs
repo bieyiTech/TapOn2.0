@@ -21,6 +21,60 @@ namespace TapOn.Models.DataModels
         public GameObject instance;
     }
 
+    public abstract class BaseProp
+    {
+        public ProductType type;
+        public Vector3 position;
+        public Vector4 rotation;
+        public Vector3 scale;
+        public GameObject instance;
+
+        public abstract void instantiate();
+    }
+
+    public class TextProp : BaseProp
+    {
+        public string text;
+
+        public override void instantiate()
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
+    public class ImageProp : BaseProp
+    {
+        public string fileName;
+        public string url;
+
+        public override void instantiate()
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
+    public class VideoProp : BaseProp
+    {
+        public string fileName;
+        public string url;
+
+        public override void instantiate()
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
+    public class ModelProp : BaseProp
+    {
+        public string fileName;
+        public string url;
+
+        public override void instantiate()
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
     public enum ModelType
     {
         All,

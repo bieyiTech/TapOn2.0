@@ -5,6 +5,8 @@ using UnityEngine.UI;
 using easyar;
 using System;
 using TapOn.Constants;
+using TapOn.Models.DataModels;
+using TapOn.Api;
 
 namespace AREffect
 {
@@ -68,7 +70,7 @@ namespace AREffect
             CreateSession();
             mapSession.SetupMapBuilder(MapControllerPrefab);
             createEdit.SetMapSession(mapSession);
-            Prefabs.instance.arDisplay.SetActive(true);
+            Globals.instance.arDisplay.SetActive(true);
             ShowParticle(true);
         }
 
@@ -78,11 +80,22 @@ namespace AREffect
 
         }
 
-        public void PreviewMap(List<String> mapIDs)
+        public async void PreviewMap(Mark mark)
         {
-            // 根据IDs到bmob数据库查找对应metas
-            // foreach(meta in metas)
-            // selectedMaps.Add(meta);
+            //propinfo的name是什么?
+            List<Prop> props = await BmobApi.getPropsInMark(mark);
+            List<MapMeta.PropInfo> propinfo = new List<MapMeta.PropInfo>();
+            foreach(Prop prop in props)
+            {
+                propinfo.Add(
+                    new MapMeta.PropInfo
+                    {
+                        Position = new float[3] { (float)prop.pos_x.Get(), (float)prop.pos_y.Get(), (float)prop.pos_z.Get() },
+                        Rotation = new float[4] { (float)prop.rot_x.Get(), (float)prop.rot_y.Get(), (float)prop.rot_z.Get(), (float)prop.rot_w.Get() },
+                        Scale = new float[3] { (float)prop.scale_x.Get(), (float)prop.scale_y.Get(), (float)prop.scale_z.Get() },
+                    });
+            }
+            selectedMaps.Add(new MapMeta(new SparseSpatialMapController.SparseSpatialMapInfo { ID = mark.MapId, Name = mark.MapName }, propinfo));
             CreateSession();
             mapSession.LoadMapMeta(MapControllerPrefab, false);
             
