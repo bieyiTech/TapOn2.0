@@ -113,7 +113,22 @@ namespace TapOn.Screens
                 child: new Stack(
                     children: new List<Widget>
                     {
-                    new Align(alignment: Alignment.topLeft, child: new BackButton()),
+                    new Align(
+                        alignment: Alignment.topLeft, 
+                        child: new IconButton(
+                            color: CColors.Transparent,
+                            iconSize: 24,
+                            onPressed: () =>
+                            {
+                                BuildContext lastContext = Globals.instance.contextStack.Pop();
+                                Navigator.pop(lastContext);
+                            },
+                            icon: new Icon(
+                                icon: MyIcons.back_mine,
+                                color: CColors.Black
+                                )
+                            )
+                        ),
                     new Align(
                         alignment: new Alignment(0.95f, -0.98f),
                         child: new FlatButton(

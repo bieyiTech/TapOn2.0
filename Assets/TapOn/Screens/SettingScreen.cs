@@ -148,8 +148,8 @@ namespace TapOn.Screens
             animationController_second = new AnimationController(vsync: this, duration: new System.TimeSpan(0,0,0,0,500));
             //animation = new CurveTween(new CurvedAnimation()).animate(animationController);
             
-            animation_first = new StepTween(0, 50).chain(new CurveTween(Curves.easeIn)).animate(animationController_first);
-            animation_second = new StepTween(50, 100).chain(new CurveTween(Curves.easeIn)).animate(animationController_second);
+            animation_first = new StepTween(0, 44).chain(new CurveTween(Curves.easeIn)).animate(animationController_first);
+            animation_second = new StepTween(44, 88).chain(new CurveTween(Curves.easeIn)).animate(animationController_second);
             animation_first.addListener(() =>
             {
                 setState(() => { });
@@ -603,13 +603,20 @@ namespace TapOn.Screens
                 child: new AnimatedOpacity(
                     opacity: appear[productIndex[index]] ? 1 : 0,
                     duration: new System.TimeSpan(0,0,0,0,300),
-                    child: new RaisedButton(
-                        shape: new CircleBorder(),
-                        color: CColors.Transparent,
-                        child: new IconButton(
-                            icon: new Icon(
-                                size: 28,
-                                icon: widget.viewModel.allIcons[widget.viewModel.products[productIndex[index]].type.Get()]
+                    child: new SizedBox(
+                        //width: 46,
+                        //height: 46,
+                        child: new RaisedButton(
+                            elevation: 2,
+                            disabledElevation: 2,
+                            shape: new CircleBorder(),
+                            color: CColors.Transparent,
+                            child: new IconButton(
+                                icon: new Icon(
+                                    color: CColors.White,
+                                    size: 28,
+                                    icon: widget.viewModel.allIcons[widget.viewModel.products[productIndex[index]].type.Get()]
+                                    )
                                 )
                             )
                         )
@@ -642,14 +649,15 @@ namespace TapOn.Screens
             return new Scaffold(
                 backgroundColor: CColors.Transparent,
                 bottomNavigationBar: new Builder(builder: context=> {
-                    return new BottomNavigationBar(
+                    return new SizedBox(height: 79, child:
+                    new BottomNavigationBar(
                         type: BottomNavigationBarType.fix,
                         elevation: 0,
                         backgroundColor: CColors.Transparent,
                         selectedItemColor: CColors.White,
                         unselectedItemColor: CColors.White,
-                        selectedFontSize: 14,
-                        unselectedFontSize: 14,
+                        selectedFontSize: 12,
+                        unselectedFontSize: 12,
                         onTap: (value) =>
                         {
                             int nowLength = widget.viewModel.products.Length;
@@ -718,22 +726,22 @@ namespace TapOn.Screens
                         items: new List<BottomNavigationBarItem>
                         {
                             new BottomNavigationBarItem(
-                                    icon: new Icon(icon: this.widget.viewModel.allIcons[0], size: 30, color: CColors.White),
-                                    title: new Padding(padding: EdgeInsets.only(top: 5), child: new Text(data: "文字", style: new TextStyle(fontSize: 14)))
+                                    icon: new Icon(icon: this.widget.viewModel.allIcons[0], size: 24, color: CColors.White),
+                                    title: new Padding(padding: EdgeInsets.only(top: 5), child: new Text(data: "文字", style: new TextStyle(fontSize: 12)))
                                 ),
                             new BottomNavigationBarItem(
-                                    icon: new Icon(icon: this.widget.viewModel.allIcons[1], size: 30, color: CColors.White),
-                                    title: new Padding(padding: EdgeInsets.only(top: 5), child: new Text(data: "图片", style: new TextStyle(fontSize: 14)))
+                                    icon: new Icon(icon: this.widget.viewModel.allIcons[1], size: 24, color: CColors.White),
+                                    title: new Padding(padding: EdgeInsets.only(top: 5), child: new Text(data: "图片", style: new TextStyle(fontSize: 12)))
                                 ),
                             new BottomNavigationBarItem(
-                                    icon: new Icon(icon: this.widget.viewModel.allIcons[2], size: 30, color: CColors.White),
-                                    title: new Padding(padding: EdgeInsets.only(top: 5), child: new Text(data: "视频", style: new TextStyle(fontSize: 14)))
+                                    icon: new Icon(icon: this.widget.viewModel.allIcons[2], size: 24, color: CColors.White),
+                                    title: new Padding(padding: EdgeInsets.only(top: 5), child: new Text(data: "视频", style: new TextStyle(fontSize: 12)))
                                 ),
                             new BottomNavigationBarItem(
-                                    icon: new Icon(icon: this.widget.viewModel.allIcons[3], size: 30, color: CColors.White),
-                                    title: new Padding(padding: EdgeInsets.only(top: 5), child: new Text(data: "模型", style: new TextStyle(fontSize: 14)))
+                                    icon: new Icon(icon: this.widget.viewModel.allIcons[3], size: 24, color: CColors.White),
+                                    title: new Padding(padding: EdgeInsets.only(top: 5), child: new Text(data: "模型", style: new TextStyle(fontSize: 12)))
                                 ),
-                        });
+                        }));
                     }),
                 body: new GestureDetector(
                         onPanEnd: detail =>
@@ -778,11 +786,11 @@ namespace TapOn.Screens
                                     new Align(
                                         alignment: Alignment.topCenter,
                                         child: new Container(
-                                            padding: isFirst? EdgeInsets.fromLTRB(animation_first.value - 50, 0, 50 - animation_first.value, 0) : EdgeInsets.fromLTRB(animation_second.value - 50, 0, 50 - animation_second.value, 0),
+                                            padding: isFirst? EdgeInsets.fromLTRB(animation_first.value - 44, 0, 44 - animation_first.value, 0) : EdgeInsets.fromLTRB(animation_second.value - 44, 0, 44 - animation_second.value, 0),
                                             child: new Container(
                                                     child: new Container(
-                                                        width: 150,
-                                                        height: 50,
+                                                        width: 132,
+                                                        height: 21,
                                                         child: new Row(
                                                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                                                                 children: new List<Widget>
@@ -796,12 +804,11 @@ namespace TapOn.Screens
                                                 )
                                             ),
                                     new Align(
-                                        alignment: new Alignment(0, 0.5f),
-
+                                        alignment: new Alignment(0, 1.0f),
                                         child: new Listener(
                                             onPointerDown: detail=>
                                             {
-                                                Debug.Log("onpointerdown");
+                                                Globals.instance.contextStack.Push(context);
                                                 Navigator.push(context, new MaterialPageRoute(builder: (_) =>
                                                     {
                                                         return new StoreProvider<AppState>(
@@ -813,22 +820,25 @@ namespace TapOn.Screens
                                                     }));
                                             },
                                             child: new SizedBox(
-                                                width: 72, height:72, child:
-                                            new RaisedButton(
-                                                shape: new CircleBorder(new BorderSide(color: CColors.White, width: 8)),
-                                                elevation: 0,
-                                                color: CColors.Transparent,
-                                                disabledColor: CColors.Transparent,
-                                                child: cameraType == 0 ? 
-                                                        new Icon(
-                                                            color: CColors.White,
-                                                            size: 36,
-                                                            icon: MyIcons.upload
-                                                        ) : (cameraType == 1 ? 
-                                                        new Icon(
-                                                            color: CColors.WeChatGreen,
-                                                            size: 24,
-                                                            icon: MyIcons.camera_button_mine
+                                                width: 60, 
+                                                height:60, 
+                                                child: new RaisedButton(
+                                                    shape: new CircleBorder(new BorderSide(color: CColors.White, width: 5)),
+                                                    color: CColors.Transparent,
+                                                    disabledColor: CColors.Transparent,
+                                                    elevation: 0,
+                                                    disabledElevation: 0,
+                                                    padding: cameraType == 0 ? EdgeInsets.only(right: 5) : null,
+                                                    child: cameraType == 0 ? 
+                                                            new Icon(
+                                                                color: CColors.White,
+                                                                size: 28,
+                                                                icon: MyIcons.upload_mine
+                                                            ) : (cameraType == 1 ? 
+                                                            new Icon(
+                                                                color: CColors.FlatGreen,
+                                                                size: 24,
+                                                                icon: MyIcons.camera_button_mine
                                                             ) : null
                                                         )
                                                     )
@@ -849,9 +859,10 @@ namespace TapOn.Screens
                 children: new List<Widget>
                 {
                     new Container(
-                        height: 200,
+                        height: 169,
                         child: _buildBottom()
                         ),
+                    new Padding(padding: EdgeInsets.only(bottom: 20)),
                     new Container(
                         height: 800,
                         child:new Stack(
@@ -859,30 +870,42 @@ namespace TapOn.Screens
                             {
                                 new Align(
                                     alignment: Alignment.bottomLeft,
-                                    child: new RaisedButton(
-                                        shape: new CircleBorder(),
-                                        color: CColors.Transparent,
-                                        child: new IconButton(
-                                            onPressed: () =>
-                                            {
-                                                if(widget.viewModel.products.Length == 0)
-                                                    return;
-                                                if(span == false)
-                                                    setState(()=>{span = true; show = true; });
-                                                else
+                                    child: /*new Container(
+                                        width: 46, 
+                                        height: 46,
+                                        decoration: new BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: new Unity.UIWidgets.ui.Color(0x161616b3),
+                                            boxShadow: new List<BoxShadow>
+                                            { new BoxShadow(color: Colors.black12, offset: new Offset(0, 15), blurRadius: 15, spreadRadius: 1) }
+                                            ),*/
+                                            new RaisedButton( 
+                                                shape: new CircleBorder(),
+                                                disabledColor: CColors.Transparent,
+                                                disabledElevation: 2,
+                                            child: new IconButton(
+                                                color: CColors.White,
+                                                onPressed: () =>
                                                 {
-                                                    setState(()=>{span = !span; });
-                                                    Window.instance.startCoroutine(wait_300());
-                                                }
-                                            },
-                                            icon: span ? new Icon(
-                                                size: 28,
-                                                icon: MyIcons.delete_mine
-                                                ) : new Icon(
-                                                size: 28,
-                                                icon: MyIcons.add_mine
+                                                    if(widget.viewModel.products.Length == 0)
+                                                        return;
+                                                    if(span == false)
+                                                        setState(()=>{span = true; show = true; });
+                                                    else
+                                                    {
+                                                        setState(()=>{span = !span; });
+                                                        Window.instance.startCoroutine(wait_300());
+                                                    }
+                                                },
+                                                icon: span ? new Icon(
+                                                    size: 28,
+                                                    icon: MyIcons.delete_mine
+                                                    ) : new Icon(
+                                                    size: 28,
+                                                    icon: MyIcons.add_mine
+                                                    )
                                                 )
-                                            )
+                                            
                                         )
                                     ),
 

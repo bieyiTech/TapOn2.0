@@ -54,6 +54,7 @@ namespace TapOn.Screens
                                 decoration: TextDecoration.none
                             )
                         ),
+                    //new Container(height: 20, width: 300, color: CColors.Black),
                     new Text(
                         data: "Hear me roar",
                         textAlign: TextAlign.center,

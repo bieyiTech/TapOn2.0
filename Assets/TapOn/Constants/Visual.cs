@@ -104,19 +104,24 @@ namespace TapOn.Constants {
         public static IconData word_mine = new IconData(0xe610, "myicon");
         public static IconData image_mine = new IconData(0xe611, "myicon");
         public static IconData camera_button_mine = new IconData(0xe612, "myicon");
-        //public static readonly IconData home = new IconData(0xe7a5, "Material Icons");
+
+        public static IconData message_mine = new IconData(0xe615, "UnauthorizedIcon");
+        public static IconData upload_mine = new IconData(0xe614, "UnauthorizedIcon");
+        public static IconData map_mine = new IconData(0xe618, "UnauthorizedIcon");
+        public static IconData mine_mine = new IconData(0xe616, "UnauthorizedIcon");
+        public static IconData list_mine = new IconData(0xe617, "UnauthorizedIcon");
     }
 
     public static class CTextStyle {
         public static readonly TextStyle normal = new TextStyle(
-            fontSize: 18,
+            fontSize: 14,
             fontFamily: "Roboto-Bold",
             color: CColors.White, 
             decoration: TextDecoration.none
         );
 
         public static readonly TextStyle strength = new TextStyle(
-            fontSize: 18,
+            fontSize: 14,
             fontWeight: FontWeight.bold,
             fontFamily: "Roboto-Bold",
             color: CColors.White,
@@ -601,5 +606,10 @@ namespace TapOn.Constants {
         public static readonly Color BlueMessage = new Color(0xFFC5E8FF);
         public static readonly Color MessageReaction = new Color(0xFFF8F8F8);
         public static readonly Color MessageReactionCount = new Color(0xFF0069C0);
+
+        public static readonly Color IconBlack = new Color(0xFF727983);
+        public static readonly Color IconGreen = new Color(0xFF78DEC9);
+        public static readonly Color FlatGreen = new Color(0xFFB9DEC4);
+        
     }
 }

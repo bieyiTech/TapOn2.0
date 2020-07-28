@@ -52,6 +52,7 @@ namespace TapOn.Main
             FontManager.instance.addFont(Resources.Load<Font>("font/Menlo-Regular"), "Menlo");
             FontManager.instance.addFont(Resources.Load<Font>("font/iconFont"), "iconfont");
             FontManager.instance.addFont(Resources.Load<Font>("font/myicon"), "myicon");
+            FontManager.instance.addFont(Resources.Load<Font>("font/UnauthorizedIcon"), "UnauthorizedIcon");
         }
 
         protected override Widget createWidget()
@@ -122,30 +123,34 @@ namespace TapOn.Main
         public Widget _mineBottomBar()
         {
             return new Container(
-                height: 50,
-                decoration: new BoxDecoration(image: new DecorationImage(image: new AssetImage("texture/bottomframe"))),
-                child: new Row(
+                height: 73,
+                
+                child: new Column(children: new List<Widget>
+                {
+                    new Container(
+                        decoration: new BoxDecoration(border: new Border(top: new BorderSide(color: CColors.Transparent, width: 0), bottom:new BorderSide(color: CColors.White, width: 0)), color: CColors.Transparent, image: new DecorationImage(fit: BoxFit.cover, image: new AssetImage("texture/bottomframe"))),
+                        child:  new Row(
                     mainAxisAlignment: Unity.UIWidgets.rendering.MainAxisAlignment.spaceAround,
                     children: new List<Widget>
                     {
-                        new Expanded( 
+                        new Expanded(
                             flex: 5,
                             child:  new Listener(
-                                onPointerDown: detail => 
+                                onPointerDown: detail =>
                                 {
                                     setState(()=>{if(_currentIndex != 0) _currentIndex = 0; });
-                                }, 
+                                },
                                 child: new Column(children: new List<Widget>
                                 {
-                                    new Padding(padding: EdgeInsets.only(top: 15)),
-                                    new Icon(icon: MyIcons.word_mine, size: 16, color: _currentIndex == 0 ? CColors.SecondaryPink : CColors.Black),
-                                    new Padding(padding: EdgeInsets.only(top:5)),
-                                    new Text(data: "地图", style: new TextStyle(fontSize: 8)),
+                                    new Padding(padding: EdgeInsets.only(top: 26)),
+                                    new Icon(icon: MyIcons.map_mine, size: 24, color: _currentIndex == 0 ? CColors.IconGreen : CColors.IconBlack),
+                                    new Padding(padding: EdgeInsets.only(top:2)),
+                                    new Text(data: "地图", style: new TextStyle(fontSize: 10, color: CColors.Black)),
                                 })
                             )
                         ),
                         //new Padding(padding: EdgeInsets.only(left: 15)),
-                        new Expanded( 
+                        new Expanded(
                             flex: 4,
                             child: new Listener(
                                 onPointerDown: detail =>
@@ -154,46 +159,52 @@ namespace TapOn.Main
                                 },
                                 child: new Column(children: new List<Widget>
                                 {
-                                    new Padding(padding: EdgeInsets.only(top: 15)),
-                                    new Icon(icon: MyIcons.word_mine, size: 16, color: _currentIndex == 1 ? CColors.SecondaryPink : CColors.Black),
-                                    new Padding(padding: EdgeInsets.only(top:5)),
-                                    new Text(data: "树洞", style: new TextStyle(fontSize: 8)),
+                                    new Padding(padding: EdgeInsets.only(top: 26)),
+                                    new Icon(icon: MyIcons.list_mine, size: 24, color: _currentIndex == 1 ? CColors.IconGreen : CColors.IconBlack),
+                                    new Padding(padding: EdgeInsets.only(top:2)),
+                                    new Text(data: "榜单", style: new TextStyle(fontSize: 10, color: CColors.Black)),
                                 })
                             )
                         ),
-                        new Expanded( 
+                        new Expanded(
                             flex: 5,
-                            child: new FlatButton(
-                                onPressed: () =>
-                                {
-                                    Globals.instance.contextStack.Push(context);
-                                    //Globals.instance.map.SetActive(false);
-                                    GameObject[] t = GameObject.FindGameObjectsWithTag("mark");
-                                    foreach (GameObject mark in t)
-                                        mark.SetActive(false);
-                                    Navigator.push(context, new MaterialPageRoute(builder: (_) =>
+                            child: new Padding(padding: EdgeInsets.only(top: 9), child:
+                            new SizedBox(
+                                height: 54,
+                                width: 54,
+                                child: new FlatButton(
+                                    onPressed: () =>
                                     {
-                                        return new StoreProvider<AppState>(
-                                            store: StoreProvider.store,
-                                            new MaterialApp(
-                                                home: new SettingScreenConnector()
-                                            )
-                                        );
-                                    }));
+                                        Globals.instance.contextStack.Push(context);
+                                        //Globals.instance.map.SetActive(false);
+                                        GameObject[] t = GameObject.FindGameObjectsWithTag("mark");
+                                        foreach (GameObject mark in t)
+                                            mark.SetActive(false);
+                                        Navigator.push(context, new MaterialPageRoute(builder: (_) =>
+                                        {
+                                            return new StoreProvider<AppState>(
+                                                store: StoreProvider.store,
+                                                new MaterialApp(
+                                                    home: new SettingScreenConnector()
+                                                )
+                                            );
+                                        }));
 
-                                    Globals.instance.arEffect.SetActive(true);
-                                    Globals.instance.arEffect.GetComponent<AREffectManager>().CreateAndEditMap();
-                                },
-                                shape: new CircleBorder(),
-                                color: CColors.WeChatGreen,
-                                disabledColor: CColors.WeChatGreen,
-                                child: new Text(
-                                    data: "埋下\n回忆", 
-                                    style: new TextStyle(fontSize: 10, color: CColors.White))
+                                        Globals.instance.arEffect.SetActive(true);
+                                        Globals.instance.arEffect.GetComponent<AREffectManager>().CreateAndEditMap();
+                                    },
+                                    shape: new CircleBorder(),
+                                    color: CColors.FlatGreen,
+                                    disabledColor: CColors.FlatGreen,
+                                    child: new Text(
+                                        data: "埋下\n回忆",
+                                        style: new TextStyle(fontSize: 12, color: CColors.White))
+                                    )
                                 )
+                            )
                             ),
                         //new Padding(padding: EdgeInsets.only(left: -15)),
-                        new Expanded( 
+                        new Expanded(
                             flex: 4,
                             child: new Listener(
                                 onPointerDown: detail =>
@@ -202,10 +213,10 @@ namespace TapOn.Main
                                 },
                                 child: new Column(children: new List<Widget>
                                 {
-                                    new Padding(padding: EdgeInsets.only(top: 15)),
-                                    new Icon(icon: MyIcons.word_mine, size: 16, color: _currentIndex == 2 ? CColors.SecondaryPink : CColors.Black),
-                                    new Padding(padding: EdgeInsets.only(top:5)),
-                                    new Text(data: "消息", style: new TextStyle(fontSize: 8)),
+                                    new Padding(padding: EdgeInsets.only(top: 26)),
+                                    new Icon(icon: MyIcons.message_mine, size: 24, color: _currentIndex == 2 ? CColors.IconGreen : CColors.IconBlack),
+                                    new Padding(padding: EdgeInsets.only(top:2)),
+                                    new Text(data: "消息", style: new TextStyle(fontSize: 10, color: CColors.Black)),
                                 })
                             )
                             ),
@@ -219,14 +230,19 @@ namespace TapOn.Main
                                 },
                                 child: new Column(children: new List<Widget>
                                 {
-                                    new Padding(padding: EdgeInsets.only(top: 15)),
-                                    new Icon(icon: MyIcons.word_mine, size: 16, color: _currentIndex == 3 ? CColors.SecondaryPink : CColors.Black),
-                                    new Padding(padding: EdgeInsets.only(top:5)),
-                                    new Text(data: "我的", style: new TextStyle(fontSize: 8)),
+                                    new Padding(padding: EdgeInsets.only(top: 26)),
+                                    new Icon(icon: MyIcons.mine_mine, size: 24, color: _currentIndex == 3 ? CColors.IconGreen : CColors.IconBlack),
+                                    new Padding(padding: EdgeInsets.only(top:2)),
+                                    new Text(data: "我的", style: new TextStyle(fontSize: 10, color: CColors.Black)),
                                 })
                             )
                         ),
                     })
+                        ),
+                    new Container(constraints: new Unity.UIWidgets.rendering.BoxConstraints(maxHeight:73), color: CColors.White),
+                })
+                
+               
                 );
         }
 
@@ -290,34 +306,6 @@ namespace TapOn.Main
             Globals.instance.homeContext = context;
             return new Scaffold(
                 backgroundColor: CColors.Transparent,
-                /*floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-                floatingActionButton: new FloatingActionButton(
-                    elevation: 0,
-                    onPressed: ()=>
-                    {
-                        Prefabs.instance.map.SetActive(false);
-                        GameObject[] t = GameObject.FindGameObjectsWithTag("mark");
-                        foreach (GameObject mark in t)
-                            mark.SetActive(false);
-                        Navigator.push(context, new MaterialPageRoute(builder: (_) =>
-                        {
-                            return new StoreProvider<AppState>(
-                                store: StoreProvider.store,
-                                new MaterialApp(
-                                    home: new SettingScreenConnector()
-                                )
-                            );
-                        }));
-                        //运行create部分代码和edit代码
-                        Prefabs.instance.arEffect.SetActive(true);
-                        Prefabs.instance.arEffect.GetComponent<AREffectManager>().CreateAndEditMap();
-                    },
-                    backgroundColor: CColors.Red,
-                    child: new Icon(
-                        icon: MyIcons.camera_alt
-                        )
-                    ),*/
-                //appBar: _appBar(),
                 body: new PageView(
                     onPageChanged: value=> 
                     {
