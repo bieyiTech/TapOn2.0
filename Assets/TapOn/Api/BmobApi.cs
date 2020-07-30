@@ -69,6 +69,10 @@ namespace TapOn.Api
             return Task.Run(
                 async () =>
                 {
+                    UploadCallbackData ud = await Bmob.FileUploadTaskAsync(new BmobLocalFile(mark.snapShot_byte));
+                    if (ud.filename == null || ud.filename.Length == 0)
+                        return false;
+                    mark.snapShot = ud;
                     CreateCallbackData callback_mark = await Bmob.CreateTaskAsync(Mark.table_name, mark);
                     if (callback_mark == null || callback_mark.objectId == null || callback_mark.objectId.Length == 0)
                         return false;
