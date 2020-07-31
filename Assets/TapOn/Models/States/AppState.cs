@@ -40,10 +40,18 @@ namespace TapOn.Models.States
                         MyIcons.video_mine,
                         MyIcons.model_mine,
                     },
-                    index = 0,
+                    //index = 0,
                     products = new Queue<Prop>(),
                     objects = new List<GameObject>(),
                     models = new List<Model>(),
+                    productSpan = true,
+                    productShow = true,
+                    productAppear = new List<bool> { false, false, false},
+                    cameraType = 0,
+                    productIndex = new List<int> { 0, 1, 2},
+                    moveByCircle = false,
+                    modelIndex = 0,
+                    modelsMessageReady = false,
                 }
             };
         }

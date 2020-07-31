@@ -54,6 +54,28 @@ namespace TapOn.Constants {
         public PropsController dragger;
 
         // Start is called before the first frame update
+
+        public void CheckInstance()
+        {
+            if (instance.bmob == null)
+            {
+                GameObject t = GameObject.Find("Config");
+                if (t == null) Debug.LogError("Config in scene not found!");
+                else
+                {
+                    Globals.instance.bmob = t.GetComponent<BmobUnity>();
+                }
+            }
+            /*if(instance.arEffect == null)
+            {
+                GameObject t = GameObject.Find("Config");
+                if (t == null) Debug.LogError("Config in scene not found!");
+                else
+                {
+                    Globals.instance.bmob = t.GetComponent<BmobUnity>();
+                }
+            }*/
+        }
         void Start()
         {
 
