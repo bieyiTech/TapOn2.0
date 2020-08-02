@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using TapOn.Constants;
 using TapOn.Models;
 using TapOn.Models.DataModels;
+using TapOn.Utils;
 using TencentMap.CoordinateSystem;
 using Unity.UIWidgets.async;
 using Unity.UIWidgets.ui;
@@ -66,31 +67,28 @@ namespace TapOn.Api
         public static Task<bool> addMarktoServer(Mark mark)
         {
             return Task.Run(
-                async () =>
+                () =>
                 {
-                    Debug.Log("snapShot_byte Length: " + mark.snapShot_byte.Length);
-                    UploadCallbackData ud = await Bmob.FileUploadTaskAsync(new BmobLocalFile(mark.snapShot_byte, "Img_" + DateTime.Now.ToString("yyyy-MM-dd_HHmmss") + ".jpg"));
-                    if (ud.filename == null || ud.filename.Length == 0)
-                        return false;
-                    Debug.Log(ud.url);
-
-                    mark.snapShot = ud;
-                    UploadCallbackData um = await Bmob.FileUploadTaskAsync(new BmobLocalFile(mark.meta_byte, "Map_" + DateTime.Now.ToString("yyyy-MM-dd_HHmmss") + ".meta"));
-                    if (um.filename == null || um.filename.Length == 0)
-                        return false;
-                    mark.meta = um;
-
-                    CreateCallbackData callback_mark = await Bmob.CreateTaskAsync(Mark.table_name, mark);
-                    if (callback_mark == null || callback_mark.objectId == null || callback_mark.objectId.Length == 0)
-                        return false;
-
-                    //foreach(Prop prop in mark.props)
-                    //{
-                    //    prop.mark = mark;
-                    //    CreateCallbackData callback_prop = await Bmob.CreateTaskAsync(Prop.table_name, prop);
-                    //}
-
-                    return true;
+                    bool result = false;
+                    TapOnUtils.upLoadFile("pic.jpg", "application/x-jpg", mark.snapShot_byte, async (wr)=> 
+                    {
+                        Restful_FileUpLoadCallBack t = TapOnUtils.fileUpLoadCallBackfromJson(wr.downloadHandler.text);
+                        mark.snapShot = new BmobFile { filename = t.filename, url = t.url };
+                        CreateCallbackData callback_mark = await Bmob.CreateTaskAsync(Mark.table_name, mark);
+                        if (callback_mark == null || callback_mark.objectId == null || callback_mark.objectId.Length == 0)
+                            return;
+                        foreach (Prop prop in mark.props)
+                        {
+                            prop.mark = mark;
+                            CreateCallbackData callback_prop = await Bmob.CreateTaskAsync(Prop.table_name, prop);
+                        }
+                        result = true;
+                    });
+                    //UploadCallbackData ud = await Bmob.FileUploadTaskAsync(new BmobLocalFile(mark.snapShot_byte));
+                    //if (ud.filename == null || ud.filename.Length == 0)
+                    //    return false;
+                    //mark.snapShot = ud;
+                    return result;
                 });
         }
 

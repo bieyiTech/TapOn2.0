@@ -20,6 +20,9 @@ using Unity.UIWidgets.widgets;
 using UnityEngine;
 using AREffect;
 using Image = Unity.UIWidgets.widgets.Image;
+using UnityEngine.Networking;
+using Unity.UIWidgets.async;
+using TapOn.Utils;
 
 namespace TapOn.Main
 {
@@ -241,9 +244,10 @@ namespace TapOn.Main
                                 onPointerDown:detail =>
                                 {
                                     //cn.bmob.response.UploadCallbackData ba = await Globals.instance.bmob.FileUploadTaskAsync(new cn.bmob.io.BmobLocalFile("E:/easyAR_sample/TapOn2.0/Assets/TapOn/Resources/texture/namecard.jpg"));
-                                    Globals.instance.bmob.FileUpload("E:\\easyAR_sample\\TapOn2.0\\Assets\\TapOn\\Resources\\texture\\namecard.jpg", (resp,exception)=>
+                                    /*Globals.instance.bmob.FileUpload("E:\\easyAR_sample\\TapOn2.0\\Assets\\TapOn\\Resources\\texture\\namecard.jpg", (resp,exception)=>
                                     {if(exception != null) {Debug.LogError(exception.Message);return; } Debug.Log(resp.filename); }
-                                    );
+                                    );*/
+                                    Window.instance.startCoroutine(test());
                                     setState(()=>{if(_currentIndex != 3) _currentIndex = 3; });
                                 },
                                 child: new Column(children: new List<Widget>
@@ -259,11 +263,30 @@ namespace TapOn.Main
                         ),
                     new Container(constraints: new Unity.UIWidgets.rendering.BoxConstraints(maxHeight:73), color: CColors.White),
                 })
-                
-               
                 );
         }
 
+        public IEnumerator test()
+        {
+            UnityWebRequest wr = new UnityWebRequest("https://api.bmob.cn/2/files/myTest.jpg", "POST");
+            wr.SetRequestHeader("X-Bmob-Application-Id", "694024c993688a00b5707fba73ab8551");
+            wr.SetRequestHeader("X-Bmob-REST-API-Key", "60ad19f4362c54aa3da42a41282cb369");
+            wr.SetRequestHeader("Content-Type", "application/x-jpg");
+            wr.uploadHandler = new UploadHandlerFile("E:\\easyAR_sample\\TapOn2.0\\Assets\\TapOn\\Resources\\texture\\namecard.jpg");
+            wr.downloadHandler = new DownloadHandlerBuffer();
+            yield return wr.SendWebRequest();
+            if(wr.isHttpError || wr.isNetworkError)
+            {
+                Debug.LogError(wr.error + "\n" + wr.downloadHandler.text);
+            }
+            else
+            {
+                Debug.Log("bmob return " + wr.downloadHandler.text);
+                Restful_FileUpLoadCallBack t = TapOnUtils.fileUpLoadCallBackfromJson(wr.downloadHandler.text);
+                Debug.Log(t.filename);
+                Debug.Log(t.url);
+            }
+        }
         public Widget _bottomNavigationBar()
         {
             return new BottomAppBar(
