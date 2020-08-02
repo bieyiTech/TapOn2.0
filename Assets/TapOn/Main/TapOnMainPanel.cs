@@ -180,6 +180,8 @@ namespace TapOn.Main
                                         GameObject[] t = GameObject.FindGameObjectsWithTag("mark");
                                         foreach (GameObject mark in t)
                                             mark.SetActive(false);
+                                        Globals.instance.arEffect.SetActive(true);
+                                        Globals.instance.arEffect.GetComponent<AREffectManager>().CreateAndEditMap();
                                         Navigator.push(context, new MaterialPageRoute(builder: (_) =>
                                         {
                                             return new StoreProvider<AppState>(
@@ -190,8 +192,7 @@ namespace TapOn.Main
                                             );
                                         }));
 
-                                        Globals.instance.arEffect.SetActive(true);
-                                        Globals.instance.arEffect.GetComponent<AREffectManager>().CreateAndEditMap();
+                                        
                                     },
                                     shape: new CircleBorder(),
                                     color: CColors.FlatGreen,

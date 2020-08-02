@@ -99,7 +99,6 @@ namespace AREffect
             CreateSession();
             mapSession.LoadMapMeta(MapControllerPrefab, false);
             
-
         }
 
         public void ShowParticle(bool show)

@@ -115,8 +115,8 @@ namespace TapOn.Screens
         public override void initState()
         {
             base.initState();
-            Globals.instance.models = new List<GameObject>();
-            update();
+            //Globals.instance.models = new List<GameObject>();
+            //update();
         }
 
         private async void updateMarks()

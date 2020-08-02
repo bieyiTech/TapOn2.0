@@ -24,8 +24,7 @@ namespace TapOn.Models.DataModels
 
         public string MapId;
         public string MapName;
-
-        public List<Prop> props;
+        
         public GameObject logoInstance;
 
         public BmobGeoPoint coordinate;
@@ -33,13 +32,14 @@ namespace TapOn.Models.DataModels
 
         public BmobFile snapShot;
         public byte[] snapShot_byte;
+        public BmobFile meta;
+        public byte[] meta_byte;
         public string upLoadTime;
 
         public override void readFields(BmobInput input)
         {
             base.readFields(input);
-
-            props = new List<Prop>();
+            
 
             MapId = input.getString("mapID");
             MapName = input.getString("mapName");
@@ -47,6 +47,7 @@ namespace TapOn.Models.DataModels
             //userId = input.getString("userId");
             upLoadTime = input.getString("createdAt");
             snapShot = input.getFile("snapShot");
+            meta = input.getFile("meta");
         }
 
         public override void write(BmobOutput output, bool all)
@@ -57,6 +58,7 @@ namespace TapOn.Models.DataModels
             //output.Put("userId", userId);
             output.Put("createdAt", upLoadTime);
             output.Put("snapShot", snapShot);
+            output.Put("meta", meta);
         }
     }
 

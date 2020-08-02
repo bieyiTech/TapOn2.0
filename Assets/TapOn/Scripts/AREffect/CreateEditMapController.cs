@@ -6,6 +6,7 @@ using easyar;
 using System;
 using TapOn.Models.DataModels;
 using TapOn.Api;
+using System.IO;
 
 namespace AREffect
 {
@@ -134,10 +135,11 @@ namespace AREffect
             // GPS
             Mark mark = new Mark
             {
-                coordinate = new cn.bmob.io.BmobGeoPoint(116.314, 39.986),
-                snapShot_byte =capturedImage.EncodeToJPG(),
+                coordinate = new cn.bmob.io.BmobGeoPoint(39.986, 116.314),
+                snapShot_byte = capturedImage.EncodeToJPG(),
                 MapId = mapData.Meta.Map.ID,
-                MapName = mapData.Meta.Map.Name,
+                MapName = "Map_" + DateTime.Now.ToString("yyyy-MM-dd_HHmmss"),
+                meta_byte = File.ReadAllBytes(MapMetaManager.GetPath(mapData.Meta.Map.ID)),
             };
             bool success = await BmobApi.addMarktoServer(mark);
             if (!success) Debug.LogError("Upload Error: Mark hasn't uploaded!");

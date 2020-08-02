@@ -12,7 +12,7 @@ Shader "Sample/OutLine"
     {
         _MainTex ("Texture", 2D) = "white" {}
         _OutlineColor("Outline Color", Color) = (0,0,0,1)
-        _OutlineWidth("Outline width", Range(1.0, 2.0)) = 1.15
+        _OutlineWidth("Outline width", Range(1.0, 2.0)) = 1.05
     }
     SubShader
     {

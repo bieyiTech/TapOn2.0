@@ -133,7 +133,9 @@ namespace TapOn.Screens
                         alignment: new Alignment(0.95f, -0.98f),
                         child: new FlatButton(
                             //minSize: 24,
-                            onPressed: ()=>{},
+                            onPressed: ()=>{
+                                Globals.instance.CreateEdit.SaveEdit();
+                            },
                             disabledColor: CColors.WeChatGreen,
                             color: CColors.WeChatGreen, 
                             child: new Text(data:"发布", style: new TextStyle(color: CColors.White, fontSize:18)))),

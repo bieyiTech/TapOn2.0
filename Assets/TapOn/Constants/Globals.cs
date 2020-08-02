@@ -10,17 +10,18 @@ namespace TapOn.Constants {
     public class Globals : MonoBehaviour
     {
         private static Globals _instance;
+        private static GameObject go;
         public static Globals instance
         {
             get
             {
                 if (_instance == null)  // 如果没有找到
                 {
-                    GameObject t = GameObject.FindGameObjectWithTag("global");
+                    GameObject t = GameObject.Find("global");
                     if (t == null)
                     {
-                        GameObject go = new GameObject("_globals"); // 创建一个新的GameObject
-                                                                    //DontDestroyOnLoad(go);  // 防止被销毁
+                        go = new GameObject("_globals"); // 创建一个新的GameObject
+                                                         //DontDestroyOnLoad(go);  // 防止被销毁
                         _instance = go.AddComponent<Globals>(); // 将实例挂载到GameObject上
                     }
                     else if (t.GetComponent<Globals>() == null)
@@ -31,6 +32,19 @@ namespace TapOn.Constants {
                         _instance = t.GetComponent<Globals>();
                 }
                 return _instance;
+            }
+        }
+
+        public void Awake()
+        {
+            GameObject t = GameObject.Find("global");
+            if(t == null)
+            {
+                Debug.LogError("Can not Found global");
+            }
+            else
+            {
+                _instance = t.GetComponent<Globals>();
             }
         }
 
@@ -45,7 +59,6 @@ namespace TapOn.Constants {
         public MapController mapController;
 
         public MarkManager markManager;
-        public SpriteMask spriteMask;
 
         public GameObject arEffect;
         public GameObject arDisplay;
@@ -53,16 +66,12 @@ namespace TapOn.Constants {
         public List<GameObject> templetes;
         public PropsController dragger;
 
-        // Start is called before the first frame update
-        void Start()
+        public CreateEditMapController CreateEdit;
+        
+        private void OnDestroy()
         {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
+            if (go != null)
+                Destroy(go);
         }
     }
 }

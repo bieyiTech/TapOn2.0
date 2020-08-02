@@ -3,7 +3,16 @@ guid: 5e4df1a749746cb46af3c589eec607fa
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - marker: {fileID: 173707483444115714, guid: d691501c7179027458a389c0a6ac0298, type: 3}
+  - map: {instanceID: 0}
+  - bmob: {instanceID: 0}
+  - mapController: {instanceID: 0}
+  - markManager: {instanceID: 0}
+  - arEffect: {instanceID: 0}
+  - arDisplay: {instanceID: 0}
+  - dragger: {instanceID: 0}
+  - CreateEdit: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

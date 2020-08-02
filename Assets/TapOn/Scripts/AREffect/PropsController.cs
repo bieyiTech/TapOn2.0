@@ -26,7 +26,7 @@ namespace AREffect
         private void Awake()
         {
             touchControl = GetComponentInChildren<TouchController>(true);
-            //OutlinePrefab = Instantiate(OutlinePrefab);
+            OutlinePrefab = Instantiate(OutlinePrefab);
             OutlinePrefab.SetActive(false);
         }
 
@@ -40,8 +40,6 @@ namespace AREffect
             
             if (candidate)
             {
-                Debug.Log("candidate in");
-                Debug.Log("!isPointerOverGameObject: " + !isPointerOverGameObject);
                 
                 //if (mapSession != null && !isPointerOverGameObject && Input.touchCount > 0)
                 if (mapSession != null && Input.touchCount > 0)
@@ -56,12 +54,12 @@ namespace AREffect
 
                 if (!isOnMap)
                 {
-                    Debug.Log("candidate is false");
+                    //Debug.Log("candidate is false");
                     candidate.SetActive(false);
                 }
                 else
                 {
-                    Debug.Log("candidate is true");
+                    //Debug.Log("candidate is true");
                     candidate.SetActive(true);
                 }
 
@@ -75,8 +73,8 @@ namespace AREffect
                     RaycastHit hitInfo;
                     if (Physics.Raycast(ray, out hitInfo))
                     {
+                        Debug.Log("hitInfo: " + hitInfo);
                         StopEdit();
-                        Debug.Log("StartEdit");
                         StartEdit(hitInfo.collider.gameObject);
                     }
                 }
@@ -84,13 +82,13 @@ namespace AREffect
 
             if (mapSession != null && selection && !isMoveFree)
             {
-                Debug.Log("selection");
+                //Debug.Log("selection");
                 if (!isPointerOverGameObject && Input.touchCount == 1)
                 {
                     var point = mapSession.HitTestOne(new Vector2(Input.touches[0].position.x / Screen.width, Input.touches[0].position.y / Screen.height));
                     if (point.OnSome)
                     {
-                        Debug.Log("point on some");
+                        //Debug.Log("point on some");
                         selection.transform.position = point.Value + Vector3.up * selection.transform.localScale.y / 2;
                     }
                 }
@@ -173,15 +171,25 @@ namespace AREffect
                 var video = selection.GetComponentInChildren<VideoPlayerAgent>(true);
                 if (video) { video.Playable = true; }
             }
-
-            //var meshFilter = selection.GetComponentInChildren<MeshFilter>();
-            //OutlinePrefab.SetActive(true);
-            //OutlinePrefab.GetComponent<MeshFilter>().mesh = meshFilter.mesh;
-            //OutlinePrefab.transform.parent = meshFilter.transform;
-            //OutlinePrefab.transform.localPosition = Vector3.zero;
-            //OutlinePrefab.transform.localRotation = Quaternion.identity;
-            //OutlinePrefab.transform.localScale = Vector3.one;
-
+            if(selection.name == "NameCard(Clone)")
+            {
+                var meshFilter = selection.GetComponentInChildren<MeshFilter>();
+                OutlinePrefab.SetActive(true);
+                OutlinePrefab.GetComponent<MeshFilter>().mesh = meshFilter.mesh;
+                OutlinePrefab.transform.parent = meshFilter.transform;
+                
+            }
+            else if(selection.name == "Word(Clone)")
+            {
+                var TextMesh = selection.GetComponentInChildren<TextMesh>();
+                OutlinePrefab.SetActive(false);
+                OutlinePrefab.transform.parent = TextMesh.transform;
+            }
+            
+            OutlinePrefab.transform.localPosition = Vector3.zero;
+            OutlinePrefab.transform.localRotation = Quaternion.identity;
+            OutlinePrefab.transform.localScale = Vector3.one;
+            
             SetFreeMove(isMoveFree);
         }
 

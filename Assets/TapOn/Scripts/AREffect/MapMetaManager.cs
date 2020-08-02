@@ -6,7 +6,7 @@ namespace AREffect
 {
     public class MapMetaManager
     {
-        private static readonly string root = Application.persistentDataPath + "/SparseSpatialMap";
+        private static readonly string root = Application.persistentDataPath + "/TapOn";
 
         public static List<MapMeta> LoadAll()
         {
@@ -72,7 +72,7 @@ namespace AREffect
             return path;
         }
 
-        private static string GetPath(string id)
+        public static string GetPath(string id)
         {
             return GetRootPath() + "/" + id + ".meta";
         }

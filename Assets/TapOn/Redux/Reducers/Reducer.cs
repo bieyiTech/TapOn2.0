@@ -56,6 +56,16 @@ namespace TapOn.Redux.Reducers {
                     {
                         GameObject instance = Globals.instance.templetes[1];
                         Renderer rd = instance.GetComponentInChildren<Renderer>();
+                        UnityEngine.Transform tf = instance.transform.Find("Cube");
+                        float ratio = tf.localScale.y * 1.0f / tf.localScale.x;
+                        float ratio_tex = action.texture.height * 1.0f / action.texture.width;
+                        Debug.Log("ratio: " + ratio + " ratio_text: " + ratio_tex);
+                        
+                        tf.localScale = ratio_tex > ratio ?
+                            new Vector3(ratio / ratio_tex * tf.localScale.x, tf.localScale.y, tf.localScale.z) :
+                            new Vector3(tf.localScale.x, ratio_tex / ratio * tf.localScale.y, tf.localScale.z);
+
+
                         rd.material.mainTexture = action.texture;
                         Prop product = new Prop { type = (int)ProductType.Picture, texture_byte = action.texture.EncodeToPNG(), instance = instance };
                         if (state.settingState.products.Count >= 3)

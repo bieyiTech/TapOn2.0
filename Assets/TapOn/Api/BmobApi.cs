@@ -69,14 +69,28 @@ namespace TapOn.Api
             return Task.Run(
                 async () =>
                 {
+                    Debug.Log("snapShot_byte Length: " + mark.snapShot_byte.Length);
+                    UploadCallbackData ud = await Bmob.FileUploadTaskAsync(new BmobLocalFile(mark.snapShot_byte, "Img_" + DateTime.Now.ToString("yyyy-MM-dd_HHmmss") + ".jpg"));
+                    if (ud.filename == null || ud.filename.Length == 0)
+                        return false;
+                    Debug.Log(ud.url);
+
+                    mark.snapShot = ud;
+                    UploadCallbackData um = await Bmob.FileUploadTaskAsync(new BmobLocalFile(mark.meta_byte, "Map_" + DateTime.Now.ToString("yyyy-MM-dd_HHmmss") + ".meta"));
+                    if (um.filename == null || um.filename.Length == 0)
+                        return false;
+                    mark.meta = um;
+
                     CreateCallbackData callback_mark = await Bmob.CreateTaskAsync(Mark.table_name, mark);
                     if (callback_mark == null || callback_mark.objectId == null || callback_mark.objectId.Length == 0)
                         return false;
-                    foreach(Prop prop in mark.props)
-                    {
-                        prop.mark = mark;
-                        CreateCallbackData callback_prop = await Bmob.CreateTaskAsync(Prop.table_name, prop);
-                    }
+
+                    //foreach(Prop prop in mark.props)
+                    //{
+                    //    prop.mark = mark;
+                    //    CreateCallbackData callback_prop = await Bmob.CreateTaskAsync(Prop.table_name, prop);
+                    //}
+
                     return true;
                 });
         }
