@@ -29,9 +29,7 @@ namespace AREffect
             OutlinePrefab = Instantiate(OutlinePrefab);
             OutlinePrefab.SetActive(false);
         }
-
-
-
+        
         private void Update()
         {
             var isEditorOrStandalone = Application.isEditor || Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.OSXPlayer;

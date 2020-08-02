@@ -17,6 +17,10 @@ namespace TapOn.Redux.Reducers {
     {
         public static AppState Reduce(AppState state, object bAction)
         {
+            Vector3 imageTF = Vector3.one;
+            float ratio = 1.0f;
+            bool saveImgTf = true ;
+
             int markSize = 20;
             switch (bAction)
             {
@@ -57,13 +61,18 @@ namespace TapOn.Redux.Reducers {
                         GameObject instance = Globals.instance.templetes[1];
                         Renderer rd = instance.GetComponentInChildren<Renderer>();
                         UnityEngine.Transform tf = instance.transform.Find("Cube");
-                        float ratio = tf.localScale.y * 1.0f / tf.localScale.x;
+                        if (saveImgTf)
+                        {
+                            saveImgTf = false;
+                            imageTF = instance.transform.Find("Cube").localScale;
+                            ratio = imageTF.y * 1.0f / imageTF.x;
+                        }
                         float ratio_tex = action.texture.height * 1.0f / action.texture.width;
                         Debug.Log("ratio: " + ratio + " ratio_text: " + ratio_tex);
                         
                         tf.localScale = ratio_tex > ratio ?
-                            new Vector3(ratio / ratio_tex * tf.localScale.x, tf.localScale.y, tf.localScale.z) :
-                            new Vector3(tf.localScale.x, ratio_tex / ratio * tf.localScale.y, tf.localScale.z);
+                            new Vector3(ratio / ratio_tex * imageTF.x, imageTF.y, imageTF.z) :
+                            new Vector3(imageTF.x, ratio_tex / ratio * imageTF.y, imageTF.z);
 
 
                         rd.material.mainTexture = action.texture;
