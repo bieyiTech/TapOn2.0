@@ -609,7 +609,7 @@ namespace TapOn.Constants {
 
         public static readonly Color IconBlack = new Color(0xFF727983);
         public static readonly Color IconGreen = new Color(0xFF78DEC9);
-        public static readonly Color FlatGreen = new Color(0xFFB9DEC4);
+        public static readonly Color FlatGreen = new Color(0xFF7ADEC9);
         
     }
 }

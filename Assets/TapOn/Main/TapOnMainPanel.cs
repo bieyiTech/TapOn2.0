@@ -37,6 +37,19 @@ namespace TapOn.Main
             LoadFonts();
             BmobDebug.Register(print);
             BmobDebug.level = BmobDebug.Level.TRACE;
+            
+            if (Globals.instance == null) Debug.LogError("Global instance is null!");
+            if (Globals.instance.bmob == null) Debug.LogError("Global bmob is null!");
+            if (Globals.instance.bmob == null)
+            {
+                GameObject t = GameObject.Find("Config");
+                if (t == null) Debug.LogError("t is null");
+                else
+                {
+                    Globals.instance.bmob = t.GetComponent<BmobUnity>();
+                }
+            }
+            if (Globals.instance.bmob == null) Debug.LogError("Global bmob is null after!");
         }
 
         static void LoadFonts()
@@ -225,8 +238,12 @@ namespace TapOn.Main
                         new Expanded(
                             flex: 5,
                             child: new Listener(
-                                onPointerDown: detail =>
+                                onPointerDown:detail =>
                                 {
+                                    //cn.bmob.response.UploadCallbackData ba = await Globals.instance.bmob.FileUploadTaskAsync(new cn.bmob.io.BmobLocalFile("E:/easyAR_sample/TapOn2.0/Assets/TapOn/Resources/texture/namecard.jpg"));
+                                    Globals.instance.bmob.FileUpload("E:\\easyAR_sample\\TapOn2.0\\Assets\\TapOn\\Resources\\texture\\namecard.jpg", (resp,exception)=>
+                                    {if(exception != null) {Debug.LogError(exception.Message);return; } Debug.Log(resp.filename); }
+                                    );
                                     setState(()=>{if(_currentIndex != 3) _currentIndex = 3; });
                                 },
                                 child: new Column(children: new List<Widget>

@@ -24,6 +24,7 @@ namespace TapOn.Redux.Reducers {
             int markSize = 20;
             switch (bAction)
             {
+                //map
                 case MapHorizontalDragAction action:
                     {
                         state.mapState.offsetX = action.offset;
@@ -135,9 +136,61 @@ namespace TapOn.Redux.Reducers {
                         }
                         break;
                     }
+                // setting
                 case SetModelsMessageAction action:
                     {
                         state.settingState.models = action.models;
+                        break;
+                    }
+                case AddProductAction action:
+                    {
+                        Debug.Log("S : " + action.product.text);
+                        if (state.settingState.products.Count >= 3)
+                            state.settingState.products.Dequeue();
+                        state.settingState.products.Enqueue(action.product);
+                        break;
+                    }
+                case ChangeSpanStateAction action:
+                    {
+                        state.settingState.productSpan = action.state;
+                        break;
+                    }
+                case ChangeShowStateAction action:
+                    {
+                        state.settingState.productShow = action.state;
+                        break;
+                    }
+                case ChangeAppearStateAction action:
+                    {
+                        state.settingState.productAppear[action.index] = action.state;
+                        break;
+                    }
+                case ChangeProductIndexAction action:
+                    {
+                        int temp = state.settingState.productIndex[2];
+                        state.settingState.productIndex[2] = state.settingState.productIndex[1];
+                        state.settingState.productIndex[1] = state.settingState.productIndex[0];
+                        state.settingState.productIndex[0] = temp;
+                        break;
+                    }
+                case ChangeMovebycircleStateAction action:
+                    {
+                        state.settingState.moveByCircle = action.state;
+                        break;
+                    }
+                case ChangeModelIndexAction action:
+                    {
+                        state.settingState.modelIndex = action.index;
+                        break;
+                    }
+                case ChangeModelMessageReadyStateAction action:
+                    {
+                        state.settingState.modelsMessageReady = action.state;
+                        break;
+                    }
+                case ChangeCameraTypeAction action:
+                    {
+                        state.settingState.cameraType = action.CameraType;
                         break;
                     }
             }

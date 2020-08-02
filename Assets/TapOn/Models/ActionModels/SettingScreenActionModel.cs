@@ -8,12 +8,27 @@ namespace TapOn.Models.ActionModels
 {
     public class SettingScreenActionModel
     {
-        public Action<int> ChangeIndex;
+        
 
         public Action<string> AddTextProduct;
         public Action<Texture2D> AddImageProduct;
         public Action<string> AddVideoProduct;
 
+        /// <summary>
+        /// 从服务器拉取所有的模型信息
+        /// </summary>
         public Action<List<Model>> SetModelsMessage;
+
+        public Action<bool> ChangeSpanState;
+        public Action<bool> ChangeShowState;
+        public Action<bool, int> ChangeAppearState;
+        public Action ChangeProductIndex;
+        public Action<bool> ChangeMovebycircleState;
+        public Action<int> ChangeModelIndex;
+        public Action<bool> ChangeModelMessageReadyState;
+        public Action<int> ChangeCameraType;
+
+        public Func<string, object> AddTextProductFuc;
+        public Func<Texture2D, object> AddImageProductFuc;
     }
 }

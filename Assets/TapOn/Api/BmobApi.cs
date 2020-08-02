@@ -32,7 +32,6 @@ namespace TapOn.Api
         {
             BmobQuery query = new BmobQuery();
             query.Limit(100);
-            if (Bmob == null) Debug.LogError("nulkl");
             return await Bmob.FindTaskAsync<BmobModel>(BmobModel.table_name, query);
         }
 
