@@ -432,8 +432,6 @@ namespace TapOn.Screens
                         circleDragLeft += detail.delta.dx;
                         circleDragBottom -= detail.delta.dy;
                     });
-                    
-                    //widget.viewModel.products
                 },
                 child: new AnimatedOpacity(
                     opacity: widget.viewModel.productAppear[widget.viewModel.productIndex[index]] ? 1 : 0,
