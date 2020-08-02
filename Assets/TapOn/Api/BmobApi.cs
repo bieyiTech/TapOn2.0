@@ -73,6 +73,7 @@ namespace TapOn.Api
                     TapOnUtils.upLoadFile("pic.jpg", "application/x-jpg", mark.snapShot_byte, async (wr)=> 
                     {
                         Restful_FileUpLoadCallBack t = TapOnUtils.fileUpLoadCallBackfromJson(wr.downloadHandler.text);
+                        mark.snapShot = new BmobFile { filename = t.filename, url = t.url };
                         CreateCallbackData callback_mark = await Bmob.CreateTaskAsync(Mark.table_name, mark);
                         if (callback_mark == null || callback_mark.objectId == null || callback_mark.objectId.Length == 0)
                             return;
