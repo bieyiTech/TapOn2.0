@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.UIWidgets.ui;
 using easyar;
 using System;
 using TapOn.Models.DataModels;
 using TapOn.Api;
 using System.IO;
+using TapOn.Utils;
+using cn.bmob.io;
 
 namespace AREffect
 {
@@ -25,6 +28,7 @@ namespace AREffect
         private Texture2D capturedImage;
         private int uploadingTime;
         private int tempCount = 0;
+        private int tempInfoCount = 0;
 
         private void Awake()
         {
@@ -101,32 +105,12 @@ namespace AREffect
         /// </summary>
         public async void SaveEdit()
         {
-            Snapshot();
-            // mapData.Props
             if (mapData == null)
             {
                 return;
             }
-
-            var propInfos = new List<MapMeta.PropInfo>();
-
-            foreach (var prop in mapData.Props)
-            {
-                var position = prop.transform.localPosition;
-                var rotation = prop.transform.localRotation;
-                var scale = prop.transform.localScale;
-
-                propInfos.Add(new MapMeta.PropInfo()
-                {
-                    Name = prop.name,
-                    Position = new float[3] { position.x, position.y, position.z },
-                    Rotation = new float[4] { rotation.x, rotation.y, rotation.z, rotation.w },
-                    Scale = new float[3] { scale.x, scale.y, scale.z }
-                });
-            }
-            mapData.Meta.Props = propInfos;
-            // 保存到本地
-            MapMetaManager.Save(mapData.Meta);
+            SaveMapMeta();
+            //Snapshot();
             // 保存到云端
             // (图片)capturedImage
             // (ID)mapData.Meta.Map.ID
@@ -141,10 +125,91 @@ namespace AREffect
                 MapName = "Map_" + DateTime.Now.ToString("yyyy-MM-dd_HHmmss"),
                 meta_byte = File.ReadAllBytes(MapMetaManager.GetPath(mapData.Meta.Map.ID)),
             };
-            bool success = await BmobApi.addMarktoServer(mark);
-            if (!success) Debug.LogError("Upload Error: Mark hasn't uploaded!");
+            bool success = BmobApi.addMarktoServer(mark);
+            if (!success) Debug.Log("Upload Error: Mark hasn't uploaded!");
         }
         
+        public void SaveMapMeta()
+        {
+            if (mapData == null)
+            {
+                return;
+            }
+
+            var propInfos = new List<MapMeta.PropInfo>();
+
+            foreach (var prop in mapData.Props)
+            {
+                var position = prop.transform.localPosition;
+                var rotation = prop.transform.localRotation;
+                var scale = prop.transform.localScale;
+                MapMeta.PropType typeTemp;
+                string textTemp = null;
+                BmobFile infoTemp = null;
+
+                if ("Word(Clone)" == prop.name)
+                {
+                    typeTemp = MapMeta.PropType.Text;
+                    textTemp = prop.GetComponentInChildren<TextMesh>().text;
+                }
+                else
+                {
+                    byte[] info_byte = null;
+                    if ("NameCard(Clone)" == prop.name)
+                    {
+                        typeTemp = MapMeta.PropType.Texture;
+                        Texture rt = prop.GetComponentInChildren<MeshRenderer>().material.mainTexture;
+                        if (rt == null)
+                            Debug.LogError("RenderTexture is error");
+                        else
+                        {
+                            Texture2D imgTemp = new Texture2D(rt.width, rt.height, TextureFormat.RGB24, false);
+                            imgTemp.ReadPixels(new UnityEngine.Rect(0, 0, rt.width, rt.height), 0, 0);
+                            info_byte = imgTemp.EncodeToJPG();
+                            if (info_byte == null)
+                                Debug.Log("info_byte is null");
+                        }
+                        //info_byte = prop.GetComponentInChildren<MeshRenderer>().material.mainTexture.
+                        StartCoroutine(TapOnUtils.upLoadFile("NameCard_" + (tempInfoCount++) + "_"+ DateTime.Now.ToString() + ".jpg", "application/x-jpg", info_byte, async (wr) =>
+                        {
+                            Restful_FileUpLoadCallBack t = TapOnUtils.fileUpLoadCallBackfromJson(wr.downloadHandler.text);
+                            infoTemp = new BmobFile { filename = t.filename, url = t.url };
+                        }));
+                        Debug.Log("NameCard save");
+                    }
+                    else if ("Video(Clone)" == prop.name)
+                    {
+                        typeTemp = MapMeta.PropType.Video;
+                        // info_byte
+                    }
+                    else if ("Model(Clone)" == prop.name)
+                    {
+                        typeTemp = MapMeta.PropType.Model;
+                        // info_byte
+                    }
+                    else
+                    {
+                        typeTemp = MapMeta.PropType.other;
+                    }
+                }
+
+                propInfos.Add(new MapMeta.PropInfo()
+                {
+                    Name = prop.name,
+                    Position = new float[3] { position.x, position.y, position.z },
+                    Rotation = new float[4] { rotation.x, rotation.y, rotation.z, rotation.w },
+                    Scale = new float[3] { scale.x, scale.y, scale.z },
+                    type = typeTemp,
+                    text = textTemp,
+                    info = infoTemp
+                });
+            }
+            mapData.Meta.Props = propInfos;
+            // 保存到本地
+            MapMetaManager.Save(mapData.Meta);
+
+        }
+
         public void Snapshot()
         {
             var oneShot = Camera.main.gameObject.AddComponent<OneShot>();

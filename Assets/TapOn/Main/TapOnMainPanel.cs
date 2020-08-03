@@ -41,8 +41,8 @@ namespace TapOn.Main
             BmobDebug.Register(print);
             BmobDebug.level = BmobDebug.Level.TRACE;
             
-            if (Globals.instance == null) Debug.LogError("Global instance is null!");
-            if (Globals.instance.bmob == null) Debug.LogError("Global bmob is null!");
+            //if (Globals.instance == null) Debug.LogError("Global instance is null!");
+            //if (Globals.instance.bmob == null) Debug.LogError("Global bmob is null!");
             if (Globals.instance.bmob == null)
             {
                 GameObject t = GameObject.Find("Config");

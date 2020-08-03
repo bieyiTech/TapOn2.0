@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System;
+using TapOn.Models.DataModels;
 
 namespace AREffect
 {
@@ -127,11 +128,11 @@ namespace AREffect
             }
         }
 
-        public void StartCreate(GameObject prop)
+        public void StartCreate(Prop prop)
         {
             StopEdit();
             isOnMap = false;
-            candidate = Instantiate(prop);
+            candidate = Instantiate(prop.instance);
             if (candidate)
             {
                 var video = candidate.GetComponentInChildren<VideoPlayerAgent>(true);

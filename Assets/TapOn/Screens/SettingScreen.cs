@@ -414,7 +414,7 @@ namespace TapOn.Screens
                         drag[index] = true;
                     });
                     Debug.Log("onPanStart");
-                    Globals.instance.dragger.StartCreate(widget.viewModel.products[index].instance);
+                    Globals.instance.dragger.StartCreate(widget.viewModel.products[index]);
                 },
                 onPanEnd: detail =>
                 {
@@ -536,7 +536,7 @@ namespace TapOn.Screens
                                                 RenderTexture.active = previous;
                                                 RenderTexture.ReleaseTemporary(renderTex);
                                                 
-                                                widget.actionModel.AddImageProduct(readableText);
+                                                widget.actionModel.AddImageProductFuc(readableText);
 
                                             });
                                         }

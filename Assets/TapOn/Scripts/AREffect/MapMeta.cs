@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using easyar;
 using System;
+using cn.bmob.io;
 
 namespace AREffect
 {
@@ -25,6 +26,19 @@ namespace AREffect
             public float[] Position = new float[3];
             public float[] Rotation = new float[4];
             public float[] Scale = new float[3];
+            
+            public PropType type;
+            public string text;
+            public BmobFile info;
+            
+        }
+        public enum PropType
+        {
+            Text,
+            Texture,
+            Video,
+            Model,
+            other
         }
     }
 }
