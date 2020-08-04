@@ -29,7 +29,8 @@ namespace AREffect
             
             public PropType type;
             public string text;
-            public BmobFile info;
+            public string infoFileName;
+            public string infoUrl;
             
         }
         public enum PropType

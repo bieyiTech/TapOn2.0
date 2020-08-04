@@ -33,7 +33,7 @@ public class SnapShotLoad : MonoBehaviour
         GameObject tempSprite = new GameObject("Sprite");
         tempSprite.transform.parent = Mark.transform;
         tempSprite.transform.localPosition = new Vector3(0, 0.45f, 0);
-        tempSprite.transform.rotation = Quaternion.identity;
+        tempSprite.transform.localRotation = Quaternion.identity;
         tempSprite.transform.localScale = Vector3.one;
 
         // Add Sprite Texture

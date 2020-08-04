@@ -116,7 +116,7 @@ namespace TapOn.Screens
         {
             base.initState();
             //Globals.instance.models = new List<GameObject>();
-            //update();
+            update();
         }
 
         private async void updateMarks()

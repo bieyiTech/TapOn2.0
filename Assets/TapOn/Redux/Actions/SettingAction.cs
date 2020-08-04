@@ -79,6 +79,10 @@ namespace TapOn.Redux.Actions
 
     public static partial class Actions
     {
+        static Vector3 imageTF = Vector3.one;
+        static float ratio = 1.0f;
+        static bool saveImgTf = true;
+
         public static object AddTextProduct(string text)
         {
             return new ThunkAction<AppState>((dispatcher, getState) =>
@@ -118,6 +122,21 @@ namespace TapOn.Redux.Actions
             {
                 GameObject instance = Globals.instance.templetes[1];
                 Renderer rd = instance.GetComponentInChildren<Renderer>();
+
+                UnityEngine.Transform tf = instance.transform.Find("Cube");
+                if (saveImgTf)
+                {
+                    saveImgTf = false;
+                    imageTF = instance.transform.Find("Cube").localScale;
+                    ratio = imageTF.y * 1.0f / imageTF.x;
+                }
+                float ratio_tex = texture.height * 1.0f / texture.width;
+                Debug.Log("ratio: " + ratio + " ratio_text: " + ratio_tex);
+
+                tf.localScale = ratio_tex > ratio ?
+                    new Vector3(ratio / ratio_tex * imageTF.x, imageTF.y, imageTF.z) :
+                    new Vector3(imageTF.x, ratio_tex / ratio * imageTF.y, imageTF.z);
+
                 rd.material.mainTexture = texture;
                 Prop product = new Prop { type = (int)ProductType.Picture, texture_byte = texture.EncodeToPNG(), instance = instance };
                 if (getState().settingState.products.Count < 3)

@@ -163,8 +163,15 @@ namespace AREffect
                             Debug.LogError("RenderTexture is error");
                         else
                         {
-                            Texture2D imgTemp = new Texture2D(rt.width, rt.height, TextureFormat.RGB24, false);
+                            RenderTexture destTexture = new RenderTexture(rt.width, rt.height, 0);
+                            Graphics.Blit(rt, destTexture);
+                            RenderTexture.active = destTexture;
+                            var imgTemp = new Texture2D(rt.width, rt.height, TextureFormat.RGB24, false);
                             imgTemp.ReadPixels(new UnityEngine.Rect(0, 0, rt.width, rt.height), 0, 0);
+                            imgTemp.Apply();
+                            RenderTexture.active = null;
+                            Destroy(destTexture);
+
                             info_byte = imgTemp.EncodeToJPG();
                             if (info_byte == null)
                                 Debug.Log("info_byte is null");
@@ -201,7 +208,8 @@ namespace AREffect
                     Scale = new float[3] { scale.x, scale.y, scale.z },
                     type = typeTemp,
                     text = textTemp,
-                    info = infoTemp
+                    infoFileName = infoTemp.filename,
+                    infoUrl = infoTemp.url,
                 });
             }
             mapData.Meta.Props = propInfos;
@@ -213,7 +221,7 @@ namespace AREffect
         public void Snapshot()
         {
             var oneShot = Camera.main.gameObject.AddComponent<OneShot>();
-            oneShot.Shot(true, (texture) =>
+            oneShot.Shot(false, (texture) =>
             {
                 if (capturedImage)
                 {
@@ -222,7 +230,6 @@ namespace AREffect
                 capturedImage = texture;
                 PreviewImage.texture = capturedImage;
             });
-
         }
 
         private IEnumerator Saving()
