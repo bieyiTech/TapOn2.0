@@ -115,11 +115,13 @@ namespace TapOn.Redux.Reducers {
                     }
                 case SelectMarkAction action:
                     {
-                        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                        Ray ray = Globals.instance.mapCamera.ScreenPointToRay(Input.mousePosition);
                         RaycastHit hit;
                         if (Physics.Raycast(ray, out hit))
                         {
-                            GameObject gameobj = hit.collider.gameObject;;
+                            
+                            GameObject gameobj = hit.collider.gameObject;
+                            Debug.Log(gameobj.tag);
                             if (gameobj.tag == "mark")
                             {
                                 Globals.instance.contextStack.Push(Globals.instance.homeContext);

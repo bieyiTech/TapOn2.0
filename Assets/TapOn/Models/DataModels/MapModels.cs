@@ -30,6 +30,8 @@ namespace TapOn.Models.DataModels
         public BmobGeoPoint coordinate;
         //public string userId;
 
+        public List<Prop> props;
+
         public BmobFile snapShot;
         public byte[] snapShot_byte;
         public BmobFile meta;

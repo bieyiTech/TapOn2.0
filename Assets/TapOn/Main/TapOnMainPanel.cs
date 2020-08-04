@@ -347,15 +347,15 @@ namespace TapOn.Main
             Globals.instance.homeContext = context;
             return new Scaffold(
                 backgroundColor: CColors.Transparent,
-                body: new PageView(
+                /*body: new PageView(
                     onPageChanged: value=> 
                     {
                         setState(() => { _currentIndex = value; });
                     },
                     controller: pc,
                     children: page
-                    ),
-                //body: _currentIndex > 1 ? page[0] : page[_currentIndex],
+                    ),*/
+                body: page[_currentIndex],
                 bottomNavigationBar: _mineBottomBar()
             );
         }

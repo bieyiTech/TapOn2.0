@@ -68,6 +68,8 @@ namespace TapOn.Constants {
 
         public CreateEditMapController CreateEdit;
 
+        public Camera mapCamera;
+
         // Start is called before the first frame update
 
         public void CheckInstance()
@@ -80,6 +82,17 @@ namespace TapOn.Constants {
                 {
                     Globals.instance.bmob = t.GetComponent<BmobUnity>();
                 }
+            }
+            if (mapController == null)
+            {
+                Debug.Log("mapcontriller null");
+                GameObject t = GameObject.Find("map_mapObj_prefab");
+                if (t == null) Debug.LogError("map_mapObj_prefab in scene not found!");
+                else
+                {
+                    mapController = t.GetComponent<MapController>();
+                }
+                if (mapController == null) Debug.LogError("even nuill");
             }
             /*if(instance.arEffect == null)
             {

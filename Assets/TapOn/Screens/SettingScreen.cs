@@ -536,7 +536,7 @@ namespace TapOn.Screens
                                                 RenderTexture.active = previous;
                                                 RenderTexture.ReleaseTemporary(renderTex);
                                                 
-                                                widget.actionModel.AddImageProduct(readableText);
+                                                widget.actionModel.AddImageProductFuc(readableText);
 
                                             });
                                         }

@@ -109,6 +109,7 @@ namespace AREffect
             }
 
             var propInfos = new List<MapMeta.PropInfo>();
+            List<Prop> props = new List<Prop>();
 
             foreach (var prop in mapData.Props)
             {
@@ -122,6 +123,21 @@ namespace AREffect
                     Position = new float[3] { position.x, position.y, position.z },
                     Rotation = new float[4] { rotation.x, rotation.y, rotation.z, rotation.w },
                     Scale = new float[3] { scale.x, scale.y, scale.z }
+                });
+
+                props.Add(new Prop
+                {
+                    pos_x = position.x,
+                    pos_y = position.y,
+                    pos_z = position.z,
+                    rot_w = rotation.w,
+                    rot_x = rotation.x,
+                    rot_y = rotation.y,
+                    rot_z = rotation.z,
+                    scale_x = scale.x,
+                    scale_y = scale.y,
+                    scale_z = scale.z,
+
                 });
             }
             mapData.Meta.Props = propInfos;

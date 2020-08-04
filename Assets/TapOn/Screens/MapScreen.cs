@@ -11,6 +11,7 @@ using TapOn.Models.DataModels;
 using TapOn.Models.States;
 using TapOn.Models.ViewModels;
 using TapOn.Redux.Actions;
+using TencentMap.API;
 using TencentMap.CoordinateSystem;
 using UIWidgetsGallery.gallery;
 using Unity.UIWidgets.animation;
@@ -116,12 +117,15 @@ namespace TapOn.Screens
         {
             base.initState();
             //Globals.instance.models = new List<GameObject>();
-            //update();
+            Globals.instance.CheckInstance();
+            Window.instance.startCoroutine(wait_500());
         }
 
         private async void updateMarks()
         {
-            QueryCallbackData<Mark> data = await BmobApi.queryFuzztMarksAsync(Globals.instance.mapController.GetCoordinate(), 3);
+            MapController m = Globals.instance.mapController;
+            Coordinate now = m.GetCoordinate();
+            QueryCallbackData<Mark> data = await BmobApi.queryFuzztMarksAsync(now, 3);
             this.widget.actionModel.addMarkJustLoading(data.results);
             this.widget.actionModel.changeMark();
         }
@@ -130,26 +134,6 @@ namespace TapOn.Screens
         {
             yield return new UIWidgetsWaitForSeconds(0.55f);
             updateMarks();
-        }
-
-        private Task<bool> waitForMapController()
-        {
-            return Task.Run(
-                () =>
-                {
-                    for (int i = 0; i < 100000; i++)
-                        if(Globals.instance.mapController!=null)
-                        {
-                            return true;
-                        }
-                    return false;
-                });
-        }
-
-        private async void update()
-        {
-            bool t = await waitForMapController();
-            if (t) updateMarks();
         }
 
         private IPromise<object> showBottomSheet()
