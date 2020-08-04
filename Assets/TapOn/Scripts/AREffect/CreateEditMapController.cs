@@ -103,7 +103,7 @@ namespace AREffect
         /// <summary>
         /// 保存创作
         /// </summary>
-        public async void SaveEdit()
+        public void SaveEdit()
         {
             if (mapData == null)
             {
@@ -125,8 +125,7 @@ namespace AREffect
                 MapName = "Map_" + DateTime.Now.ToString("yyyy-MM-dd_HHmmss"),
                 meta_byte = File.ReadAllBytes(MapMetaManager.GetPath(mapData.Meta.Map.ID)),
             };
-            bool success = BmobApi.addMarktoServer(mark);
-            if (!success) Debug.Log("Upload Error: Mark hasn't uploaded!");
+            BmobApi.addMarktoServer(mark);
         }
         
         public void SaveMapMeta()

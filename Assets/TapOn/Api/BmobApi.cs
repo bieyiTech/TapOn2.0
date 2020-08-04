@@ -64,42 +64,87 @@ namespace TapOn.Api
                 });
         }
 
-        public static bool addMarktoServer(Mark mark)
+        public static async void addMarktoServer(Mark mark)
         {
-            //return Task.Run(
-            //    () =>
-             //   {
-                bool result = false;
-                Window.instance.startCoroutine(
-                    TapOnUtils.upLoadFile("img_" + DateTime.Now.ToString("yyyy-MM-dd_HHmmss") + ".jpg", "application/x-jpg", mark.snapShot_byte, async (wr) =>
+            CreateCallbackData callback_mark = await Bmob.CreateTaskAsync(Mark.table_name, mark);
+            if (callback_mark == null || callback_mark.objectId == null || callback_mark.objectId.Length == 0)
+            {
+                Debug.LogError("BmobRrror: Mark hasn't upload!");
+                return;
+            }
+            Window.instance.startCoroutine(
+                TapOnUtils.upLoadFile(
+                    "img_" + DateTime.Now.ToString("yyyy-MM-dd_HHmmss") + ".jpg",
+                    "application/x-jpg",
+                    mark.snapShot_byte,
+                    wr =>
                     {
                         Restful_FileUpLoadCallBack t = TapOnUtils.fileUpLoadCallBackfromJson(wr.downloadHandler.text);
-                        mark.snapShot = new BmobFile { filename = t.filename, url = t.url };
-                        Window.instance.startCoroutine(TapOnUtils.upLoadFile("Props_" + DateTime.Now.ToString("yyyy-MM-dd_HHmmss") + ".json", "application/json", mark.meta_byte, async(wr1) =>
-                        {
-                            Restful_FileUpLoadCallBack t1 = TapOnUtils.fileUpLoadCallBackfromJson(wr1.downloadHandler.text);
-                            mark.meta = new BmobFile { filename = t1.filename, url = t1.url };
-                            CreateCallbackData callback_mark = await Bmob.CreateTaskAsync(Mark.table_name, mark);
-                            if (callback_mark == null || callback_mark.objectId == null || callback_mark.objectId.Length == 0)
-                                return;
-                            //foreach (Prop prop in mark.props)
-                            //{
-                            //    prop.mark = mark;
-                            //    CreateCallbackData callback_prop = await Bmob.CreateTaskAsync(Prop.table_name, prop);
-                            //}
-                            result = true;
-                        }));
+                        BmobFile bf = new BmobFile { filename = t.filename, url = t.url, group = t.cdnname };
+                        Mark m = new Mark { snapShot = bf };
+                        Bmob.Update(
+                            Mark.table_name,
+                            callback_mark.objectId,
+                            m,
+                            (resp, exception) =>
+                            {
+                                if (exception != null)
+                                {
+                                    Debug.Log("修改失败, 失败原因为： " + exception.Message);
+                                    return;
+                                }
+
+                                Debug.Log("修改成功, @" + resp.updatedAt);
+                            });
+                    }));
+            Window.instance.startCoroutine(
+                TapOnUtils.upLoadFile(
+                    "Props_" + DateTime.Now.ToString("yyyy-MM-,") + ".json",
+                    "application/json",
+                    mark.meta_byte,
+                    wr =>
+                    {
+                        Restful_FileUpLoadCallBack t = TapOnUtils.fileUpLoadCallBackfromJson(wr.downloadHandler.text);
+                        BmobFile bf = new BmobFile { filename = t.filename, url = t.url, group = t.cdnname };
+                        Mark m = new Mark { meta = bf };
+                        Bmob.Update(
+                            Mark.table_name,
+                            callback_mark.objectId,
+                            m,
+                            (resp, exception) =>
+                            {
+                                if (exception != null)
+                                {
+                                    Debug.Log("修改失败, 失败原因为： " + exception.Message);
+                                    return;
+                                }
+
+                                Debug.Log("修改成功, @" + resp.updatedAt);
+                            });
+                    }));
+            /*Window.instance.startCoroutine(
+                TapOnUtils.upLoadFile("img_" + DateTime.Now.ToString("yyyy-MM-dd_HHmmss") + ".jpg", "application/x-jpg", mark.snapShot_byte, async (wr) =>
+                {
+                    Restful_FileUpLoadCallBack t = TapOnUtils.fileUpLoadCallBackfromJson(wr.downloadHandler.text);
+                    mark.snapShot = new BmobFile { filename = t.filename, url = t.url };
+                    Window.instance.startCoroutine(TapOnUtils.upLoadFile("Props_" + DateTime.Now.ToString("yyyy-MM-dd_HHmmss") + ".json", "application/json", mark.meta_byte, async(wr1) =>
+                    {
+                        Restful_FileUpLoadCallBack t1 = TapOnUtils.fileUpLoadCallBackfromJson(wr1.downloadHandler.text);
+                        mark.meta = new BmobFile { filename = t1.filename, url = t1.url };
+                        CreateCallbackData callback_mark = await Bmob.CreateTaskAsync(Mark.table_name, mark);
+                        if (callback_mark == null || callback_mark.objectId == null || callback_mark.objectId.Length == 0)
+                            return;
+                        //foreach (Prop prop in mark.props)
+                        //{
+                        //    prop.mark = mark;
+                        //    CreateCallbackData callback_prop = await Bmob.CreateTaskAsync(Prop.table_name, prop);
+                        //}
+                        result = true;
+                    }));
 
                         
-                    })
-                    );
-                   
-                    //UploadCallbackData ud = await Bmob.FileUploadTaskAsync(new BmobLocalFile(mark.snapShot_byte));
-                    //if (ud.filename == null || ud.filename.Length == 0)
-                    //    return false;
-                    //mark.snapShot = ud;
-                    return result;
-               // });
+                })
+                );*/
         }
 
         /*public static IPromise<List<Mark>> queryFuzzyMarks(Coordinate coodinate, int limit)

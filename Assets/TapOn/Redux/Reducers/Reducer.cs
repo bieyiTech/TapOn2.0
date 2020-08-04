@@ -127,6 +127,11 @@ namespace TapOn.Redux.Reducers {
                                 Globals.instance.contextStack.Push(Globals.instance.homeContext);
                                 Navigator.push(Globals.instance.homeContext, new MaterialPageRoute(builder: (_) =>
                                 {
+                                    Globals.instance.map.SetActive(false);
+                                    GameObject[] t = GameObject.FindGameObjectsWithTag("mark");
+                                    foreach (GameObject mark in t)
+                                        mark.SetActive(false);
+                                    //Çëuse gameobj.GetComponent<LocationInfo>().mark
                                     return new StoreProvider<AppState>(
                                         store: StoreProvider.store,
                                         new MaterialApp(

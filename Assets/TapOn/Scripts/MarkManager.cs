@@ -19,6 +19,7 @@ public class MarkManager : MonoBehaviour
         GameObject tempMark = (GameObject)Instantiate(Globals.instance.marker, GetComponent<MarkManager>().transform, true);
         tempMark.transform.position = pos + 0.5f * new Vector3(0, 1, tempMark.transform.localScale.y * tempMark.GetComponent<SpriteRenderer>().bounds.size.y);
         tempMark.GetComponent<Renderer>().sortingOrder = 1;
+        tempMark.GetComponent<LocationInfo>().mark = mark;
 
         //// 计算颜色 HSV->RGB
         string[] temp = mark.updatedAt.Split(' ');
