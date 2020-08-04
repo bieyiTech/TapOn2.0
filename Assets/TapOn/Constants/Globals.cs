@@ -35,7 +35,7 @@ namespace TapOn.Constants {
             }
         }
 
-        public void Awake()
+        public void Start()
         {
             GameObject t = GameObject.Find("global");
             if(t == null)

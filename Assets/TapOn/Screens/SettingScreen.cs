@@ -414,7 +414,7 @@ namespace TapOn.Screens
                         drag[index] = true;
                     });
                     Debug.Log("onPanStart");
-                    Globals.instance.dragger.StartCreate(widget.viewModel.products[index].instance);
+                    Globals.instance.dragger.StartCreate(widget.viewModel.products[index]);
                 },
                 onPanEnd: detail =>
                 {

@@ -110,6 +110,7 @@ namespace AREffect
                         "Map cache is used (SparseSpatialMapManager.clear not called alone)." + Environment.NewLine +
                         "Statistical request count will not be increased (more details on EasyAR website).", 5);
 
+                    // prop info
                     foreach (var propInfo in meta.Props)
                     {
                         GameObject prop = null;
@@ -131,6 +132,7 @@ namespace AREffect
                         prop.transform.localRotation = new Quaternion(propInfo.Rotation[0], propInfo.Rotation[1], propInfo.Rotation[2], propInfo.Rotation[3]);
                         prop.transform.localScale = new UnityEngine.Vector3(propInfo.Scale[0], propInfo.Scale[1], propInfo.Scale[2]);
                         prop.name = propInfo.Name;
+                        // prop info
                         m.Props.Add(prop);
                     }
                 };
