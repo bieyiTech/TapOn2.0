@@ -64,8 +64,8 @@ namespace TapOn.Screens
                         { return dispatcher.dispatch<object>(Actions.AddTextProduct(text)); },
                         AddImageProduct = (value) =>
                         { dispatcher.dispatch(new AddImageProductAction { texture = value, }); },
-                        AddImageProductFuc = (texture) =>
-                        { return dispatcher.dispatch<object>(Actions.AddImageProduct(texture)); },
+                        AddImageProductFuc = (texture, cont) =>
+                        { return dispatcher.dispatch<object>(Actions.AddImageProduct(texture, cont)); },
                         SetModelsMessage = (models) =>
                         { dispatcher.dispatch(new SetModelsMessageAction { models = models, }); },
                         ChangeSpanState = (state) =>
@@ -536,7 +536,7 @@ namespace TapOn.Screens
                                                 RenderTexture.active = previous;
                                                 RenderTexture.ReleaseTemporary(renderTex);
                                                 
-                                                widget.actionModel.AddImageProductFuc(readableText);
+                                                widget.actionModel.AddImageProductFuc(readableText, context);
 
                                             });
                                         }
@@ -544,7 +544,7 @@ namespace TapOn.Screens
                                         {
                                             NativeCall.OpenCamera((Texture2D tex) =>
                                             {
-                                                this.widget.actionModel.AddImageProductFuc(tex);
+                                                this.widget.actionModel.AddImageProductFuc(tex, context);
                                             });
                                         }
                                     });
@@ -751,26 +751,37 @@ namespace TapOn.Screens
                     fit: StackFit.loose,
                     children: new List<Widget>
                     {
-                        new Align(
-                            alignment: Alignment.topLeft,
+                        
+                        new Align(alignment: Alignment.bottomCenter, child: _buildMain()),
+                        new Positioned(
+                            top: 8,
+                            left: 11,
                             child: new IconButton(
                                 color: CColors.Transparent,
                                 iconSize: 24,
                                 onPressed: () =>
                                 {
+                                    Debug.Log("p");
                                     BuildContext lastContext = Globals.instance.contextStack.Pop();
                                     Navigator.pop(lastContext);
                                     Globals.instance.map.SetActive(true);
                                 },
                                 icon: new Icon(
-                                    icon: MyIcons.arrow_back,
-                                    color: CColors.Black
+                                    icon: MyIcons.cancel_mine,
+                                    color: CColors.White
                                     )
                                 )
                             ),
-                        new Align(alignment: Alignment.bottomCenter, child: _buildMain()),
-                    }
-                    )
+                        new Positioned(
+                            top: 5,
+                            right: 23,
+                            child: new IconButton(
+                                color: CColors.Transparent,
+                                iconSize: 36,
+                                icon: new Icon(icon: MyIcons.settings, color: CColors.White)
+                                )
+                            ),
+                    })
                 );
         }
     }

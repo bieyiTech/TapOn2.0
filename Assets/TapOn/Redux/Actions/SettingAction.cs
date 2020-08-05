@@ -87,7 +87,9 @@ namespace TapOn.Redux.Actions
         {
             return new ThunkAction<AppState>((dispatcher, getState) =>
             {
-                GameObject instance = Globals.instance.templetes[0];
+                GameObject instance = GameObject.Instantiate(Globals.instance.templetes[0]);
+                instance.tag = "word";
+                instance.SetActive(false);
                 TextMesh tm = instance.GetComponentInChildren<TextMesh>();
                 tm.text = text;
                 Prop product = new Prop { type = (int)ProductType.Text, text = text, instance = instance };
@@ -116,11 +118,13 @@ namespace TapOn.Redux.Actions
             });
         }
 
-        public static object AddImageProduct(Texture2D texture)
+        public static object AddImageProduct(Texture2D texture, Unity.UIWidgets.widgets.BuildContext context)
         {
             return new ThunkAction<AppState>((dispatcher, getState) =>
             {
-                GameObject instance = Globals.instance.templetes[1];
+                GameObject instance = GameObject.Instantiate(Globals.instance.templetes[1]);
+                instance.tag = "texture";
+                instance.SetActive(false);
                 Renderer rd = instance.GetComponentInChildren<Renderer>();
 
                 UnityEngine.Transform tf = instance.transform.Find("Cube");
@@ -147,19 +151,24 @@ namespace TapOn.Redux.Actions
                 }
                 dispatcher.dispatch(new ChangeProductIndexAction());
                 dispatcher.dispatch(new ChangeAppearStateAction { state = false, index = 2 });
-                Window.instance.startCoroutine(
-                  TapOnUtils.WaitSomeTime(
-                      time: 0.3f,
-                      after: () =>
-                      {
-                          dispatcher.dispatch(new AddProductAction { product = product });
-                          Window.instance.startCoroutine(
-                            TapOnUtils.WaitSomeTime(
-                                time: 0.3f,
-                                after: (() =>
-                                { dispatcher.dispatch(new ChangeAppearStateAction { state = true, index = 2 }); })));
-                      }
-                       ));
+                if (Window.instance == null) Debug.Log("nu");
+                using (Unity.UIWidgets.widgets.WindowProvider.of(context).getScope())
+                {
+                    Window.instance.startCoroutine(
+                      TapOnUtils.WaitSomeTime(
+                          time: 0.3f,
+                          after: () =>
+                          {
+                              Debug.Log("xs");
+                              dispatcher.dispatch(new AddProductAction { product = product });
+                              Window.instance.startCoroutine(
+                                TapOnUtils.WaitSomeTime(
+                                    time: 0.3f,
+                                    after: (() =>
+                                    { dispatcher.dispatch(new ChangeAppearStateAction { state = true, index = 2 }); })));
+                          }
+                           ));
+                }
                 return 0;
             });
         }

@@ -108,6 +108,7 @@ namespace TapOn.Screens
         }
         public override Widget build(BuildContext context)
         {
+            Globals.instance.nowContext = context;
             return new Container(
                 color: CColors.White,
                 child: new Stack(

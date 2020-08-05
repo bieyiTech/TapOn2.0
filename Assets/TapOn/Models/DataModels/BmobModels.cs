@@ -84,6 +84,8 @@ namespace TapOn.Models.DataModels
 
         public GameObject instance;
 
+        public GameObject inScene;
+
         public BmobInt type;
         public string text;
         public BmobFile texture;

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 65688246408839746}
   m_Layer: 0
   m_Name: Word
-  m_TagString: Untagged
+  m_TagString: word
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -132,7 +132,7 @@ TextMesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1726716597326277434}
-  m_Text: 45
+  m_Text: 3231
   m_OffsetZ: 0
   m_CharacterSize: 1
   m_LineSpacing: 1

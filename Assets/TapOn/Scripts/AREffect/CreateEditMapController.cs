@@ -135,8 +135,9 @@ namespace AREffect
                 return;
             }
 
+            Debug.Log("length: " + mapData.Props.Count);
+
             var propInfos = new List<MapMeta.PropInfo>();
-            List<Prop> props = new List<Prop>();
 
             foreach (var prop in mapData.Props)
             {
@@ -147,15 +148,27 @@ namespace AREffect
                 string textTemp = null;
                 BmobFile infoTemp = null;
 
-                if ("Word(Clone)" == prop.name)
+                Debug.Log("prop tag" + prop.tag);
+                Debug.Log("prop name" + prop.name);
+
+                if ("word" == prop.tag)
                 {
                     typeTemp = MapMeta.PropType.Text;
                     textTemp = prop.GetComponentInChildren<TextMesh>().text;
+                    propInfos.Add(new MapMeta.PropInfo()
+                    {
+                        Name = prop.name,
+                        Position = new float[3] { position.x, position.y, position.z },
+                        Rotation = new float[4] { rotation.x, rotation.y, rotation.z, rotation.w },
+                        Scale = new float[3] { scale.x, scale.y, scale.z },
+                        type = typeTemp,
+                        text = textTemp,
+                    });
                 }
                 else
                 {
                     byte[] info_byte = null;
-                    if ("NameCard(Clone)" == prop.name)
+                    if ("texture" == prop.tag)
                     {
                         typeTemp = MapMeta.PropType.Texture;
                         Texture rt = prop.GetComponentInChildren<MeshRenderer>().material.mainTexture;
@@ -177,12 +190,28 @@ namespace AREffect
                                 Debug.Log("info_byte is null");
                         }
                         //info_byte = prop.GetComponentInChildren<MeshRenderer>().material.mainTexture.
-                        StartCoroutine(TapOnUtils.upLoadFile("NameCard_" + (tempInfoCount++) + "_"+ DateTime.Now.ToString() + ".jpg", "application/x-jpg", info_byte, async (wr) =>
-                        {
-                            Restful_FileUpLoadCallBack t = TapOnUtils.fileUpLoadCallBackfromJson(wr.downloadHandler.text);
-                            infoTemp = new BmobFile { filename = t.filename, url = t.url };
-                        }));
-                        Debug.Log("NameCard save");
+                        StartCoroutine(
+                            TapOnUtils.upLoadFile(
+                                "NameCard_" + (tempInfoCount++) + "_"+ DateTime.Now.ToString() + ".jpg",
+                                "application/x-jpg",
+                                info_byte,
+                                (wr) =>
+                                {
+                                    Restful_FileUpLoadCallBack t = TapOnUtils.fileUpLoadCallBackfromJson(wr.downloadHandler.text);
+                                    infoTemp = new BmobFile { filename = t.filename, url = t.url };
+                                    Debug.Log("NameCard save");
+                                    propInfos.Add(new MapMeta.PropInfo()
+                                    {
+                                        Name = prop.name,
+                                        Position = new float[3] { position.x, position.y, position.z },
+                                        Rotation = new float[4] { rotation.x, rotation.y, rotation.z, rotation.w },
+                                        Scale = new float[3] { scale.x, scale.y, scale.z },
+                                        type = typeTemp,
+                                        infoFileName = infoTemp.filename,
+                                        infoUrl = infoTemp.url,
+                                    });
+                                })
+                            );
                     }
                     else if ("Video(Clone)" == prop.name)
                     {
@@ -199,33 +228,6 @@ namespace AREffect
                         typeTemp = MapMeta.PropType.other;
                     }
                 }
-
-                propInfos.Add(new MapMeta.PropInfo()
-                {
-                    Name = prop.name,
-                    Position = new float[3] { position.x, position.y, position.z },
-                    Rotation = new float[4] { rotation.x, rotation.y, rotation.z, rotation.w },
-                    Scale = new float[3] { scale.x, scale.y, scale.z },
-                    type = typeTemp,
-                    text = textTemp,
-                    infoFileName = infoTemp.filename,
-                    infoUrl = infoTemp.url,
-                });
-
-                props.Add(new Prop
-                {
-                    pos_x = position.x,
-                    pos_y = position.y,
-                    pos_z = position.z,
-                    rot_w = rotation.w,
-                    rot_x = rotation.x,
-                    rot_y = rotation.y,
-                    rot_z = rotation.z,
-                    scale_x = scale.x,
-                    scale_y = scale.y,
-                    scale_z = scale.z,
-
-                });
             }
             mapData.Meta.Props = propInfos;
             // 保存到本地

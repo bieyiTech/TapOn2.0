@@ -23,6 +23,7 @@ using Image = Unity.UIWidgets.widgets.Image;
 using UnityEngine.Networking;
 using Unity.UIWidgets.async;
 using TapOn.Utils;
+using TapOn.Models.DataModels;
 
 namespace TapOn.Main
 {
@@ -192,7 +193,7 @@ namespace TapOn.Main
                                     onPressed: () =>
                                     {
                                         Globals.instance.contextStack.Push(context);
-                                        //Globals.instance.map.SetActive(false);
+                                        Globals.instance.map.SetActive(false);
                                         GameObject[] t = GameObject.FindGameObjectsWithTag("mark");
                                         foreach (GameObject mark in t)
                                             mark.SetActive(false);
@@ -247,7 +248,12 @@ namespace TapOn.Main
                                     /*Globals.instance.bmob.FileUpload("E:\\easyAR_sample\\TapOn2.0\\Assets\\TapOn\\Resources\\texture\\namecard.jpg", (resp,exception)=>
                                     {if(exception != null) {Debug.LogError(exception.Message);return; } Debug.Log(resp.filename); }
                                     );*/
-                                    Window.instance.startCoroutine(test());
+                                    //Window.instance.startCoroutine(test());
+                                    Mark mark = new Mark
+                                    {
+                                        coordinate = new cn.bmob.io.BmobGeoPoint(39.986, 116.314),
+                                    };
+                                    BmobApi.addMarktoServer(mark);
                                     setState(()=>{if(_currentIndex != 3) _currentIndex = 3; });
                                 },
                                 child: new Column(children: new List<Widget>

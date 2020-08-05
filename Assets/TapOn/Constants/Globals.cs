@@ -54,6 +54,7 @@ namespace TapOn.Constants {
 
         public Stack<BuildContext> contextStack = new Stack<BuildContext>();
         public BuildContext homeContext;
+        public BuildContext nowContext;
 
         public BmobUnity bmob;
         public MapController mapController;

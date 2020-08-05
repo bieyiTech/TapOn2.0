@@ -155,6 +155,11 @@ namespace TapOn.Redux.Reducers {
                         if (state.settingState.products.Count >= 3)
                             state.settingState.products.Dequeue();
                         state.settingState.products.Enqueue(action.product);
+                        Debug.Log("nowLength: " + state.settingState.products.Count);
+                        foreach (Prop prop in state.settingState.products)
+                        {
+                            Debug.Log(prop.type);
+                        }
                         break;
                     }
                 case ChangeSpanStateAction action:

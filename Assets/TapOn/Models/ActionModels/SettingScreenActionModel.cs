@@ -29,6 +29,6 @@ namespace TapOn.Models.ActionModels
         public Action<int> ChangeCameraType;
 
         public Func<string, object> AddTextProductFuc;
-        public Func<Texture2D, object> AddImageProductFuc;
+        public Func<Texture2D, Unity.UIWidgets.widgets.BuildContext, object> AddImageProductFuc;
     }
 }

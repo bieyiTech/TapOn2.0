@@ -132,7 +132,9 @@ namespace AREffect
         {
             StopEdit();
             isOnMap = false;
+            Debug.Log("start instance: " +prop.instance.tag);
             candidate = Instantiate(prop.instance);
+            Debug.Log("start: " + candidate.tag);
             if (candidate)
             {
                 var video = candidate.GetComponentInChildren<VideoPlayerAgent>(true);
@@ -144,11 +146,11 @@ namespace AREffect
 
         public void StopCreate()
         {
-            Debug.Log("StopCreate");
             if (candidate.activeSelf)
             {
                 if (CreateObject != null)
                 {
+                    Debug.Log("stop: " + candidate.tag);
                     CreateObject(candidate);
                     StartEdit(candidate);
                 }

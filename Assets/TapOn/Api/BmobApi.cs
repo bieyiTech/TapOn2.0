@@ -72,56 +72,59 @@ namespace TapOn.Api
                 Debug.LogError("BmobRrror: Mark hasn't upload!");
                 return;
             }
-            Window.instance.startCoroutine(
-                TapOnUtils.upLoadFile(
-                    "img_" + DateTime.Now.ToString("yyyy-MM-dd_HHmmss") + ".jpg",
-                    "application/x-jpg",
-                    mark.snapShot_byte,
-                    wr =>
-                    {
-                        Restful_FileUpLoadCallBack t = TapOnUtils.fileUpLoadCallBackfromJson(wr.downloadHandler.text);
-                        BmobFile bf = new BmobFile { filename = t.filename, url = t.url, group = t.cdnname };
-                        Mark m = new Mark { snapShot = bf };
-                        Bmob.Update(
-                            Mark.table_name,
-                            callback_mark.objectId,
-                            m,
-                            (resp, exception) =>
-                            {
-                                if (exception != null)
+            using (Unity.UIWidgets.widgets.WindowProvider.of(Globals.instance.nowContext).getScope())
+            {
+                Window.instance.startCoroutine(
+                    TapOnUtils.upLoadFile(
+                        "img_" + DateTime.Now.ToString("yyyy-MM-dd_HHmmss") + ".jpg",
+                        "application/x-jpg",
+                        mark.snapShot_byte,
+                        wr =>
+                        {
+                            Restful_FileUpLoadCallBack t = TapOnUtils.fileUpLoadCallBackfromJson(wr.downloadHandler.text);
+                            BmobFile bf = new BmobFile { filename = t.filename, url = t.url, group = t.cdnname };
+                            Mark m = new Mark { snapShot = bf };
+                            Bmob.Update(
+                                Mark.table_name,
+                                callback_mark.objectId,
+                                m,
+                                (resp, exception) =>
                                 {
-                                    Debug.Log("修改失败, 失败原因为： " + exception.Message);
-                                    return;
-                                }
+                                    if (exception != null)
+                                    {
+                                        Debug.Log("修改失败, 失败原因为： " + exception.Message);
+                                        return;
+                                    }
 
-                                Debug.Log("修改成功, @" + resp.updatedAt);
-                            });
-                    }));
-            Window.instance.startCoroutine(
-                TapOnUtils.upLoadFile(
-                    "Props_" + DateTime.Now.ToString("yyyy-MM-,") + ".json",
-                    "application/json",
-                    mark.meta_byte,
-                    wr =>
-                    {
-                        Restful_FileUpLoadCallBack t = TapOnUtils.fileUpLoadCallBackfromJson(wr.downloadHandler.text);
-                        BmobFile bf = new BmobFile { filename = t.filename, url = t.url, group = t.cdnname };
-                        Mark m = new Mark { meta = bf };
-                        Bmob.Update(
-                            Mark.table_name,
-                            callback_mark.objectId,
-                            m,
-                            (resp, exception) =>
-                            {
-                                if (exception != null)
+                                    Debug.Log("修改成功, @" + resp.updatedAt);
+                                });
+                        }));
+                Window.instance.startCoroutine(
+                    TapOnUtils.upLoadFile(
+                        "Props_" + DateTime.Now.ToString("yyyy-MM-,") + ".json",
+                        "application/json",
+                        mark.meta_byte,
+                        wr =>
+                        {
+                            Restful_FileUpLoadCallBack t = TapOnUtils.fileUpLoadCallBackfromJson(wr.downloadHandler.text);
+                            BmobFile bf = new BmobFile { filename = t.filename, url = t.url, group = t.cdnname };
+                            Mark m = new Mark { metaFile = bf };
+                            Bmob.Update(
+                                Mark.table_name,
+                                callback_mark.objectId,
+                                m,
+                                (resp, exception) =>
                                 {
-                                    Debug.Log("修改失败, 失败原因为： " + exception.Message);
-                                    return;
-                                }
+                                    if (exception != null)
+                                    {
+                                        Debug.Log("修改失败, 失败原因为： " + exception.Message);
+                                        return;
+                                    }
 
-                                Debug.Log("修改成功, @" + resp.updatedAt);
-                            });
-                    }));
+                                    Debug.Log("修改成功, @" + resp.updatedAt);
+                                });
+                        }));
+            }
             /*Window.instance.startCoroutine(
                 TapOnUtils.upLoadFile("img_" + DateTime.Now.ToString("yyyy-MM-dd_HHmmss") + ".jpg", "application/x-jpg", mark.snapShot_byte, async (wr) =>
                 {

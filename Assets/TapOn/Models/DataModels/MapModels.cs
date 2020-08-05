@@ -34,7 +34,7 @@ namespace TapOn.Models.DataModels
 
         public BmobFile snapShot;
         public byte[] snapShot_byte;
-        public BmobFile meta;
+        public BmobFile metaFile;
         public byte[] meta_byte;
         public string upLoadTime;
 
@@ -49,7 +49,7 @@ namespace TapOn.Models.DataModels
             //userId = input.getString("userId");
             upLoadTime = input.getString("createdAt");
             snapShot = input.getFile("snapShot");
-            meta = input.getFile("meta");
+            //meta = input.getFile("meta");
         }
 
         public override void write(BmobOutput output, bool all)
@@ -58,9 +58,9 @@ namespace TapOn.Models.DataModels
 
             output.Put("position", coordinate);
             //output.Put("userId", userId);
-            output.Put("createdAt", upLoadTime);
+            //output.Put("createdAt", upLoadTime);
             output.Put("snapShot", snapShot);
-            output.Put("meta", meta);
+            output.Put("metaFile", metaFile);
         }
     }
 
