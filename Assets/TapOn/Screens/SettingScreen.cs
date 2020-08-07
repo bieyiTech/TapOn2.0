@@ -24,6 +24,7 @@ using TapOn.Models;
 using TapOn.Api;
 using com.unity.uiwidgets.Runtime.rendering;
 using TapOn.Redux;
+using Unity.UIWidgets.cupertino;
 
 namespace TapOn.Screens
 {
@@ -126,6 +127,9 @@ namespace TapOn.Screens
         PageController modelsPc = new PageController(initialPage: 0);
 
         bool modelsPreviewReady = false;
+
+        bool settingDown = false;
+        float pointCloudProgress = 0.5f;
 
         BuildContext bottomSheetContext;
 
@@ -743,6 +747,182 @@ namespace TapOn.Screens
             );
         }
 
+        public Widget _setting()
+        {
+            return new AnimatedContainer(
+                decoration: new BoxDecoration(
+                    borderRadius: BorderRadius.all(5.0f),
+                    boxShadow: new List<BoxShadow> { new BoxShadow(color: CColors.Grey80, blurRadius: 1.0f)}
+                    ),
+                padding: EdgeInsets.only(left: 11, right: 11),
+                //color: new Unity.UIWidgets.ui.Color(0xff343434),
+                color: CColors.Grey80,
+                width: 196,
+                height: settingDown ? 340 : 0,
+                duration: new System.TimeSpan(0, 0, 0, 0, 300),
+                curve: Curves.easeInOut,
+                child: new Column(
+                    children: new List<Widget>
+                    {
+                        new Padding(
+                            padding: EdgeInsets.only(left: 126, top: 5),
+                            child: new IconButton(
+                                onPressed:()=>{setState(()=>{settingDown = false; }); },
+                                color: CColors.Blue,
+                                iconSize: 36,
+                                icon: new Icon(icon: MyIcons.settings, color: CColors.White)
+                                )
+                            ),
+                        new Padding(padding: EdgeInsets.only(top: 8)),
+                        new Divider(height: 1, color: CColors.White),
+                        new Padding(padding: EdgeInsets.only(top: 11)),
+                        new Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: new List<Widget>
+                            {
+                                new Text(
+                                    data: "弹幕可见",
+                                    style: new TextStyle(
+                                        color: CColors.White,
+                                        fontSize: 14,
+                                        fontFamily: "Roboto-regular",
+                                        fontWeight: FontWeight.w100,
+                                        decoration: TextDecoration.none
+                                        )
+                                    ),
+                                new SizedBox(
+                                    //width: 44,
+                                    height: 24,
+                                    child: new CupertinoSwitch(
+                                        value: true,
+                                        onChanged: value=>{ })
+                                    ),
+                            }),
+                        new Padding(padding: EdgeInsets.only(top: 16)),
+                        new Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: new List<Widget>
+                            {
+                                new Text(
+                                    data: "点云可见",
+                                    style: new TextStyle(
+                                        color: CColors.White,
+                                        fontSize: 14,
+                                        fontFamily: "Roboto-regular",
+                                        fontWeight: FontWeight.w100,
+                                        decoration: TextDecoration.none
+                                        )
+                                    ),
+                                new SizedBox(
+                                    //width: 44, 
+                                    height: 24,
+                                    child: new CupertinoSwitch(
+                                        value: true,
+                                        onChanged: value=>{ })
+                                    ),
+                            }),
+                        new Padding(padding: EdgeInsets.only(top: 16)),
+                        new Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: new List<Widget>
+                            {
+                                new Text(
+                                    data: "视频播放",
+                                    style: new TextStyle(
+                                        color: CColors.White,
+                                        fontSize: 14,
+                                        fontFamily: "Roboto-regular",
+                                        fontWeight: FontWeight.w100,
+                                        decoration: TextDecoration.none
+                                        )
+                                    ),
+                                new SizedBox(
+                                    //width: 44,
+                                    height: 24,
+                                    child: new CupertinoSwitch(
+                                        value: true,
+                                        onChanged: value=>{ })
+                                    ),
+                            }),
+                        new Padding(padding: EdgeInsets.only(top: 16)),
+                        new Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: new List<Widget>
+                            {
+                                new Text(
+                                    data: "自由移动",
+                                    style: new TextStyle(
+                                        color: CColors.White,
+                                        fontSize: 14,
+                                        fontFamily: "Roboto-regular",
+                                        fontWeight: FontWeight.w100,
+                                        decoration: TextDecoration.none
+                                        )
+                                    ),
+                                new SizedBox(
+                                    //width: 44,
+                                    height: 24,
+                                    child: new CupertinoSwitch(
+                                        value: true,
+                                        onChanged: value=>{ })
+                                    ),
+                            }),
+                        new Padding(padding: EdgeInsets.only(top: 21)),
+                        new Divider(height: 1, color: CColors.White),
+                        new Padding(padding: EdgeInsets.only(top: 7)),
+                        new Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: new List<Widget>
+                            {
+                                new Text(
+                                    data: "自动保存地图",
+                                    style: new TextStyle(
+                                        color: CColors.White,
+                                        fontSize: 14,
+                                        fontFamily: "Roboto-regular",
+                                        fontWeight: FontWeight.w100,
+                                        decoration: TextDecoration.none
+                                        )
+                                    ),
+                                new SizedBox(
+                                   //width: 44,
+                                    height: 24,
+                                    child: new CupertinoSwitch(
+                                        value: true,
+                                        onChanged: value=>{ })
+                                    ),
+                            }),
+                        new Padding(padding: EdgeInsets.only(top: 16)),
+                        new Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: new List<Widget>
+                            {
+                                new Text(
+                                    data: "点云数量",
+                                    style: new TextStyle(
+                                        color: CColors.White,
+                                        fontSize: 14,
+                                        fontFamily: "Roboto-regular",
+                                        fontWeight: FontWeight.w100,
+                                        decoration: TextDecoration.none
+                                        )
+                                    ),
+                                new Text(
+                                    data: "1000",
+                                    style: new TextStyle(
+                                        color: CColors.White,
+                                        fontSize: 12,
+                                        fontFamily: "Roboto-regular",
+                                        fontWeight: FontWeight.w100,
+                                        decoration: TextDecoration.none
+                                        )
+                                    ),
+                            }),
+                        new Padding(padding: EdgeInsets.only(top: 7)),
+                        new Slider(value: pointCloudProgress, onChanged:value =>{setState(()=>{ pointCloudProgress=value;}); }, activeColor: CColors.Blue, inactiveColor: CColors.Black),
+                    })
+                );
+        }
         public override Widget build(BuildContext context)
         {
             return new Container(
@@ -776,10 +956,16 @@ namespace TapOn.Screens
                             top: 5,
                             right: 23,
                             child: new IconButton(
+                                onPressed:()=>{setState(()=>{settingDown = true; }); },
                                 color: CColors.Transparent,
                                 iconSize: 36,
                                 icon: new Icon(icon: MyIcons.settings, color: CColors.White)
                                 )
+                            ),
+                        new Positioned(
+                            top: 0,
+                            right: 12,
+                            child: _setting()
                             ),
                     })
                 );
