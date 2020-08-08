@@ -172,7 +172,7 @@ namespace AREffect
                 var video = selection.GetComponentInChildren<VideoPlayerAgent>(true);
                 if (video) { video.Playable = true; }
             }
-            if(selection.name == "NameCard(Clone)")
+            if(selection.tag == "texture")
             {
                 var meshFilter = selection.GetComponentInChildren<MeshFilter>();
                 OutlinePrefab.SetActive(true);
@@ -180,7 +180,7 @@ namespace AREffect
                 OutlinePrefab.transform.parent = meshFilter.transform;
                 
             }
-            else if(selection.name == "Word(Clone)")
+            else if(selection.name == "word")
             {
                 var TextMesh = selection.GetComponentInChildren<TextMesh>();
                 OutlinePrefab.SetActive(false);
