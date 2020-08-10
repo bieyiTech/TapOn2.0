@@ -55,12 +55,12 @@ namespace AREffect
 
                 if (!isOnMap)
                 {
-                    Debug.Log("candidate is false");
+                    //Debug.Log("candidate is false");
                     candidate.SetActive(false);
                 }
                 else
                 {
-                    Debug.Log("candidate is true");
+                    //Debug.Log("candidate is true");
                     candidate.SetActive(true);
                 }
 

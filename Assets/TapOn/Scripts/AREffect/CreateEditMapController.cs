@@ -30,6 +30,8 @@ namespace AREffect
         private int tempCount = 0;
         private int tempInfoCount = 0;
 
+        private List<Coroutine> coroutines = new List<Coroutine>();
+
         private void Awake()
         {
             PropDragger.CreateObject += (gameObj) =>
@@ -109,7 +111,7 @@ namespace AREffect
             {
                 return;
             }
-            SaveMapMeta();
+            StartCoroutine(SaveMapMeta());
             //Snapshot();
             // 保存到云端
             // (图片)capturedImage
@@ -128,12 +130,12 @@ namespace AREffect
             BmobApi.addMarktoServer(mark);
         }
         
-        public void SaveMapMeta()
+        public IEnumerator SaveMapMeta()
         {
-            if (mapData == null)
-            {
-                return;
-            }
+            //if (mapData == null)
+            //{
+            //    return;
+            //}
 
             Debug.Log("length: " + mapData.Props.Count);
 
@@ -190,6 +192,7 @@ namespace AREffect
                                 Debug.Log("info_byte is null");
                         }
                         //info_byte = prop.GetComponentInChildren<MeshRenderer>().material.mainTexture.
+                        coroutines.Add(
                         StartCoroutine(
                             TapOnUtils.upLoadFile(
                                 "NameCard_" + (tempInfoCount++) + "_"+ DateTime.Now.ToString() + ".jpg",
@@ -211,7 +214,7 @@ namespace AREffect
                                         infoUrl = infoTemp.url,
                                     });
                                 })
-                            );
+                            ));
                     }
                     else if ("Video(Clone)" == prop.name)
                     {
@@ -228,6 +231,10 @@ namespace AREffect
                         typeTemp = MapMeta.PropType.other;
                     }
                 }
+            }
+            foreach(var cor in coroutines)
+            {
+                yield return cor;
             }
             mapData.Meta.Props = propInfos;
             // 保存到本地

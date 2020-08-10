@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 using TapOn.Constants;
+using Unity.UIWidgets.ui;
+using Unity.UIWidgets.async;
 
 namespace AREffect
 {
@@ -135,6 +137,7 @@ namespace AREffect
                             case MapMeta.PropType.Texture:
                                 prop = UnityEngine.Object.Instantiate(Globals.instance.templetes[1]);
                                 // 获取纹理
+                                Window.instance.startCoroutine(LoadTexture(propInfo.infoUrl, propInfo.infoFileName, prop));
                                 //StartCoroutine(LoadTexture(propInfo.infoUrl, propInfo.infoFileName, prop));
                                 break;
                             case MapMeta.PropType.Video:
@@ -192,9 +195,8 @@ namespace AREffect
             // 存储texture 到本地。
 
         }
-
-
-        public void Save(string name, Optional<Image> preview)
+        
+        public void Save(string name, Optional<easyar.Image> preview)
         {
             IsSaving = true;
             MapWorker.BuilderMapController.MapHost += (map, isSuccessful, error) =>

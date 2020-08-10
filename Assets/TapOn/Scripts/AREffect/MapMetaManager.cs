@@ -31,7 +31,7 @@ namespace AREffect
 
             return metas;
         }
-
+        
         public static MapMeta LoadMeta(string id)
         {
             return JsonUtility.FromJson<MapMeta>(File.ReadAllText(GetPath(id)));
