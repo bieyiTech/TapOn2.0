@@ -15,12 +15,19 @@ namespace TapOn.Utils
             if (after != null) after();
         }
 
-        public static IEnumerator getWWW(string url, Action<UnityWebRequest> after)
+        public static IEnumerator downloadFile(string url, Action<UnityWebRequest> after)
         {
             UnityWebRequest webRequest = UnityWebRequest.Get(url);
             webRequest.timeout = 30;
             yield return webRequest.SendWebRequest();
-            after(webRequest);
+            if (webRequest.isHttpError || webRequest.isNetworkError)
+            {
+                Debug.LogError("FileUploadError: " + webRequest.error + "\nreturn: " + webRequest.downloadHandler.text);
+            }
+            else
+            {
+                after(webRequest);
+            }
         }
 
         public static IEnumerator upLoadFile(string fileName, string contentType, string localPath, Action<UnityWebRequest> after)

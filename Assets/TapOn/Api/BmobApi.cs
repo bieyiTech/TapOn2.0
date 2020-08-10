@@ -1,4 +1,5 @@
-﻿using cn.bmob.api;
+﻿using AREffect;
+using cn.bmob.api;
 using cn.bmob.io;
 using cn.bmob.response;
 using RSG;
@@ -64,6 +65,21 @@ namespace TapOn.Api
                 });
         }
 
+        public static IEnumerator getMetaFile(BmobFile metaFile, Action<MapMeta> after)
+        {
+            yield return TapOnUtils.downloadFile(
+                metaFile.url,
+                wr => 
+                {
+                    MapMeta meta = JsonUtility.FromJson<MapMeta>(wr.downloadHandler.text);
+                    if(after!=null)
+                    {
+                        after(meta);
+                    }
+
+                });
+        }
+
         public static async void addMarktoServer(Mark mark)
         {
             CreateCallbackData callback_mark = await Bmob.CreateTaskAsync(Mark.table_name, mark);
@@ -125,29 +141,6 @@ namespace TapOn.Api
                                 });
                         }));
             }
-            /*Window.instance.startCoroutine(
-                TapOnUtils.upLoadFile("img_" + DateTime.Now.ToString("yyyy-MM-dd_HHmmss") + ".jpg", "application/x-jpg", mark.snapShot_byte, async (wr) =>
-                {
-                    Restful_FileUpLoadCallBack t = TapOnUtils.fileUpLoadCallBackfromJson(wr.downloadHandler.text);
-                    mark.snapShot = new BmobFile { filename = t.filename, url = t.url };
-                    Window.instance.startCoroutine(TapOnUtils.upLoadFile("Props_" + DateTime.Now.ToString("yyyy-MM-dd_HHmmss") + ".json", "application/json", mark.meta_byte, async(wr1) =>
-                    {
-                        Restful_FileUpLoadCallBack t1 = TapOnUtils.fileUpLoadCallBackfromJson(wr1.downloadHandler.text);
-                        mark.meta = new BmobFile { filename = t1.filename, url = t1.url };
-                        CreateCallbackData callback_mark = await Bmob.CreateTaskAsync(Mark.table_name, mark);
-                        if (callback_mark == null || callback_mark.objectId == null || callback_mark.objectId.Length == 0)
-                            return;
-                        //foreach (Prop prop in mark.props)
-                        //{
-                        //    prop.mark = mark;
-                        //    CreateCallbackData callback_prop = await Bmob.CreateTaskAsync(Prop.table_name, prop);
-                        //}
-                        result = true;
-                    }));
-
-                        
-                })
-                );*/
         }
 
         /*public static IPromise<List<Mark>> queryFuzzyMarks(Coordinate coodinate, int limit)
