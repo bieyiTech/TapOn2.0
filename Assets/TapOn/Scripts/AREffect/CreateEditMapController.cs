@@ -65,11 +65,11 @@ namespace AREffect
             }
             else
             {
-                if (tempCount++ >= 60)
-                {
-                    tempCount = 0;
-                    //Debug.Log("Update: " + mapSession.Maps.Count);
-                }
+                //if (tempCount++ >= 60)
+                //{
+                //    tempCount = 0;
+                //    //Debug.Log("Update: " + mapSession.Maps.Count);
+                //}
 
                 SaveButton.interactable = true;
             }

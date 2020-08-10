@@ -44,8 +44,10 @@ namespace AREffect
                 if (mapSession != null && Input.touchCount > 0)
                 {
                     var point = mapSession.HitTestOne(new Vector2(Input.touches[0].position.x / Screen.width, Input.touches[0].position.y / Screen.height));
+                    Debug.Log(point);
                     if (point.OnSome)
                     {
+                        Debug.Log("point.OnSome");
                         candidate.transform.position = point.Value + Vector3.up * candidate.transform.localScale.y / 2;
                         isOnMap = true;
                     }
@@ -53,12 +55,12 @@ namespace AREffect
 
                 if (!isOnMap)
                 {
-                    //Debug.Log("candidate is false");
+                    Debug.Log("candidate is false");
                     candidate.SetActive(false);
                 }
                 else
                 {
-                    //Debug.Log("candidate is true");
+                    Debug.Log("candidate is true");
                     candidate.SetActive(true);
                 }
 
@@ -72,7 +74,7 @@ namespace AREffect
                     RaycastHit hitInfo;
                     if (Physics.Raycast(ray, out hitInfo))
                     {
-                        Debug.Log("hitInfo: " + hitInfo);
+                        //Debug.Log("hitInfo: " + hitInfo);
                         StopEdit();
                         StartEdit(hitInfo.collider.gameObject);
                     }
@@ -103,6 +105,7 @@ namespace AREffect
         public void SetMapSession(MapSession session)
         {
             mapSession = session;
+            
             if (mapSession.MapWorker)
             {
                 mapSession.MapWorker.MapLoad += (arg1, arg2, arg3, arg4) =>

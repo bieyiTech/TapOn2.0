@@ -69,9 +69,22 @@ namespace AREffect
         {
             CreateSession();
             mapSession.SetupMapBuilder(MapControllerPrefab);
+            createEdit.gameObject.SetActive(true);
+            if(mapSession == null)
+            {
+                Debug.Log("AREffectManager: mapSession is null");
+            }
             createEdit.SetMapSession(mapSession);
             Globals.instance.arDisplay.SetActive(true);
             ShowParticle(true);
+        }
+
+        public void CreateAndEditMapEnd()
+        {
+            createEdit.gameObject.SetActive(false);
+            DestroySession();
+            Globals.instance.arDisplay.SetActive(false);
+            ShowParticle(false);
         }
 
         public void SecondEditMap()
@@ -80,25 +93,46 @@ namespace AREffect
 
         }
 
-        public async void PreviewMap(Mark mark)
+        public IEnumerator PreviewMap(Mark mark)
         {
-            //propinfo的name是什么?
-            List<Prop> props = await BmobApi.getPropsInMark(mark);
-            List<MapMeta.PropInfo> propinfo = new List<MapMeta.PropInfo>();
-            foreach(Prop prop in props)
+            //List<Prop> props = await BmobApi.getPropsInMark(mark);
+            //List<MapMeta.PropInfo> propinfo = new List<MapMeta.PropInfo>();
+            //foreach(Prop prop in props)
+            //{
+            //    propinfo.Add(
+            //        new MapMeta.PropInfo
+            //        {
+            //            Position = new float[3] { (float)prop.pos_x.Get(), (float)prop.pos_y.Get(), (float)prop.pos_z.Get() },
+            //            Rotation = new float[4] { (float)prop.rot_x.Get(), (float)prop.rot_y.Get(), (float)prop.rot_z.Get(), (float)prop.rot_w.Get() },
+            //            Scale = new float[3] { (float)prop.scale_x.Get(), (float)prop.scale_y.Get(), (float)prop.scale_z.Get() },
+
+            //        });
+            //}
+            //selectedMaps.Add(new MapMeta(new SparseSpatialMapController.SparseSpatialMapInfo { ID = mark.MapId, Name = mark.MapName }, propinfo));
+            // Load Meta 文件即可
+            // 如果本地有文件，获取之
+            if(MapMetaManager.isLocal(mark.MapId))
             {
-                propinfo.Add(
-                    new MapMeta.PropInfo
-                    {
-                        Position = new float[3] { (float)prop.pos_x.Get(), (float)prop.pos_y.Get(), (float)prop.pos_z.Get() },
-                        Rotation = new float[4] { (float)prop.rot_x.Get(), (float)prop.rot_y.Get(), (float)prop.rot_z.Get(), (float)prop.rot_w.Get() },
-                        Scale = new float[3] { (float)prop.scale_x.Get(), (float)prop.scale_y.Get(), (float)prop.scale_z.Get() },
-                    });
+                selectedMaps.Add(MapMetaManager.LoadMeta(mark.MapId));
+            }       // 否则，从url获取, 并保存在本地
+            else
+            {
+#pragma warning disable CS0618 // 类型或成员已过时
+                WWW meta = new WWW(mark.metaFile.url);
+#pragma warning restore CS0618 // 类型或成员已过时
+                yield return meta;
+                selectedMaps.Add(JsonUtility.FromJson<MapMeta>(meta.text));
+                // 保存在本地
+                foreach(var m in selectedMaps)
+                {
+                    if(!MapMetaManager.isLocal(m.Map.ID))
+                        MapMetaManager.Save(m);
+                }
             }
-            selectedMaps.Add(new MapMeta(new SparseSpatialMapController.SparseSpatialMapInfo { ID = mark.MapId, Name = mark.MapName }, propinfo));
+            
             CreateSession();
             mapSession.LoadMapMeta(MapControllerPrefab, false);
-            
+            ShowParticle(false);
         }
 
         public void ShowParticle(bool show)
@@ -123,7 +157,6 @@ namespace AREffect
             session = easyarObject.GetComponent<ARSession>();
             vioCamera = easyarObject.GetComponentInChildren<VIOCameraDeviceUnion>();
             mapFrameFilter = easyarObject.GetComponentInChildren<SparseSpatialMapWorkerFrameFilter>();
-
             mapSession = new MapSession(mapFrameFilter, selectedMaps);
         }
 

@@ -11,6 +11,7 @@ using Unity.UIWidgets.widgets;
 using Unity.UIWidgets.material;
 using TapOn.Screens;
 using Unity.UIWidgets.Redux;
+using AREffect;
 
 namespace TapOn.Redux.Reducers {
     public static class AppReducer
@@ -132,6 +133,7 @@ namespace TapOn.Redux.Reducers {
                                     foreach (GameObject mark in t)
                                         mark.SetActive(false);
                                     //Çëuse gameobj.GetComponent<LocationInfo>().mark
+                                    //Globals.instance.arEffect.GetComponent<AREffectManager>().PreviewMap(gameobj.GetComponent<LocationInfo>().mark);
                                     return new StoreProvider<AppState>(
                                         store: StoreProvider.store,
                                         new MaterialApp(
