@@ -34,7 +34,6 @@ namespace AREffect
                     Maps.Add(new MapData() { Meta = meta });
                 }
             }
-            Debug.Log("new MapSession");
         }
 
         ~MapSession()

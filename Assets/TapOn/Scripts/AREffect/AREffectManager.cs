@@ -111,28 +111,36 @@ namespace AREffect
             //selectedMaps.Add(new MapMeta(new SparseSpatialMapController.SparseSpatialMapInfo { ID = mark.MapId, Name = mark.MapName }, propinfo));
             // Load Meta 文件即可
             // 如果本地有文件，获取之
-            if(MapMetaManager.isLocal(mark.MapId))
+            Debug.Log("PreviewMap");
+            var cor = StartCoroutine("LoadMetaFile", mark);
+            CreateSession();
+            yield return cor;
+            mapSession.LoadMapMeta(MapControllerPrefab, false);
+            ShowParticle(false);
+        }
+
+        public IEnumerable LoadMetaFile(Mark mark)
+        {
+            if (MapMetaManager.isLocal(mark.MapId))
             {
+                Debug.Log("is Local");
                 selectedMaps.Add(MapMetaManager.LoadMeta(mark.MapId));
             }       // 否则，从url获取, 并保存在本地
             else
             {
+                Debug.Log("get for url");
 #pragma warning disable CS0618 // 类型或成员已过时
                 WWW meta = new WWW(mark.metaFile.url);
 #pragma warning restore CS0618 // 类型或成员已过时
                 yield return meta;
                 selectedMaps.Add(JsonUtility.FromJson<MapMeta>(meta.text));
                 // 保存在本地
-                foreach(var m in selectedMaps)
+                foreach (var m in selectedMaps)
                 {
-                    if(!MapMetaManager.isLocal(m.Map.ID))
+                    if (!MapMetaManager.isLocal(m.Map.ID))
                         MapMetaManager.Save(m);
                 }
             }
-            
-            CreateSession();
-            mapSession.LoadMapMeta(MapControllerPrefab, false);
-            ShowParticle(false);
         }
 
         public void ShowParticle(bool show)
