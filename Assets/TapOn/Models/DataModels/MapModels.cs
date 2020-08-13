@@ -55,8 +55,10 @@ namespace TapOn.Models.DataModels
         public override void write(BmobOutput output, bool all)
         {
             base.write(output, all);
-
+            
             output.Put("position", coordinate);
+            output.Put("mapID", MapId);
+            output.Put("mapName", MapName);
             //output.Put("userId", userId);
             //output.Put("createdAt", upLoadTime);
             output.Put("snapShot", snapShot);

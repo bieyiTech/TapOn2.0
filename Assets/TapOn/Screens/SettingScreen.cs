@@ -25,6 +25,7 @@ using TapOn.Api;
 using com.unity.uiwidgets.Runtime.rendering;
 using TapOn.Redux;
 using Unity.UIWidgets.cupertino;
+using AREffect;
 
 namespace TapOn.Screens
 {
@@ -548,7 +549,24 @@ namespace TapOn.Screens
                                         {
                                             NativeCall.OpenCamera((Texture2D tex) =>
                                             {
-                                                this.widget.actionModel.AddImageProductFuc(tex, context);
+                                                Texture2D source = tex;
+                                                RenderTexture renderTex = RenderTexture.GetTemporary(
+                                                    source.width,
+                                                    source.height,
+                                                    0,
+                                                    RenderTextureFormat.Default,
+                                                    RenderTextureReadWrite.Linear);
+
+                                                Graphics.Blit(source, renderTex);
+                                                RenderTexture previous = RenderTexture.active;
+                                                RenderTexture.active = renderTex;
+                                                Texture2D readableText = new Texture2D(source.width, source.height);
+                                                readableText.ReadPixels(new UnityEngine.Rect(0, 0, renderTex.width, renderTex.height), 0, 0);
+                                                readableText.Apply();
+                                                RenderTexture.active = previous;
+                                                RenderTexture.ReleaseTemporary(renderTex);
+
+                                                this.widget.actionModel.AddImageProductFuc(readableText, context);
                                             });
                                         }
                                     });
@@ -945,6 +963,7 @@ namespace TapOn.Screens
                                     BuildContext lastContext = Globals.instance.contextStack.Pop();
                                     Navigator.pop(lastContext);
                                     Globals.instance.map.SetActive(true);
+                                    Globals.instance.arEffect.GetComponent<AREffectManager>().CreateAndEditMapEnd();
                                 },
                                 icon: new Icon(
                                     icon: MyIcons.cancel_mine,

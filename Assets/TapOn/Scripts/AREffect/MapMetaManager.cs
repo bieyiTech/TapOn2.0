@@ -14,7 +14,7 @@ namespace AREffect
             var dirRoot = GetRootPath();
             try
             {
-                foreach(var path in Directory.GetFiles(dirRoot, "*.meta"))
+                foreach(var path in Directory.GetFiles(dirRoot, "*.json"))
                 {
                     try
                     {
@@ -30,6 +30,20 @@ namespace AREffect
             }
 
             return metas;
+        }
+        
+        public static MapMeta LoadMeta(string id)
+        {
+            return JsonUtility.FromJson<MapMeta>(File.ReadAllText(GetPath(id)));
+        }
+
+        public static bool isLocal(string id)
+        {
+            if(!File.Exists(GetPath(id)))
+            {
+                return false;
+            }
+            return true;
         }
 
         public static bool Save(MapMeta meta)
@@ -74,7 +88,7 @@ namespace AREffect
 
         public static string GetPath(string id)
         {
-            return GetRootPath() + "/" + id + ".meta";
+            return GetRootPath() + "/" + id + ".json";
         }
     }
 }

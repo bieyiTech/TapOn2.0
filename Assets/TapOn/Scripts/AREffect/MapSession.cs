@@ -9,7 +9,11 @@
 using easyar;
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
+using TapOn.Constants;
+using Unity.UIWidgets.ui;
+using Unity.UIWidgets.async;
 
 namespace AREffect
 {
@@ -114,13 +118,34 @@ namespace AREffect
                     foreach (var propInfo in meta.Props)
                     {
                         GameObject prop = null;
-                        foreach (var templet in PropCollection.Instance.Templets)
+                        //foreach (var templet in PropCollection.Instance.Templets)
+                        //{
+                        //    if (templet.Object.name == propInfo.Name)
+                        //    {
+                        //        prop = UnityEngine.Object.Instantiate(templet.Object);
+                        //        break;
+                        //    }
+                        //}
+                        switch (propInfo.type)
                         {
-                            if (templet.Object.name == propInfo.Name)
-                            {
-                                prop = UnityEngine.Object.Instantiate(templet.Object);
+                            case MapMeta.PropType.Text:
+                                prop = UnityEngine.Object.Instantiate(Globals.instance.templetes[0]);
+                                var textTmp = prop.GetComponentInChildren<TextMesh>().text;
+                                textTmp = propInfo.text;
                                 break;
-                            }
+                            case MapMeta.PropType.Texture:
+                                prop = UnityEngine.Object.Instantiate(Globals.instance.templetes[1]);
+                                // 获取纹理
+                                Window.instance.startCoroutine(LoadTexture(propInfo.infoUrl, propInfo.infoFileName, prop));
+                                //StartCoroutine(LoadTexture(propInfo.infoUrl, propInfo.infoFileName, prop));
+                                break;
+                            case MapMeta.PropType.Video:
+                                break;
+                            case MapMeta.PropType.Model:
+                                break;
+                            case MapMeta.PropType.other:
+                                Debug.LogError("error: The PropType is other");
+                                break;
                         }
                         if (!prop)
                         {
@@ -155,9 +180,22 @@ namespace AREffect
             }
             MapWorker.Localizer.startLocalization();
         }
+        
+        public IEnumerator LoadTexture(string url, string filename, GameObject prop)
+        {
+            // 判定texture是否本地存在
 
+#pragma warning disable CS0618 // 类型或成员已过时
+            WWW www = new WWW(url);
+#pragma warning restore CS0618 // 类型或成员已过时
+            yield return www;
 
-        public void Save(string name, Optional<Image> preview)
+            prop.GetComponentInChildren<MeshRenderer>().material.mainTexture = www.texture;
+            // 存储texture 到本地。
+
+        }
+        
+        public void Save(string name, Optional<easyar.Image> preview)
         {
             IsSaving = true;
             MapWorker.BuilderMapController.MapHost += (map, isSuccessful, error) =>

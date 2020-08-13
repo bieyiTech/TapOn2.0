@@ -44,8 +44,10 @@ namespace AREffect
                 if (mapSession != null && Input.touchCount > 0)
                 {
                     var point = mapSession.HitTestOne(new Vector2(Input.touches[0].position.x / Screen.width, Input.touches[0].position.y / Screen.height));
+                    Debug.Log(point);
                     if (point.OnSome)
                     {
+                        Debug.Log("point.OnSome");
                         candidate.transform.position = point.Value + Vector3.up * candidate.transform.localScale.y / 2;
                         isOnMap = true;
                     }
@@ -72,7 +74,7 @@ namespace AREffect
                     RaycastHit hitInfo;
                     if (Physics.Raycast(ray, out hitInfo))
                     {
-                        Debug.Log("hitInfo: " + hitInfo);
+                        //Debug.Log("hitInfo: " + hitInfo);
                         StopEdit();
                         StartEdit(hitInfo.collider.gameObject);
                     }
@@ -103,6 +105,7 @@ namespace AREffect
         public void SetMapSession(MapSession session)
         {
             mapSession = session;
+            
             if (mapSession.MapWorker)
             {
                 mapSession.MapWorker.MapLoad += (arg1, arg2, arg3, arg4) =>
@@ -172,7 +175,7 @@ namespace AREffect
                 var video = selection.GetComponentInChildren<VideoPlayerAgent>(true);
                 if (video) { video.Playable = true; }
             }
-            if(selection.name == "NameCard(Clone)")
+            if(selection.tag == "texture")
             {
                 var meshFilter = selection.GetComponentInChildren<MeshFilter>();
                 OutlinePrefab.SetActive(true);
@@ -180,7 +183,7 @@ namespace AREffect
                 OutlinePrefab.transform.parent = meshFilter.transform;
                 
             }
-            else if(selection.name == "Word(Clone)")
+            else if(selection.name == "word")
             {
                 var TextMesh = selection.GetComponentInChildren<TextMesh>();
                 OutlinePrefab.SetActive(false);
