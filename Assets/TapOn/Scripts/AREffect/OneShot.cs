@@ -36,8 +36,8 @@ namespace AREffect
             }
 
             RenderTexture.active = destTexture;
-            var texture = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
-            texture.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+            var texture = new Texture2D(200, 200, TextureFormat.RGB24, false);
+            texture.ReadPixels(new Rect(Screen.width-100, Screen.height-100, 200, 200), 0, 0);
             texture.Apply();
             RenderTexture.active = null;
             Destroy(destTexture);

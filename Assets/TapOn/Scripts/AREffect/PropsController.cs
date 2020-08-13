@@ -44,10 +44,10 @@ namespace AREffect
                 if (mapSession != null && Input.touchCount > 0)
                 {
                     var point = mapSession.HitTestOne(new Vector2(Input.touches[0].position.x / Screen.width, Input.touches[0].position.y / Screen.height));
-                    Debug.Log(point);
+                    //Debug.Log(point);
                     if (point.OnSome)
                     {
-                        Debug.Log("point.OnSome");
+                        //Debug.Log("point.OnSome");
                         candidate.transform.position = point.Value + Vector3.up * candidate.transform.localScale.y / 2;
                         isOnMap = true;
                     }

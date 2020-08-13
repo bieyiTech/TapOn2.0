@@ -16,10 +16,10 @@ namespace AREffect
     public class CreateEditMapController : MonoBehaviour
     {
         public PropsController PropDragger;
-        public Button SaveButton;
+        //public Button SaveButton;
         public RawImage PreviewImage;
         public SparseSpatialMapController MapControllerPrefab;
-        public GameObject UploadPopup;
+        //public GameObject UploadPopup;
         public static bool SnapShotDone = false;
         
         private MapSession mapSession;
@@ -30,7 +30,7 @@ namespace AREffect
         private int uploadingTime;
         private int tempCount = 0;
         private int tempInfoCount = 0;
-        private int pointCloudMaxNumber = 500;
+        private int pointCloudMaxNumber = 300;
         private bool buildSuccess = false;
 
         private List<Coroutine> coroutines = new List<Coroutine>();
@@ -56,9 +56,9 @@ namespace AREffect
 
         private void OnEnable()
         {
-            SaveButton.gameObject.SetActive(true);
-            SaveButton.interactable = false;
-            UploadPopup.SetActive(false);
+            //SaveButton.gameObject.SetActive(true);
+            //SaveButton.interactable = false;
+            //UploadPopup.SetActive(false)
         }
 
         private void Update()
@@ -66,7 +66,7 @@ namespace AREffect
             if ((mapSession.MapWorker.LocalizedMap == null || mapSession.MapWorker.LocalizedMap.PointCloud.Count <= 20) && !Application.isEditor
                 || mapSession.IsSaving || mapSession.Saved)
             {
-                SaveButton.interactable = false;
+                //SaveButton.interactable = false;
             }
             else
             {
@@ -76,7 +76,7 @@ namespace AREffect
                 //    //Debug.Log("Update: " + mapSession.Maps.Count);
                 //}
 
-                SaveButton.interactable = true;
+                //SaveButton.interactable = true;
                 if (!buildSuccess && mapSession.MapWorker.LocalizedMap.PointCloud.Count >= pointCloudMaxNumber)
                 {
                     StartCoroutine(Upload());
@@ -116,7 +116,7 @@ namespace AREffect
                 mapSession.Save(mapName, withPreview ? image : null);
             }
             //mapSession.Save(mapName, null);
-            StartCoroutine(SavingStatus());
+            //StartCoroutine(SavingStatus());
             StartCoroutine(Saving());
         }
 
@@ -291,24 +291,24 @@ namespace AREffect
             }
             else
             {
-                var buttonText = SaveButton.GetComponentInChildren<Text>();
-                buttonText.text = "Retry";
+                //var buttonText = SaveButton.GetComponentInChildren<Text>();
+                //buttonText.text = "Retry";
             }
         }
 
-        private IEnumerator SavingStatus()
-        {
-            var buttonText = SaveButton.GetComponentInChildren<Text>();
-            while(mapSession.IsSaving)
-            {
-                buttonText.text = "Saving";
-                for(int i = 0; i < uploadingTime; i++)
-                {
-                    buttonText.text += ".";
-                }
-                uploadingTime = (uploadingTime + 1) % 3;
-                yield return new WaitForSeconds(1);
-            }
-        }
+        //private IEnumerator SavingStatus()
+        //{
+        //    var buttonText = SaveButton.GetComponentInChildren<Text>();
+        //    while(mapSession.IsSaving)
+        //    {
+        //        buttonText.text = "Saving";
+        //        for(int i = 0; i < uploadingTime; i++)
+        //        {
+        //            buttonText.text += ".";
+        //        }
+        //        uploadingTime = (uploadingTime + 1) % 3;
+        //        yield return new WaitForSeconds(1);
+        //    }
+        //}
     }
 }

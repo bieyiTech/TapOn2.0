@@ -16,7 +16,7 @@ namespace AREffect
         public GameObject EasyARSession;
         public SparseSpatialMapController MapControllerPrefab;
         public Text Status;
-        public Toggle PointCloudUI;
+        //public Toggle PointCloudUI;
         public CreateEditMapController createEdit;
 
         private GameObject easyarObject;
@@ -48,11 +48,11 @@ namespace AREffect
                     "\tPoint Cloud Count: " + (mapFrameFilter.LocalizedMap == null ? "-" : mapFrameFilter.LocalizedMap.PointCloud.Count.ToString());
                 if (mapFrameFilter.LocalizedMap == null)
                 {
-                    PointCloudUI.gameObject.SetActive(false);
+                    //PointCloudUI.gameObject.SetActive(false);
                 }
                 else
                 {
-                    PointCloudUI.gameObject.SetActive(true);
+                    //PointCloudUI.gameObject.SetActive(true);
                 }
             }
             else
@@ -113,6 +113,7 @@ namespace AREffect
             // 如果本地有文件，获取之
             Debug.Log("PreviewMap");
             var cor = StartCoroutine("LoadMetaFile", mark);
+            Debug.Log("After LoadMetaFile");
             CreateSession();
             yield return cor;
             mapSession.LoadMapMeta(MapControllerPrefab, false);
@@ -121,6 +122,10 @@ namespace AREffect
 
         public IEnumerable LoadMetaFile(Mark mark)
         {
+            Debug.Log("LoadMetaFile");
+            Debug.Log(mark.MapId);
+            Debug.Log(mark.MapName);
+
             if (MapMetaManager.isLocal(mark.MapId))
             {
                 Debug.Log("is Local");
