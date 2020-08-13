@@ -34,6 +34,7 @@ namespace TapOn.Main
         protected override void OnEnable()
         {
             base.OnEnable();
+            StartCoroutine(TapOnUtils.startGPS());
             //Debuger.EnableLog = Config.enableDebug;
             Screen.fullScreen = false;
             Screen.orientation = ScreenOrientation.Portrait;

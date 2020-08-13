@@ -15,12 +15,19 @@ namespace TapOn.Utils
             if (after != null) after();
         }
 
-        public static IEnumerator getWWW(string url, Action<UnityWebRequest> after)
+        public static IEnumerator downloadFile(string url, Action<UnityWebRequest> after)
         {
             UnityWebRequest webRequest = UnityWebRequest.Get(url);
             webRequest.timeout = 30;
             yield return webRequest.SendWebRequest();
-            after(webRequest);
+            if (webRequest.isHttpError || webRequest.isNetworkError)
+            {
+                Debug.LogError("FileUploadError: " + webRequest.error + "\nreturn: " + webRequest.downloadHandler.text);
+            }
+            else
+            {
+                after(webRequest);
+            }
         }
 
         public static IEnumerator upLoadFile(string fileName, string contentType, string localPath, Action<UnityWebRequest> after)
@@ -66,6 +73,45 @@ namespace TapOn.Utils
         public static Restful_FileUpLoadCallBack fileUpLoadCallBackfromJson(string jsonText)
         {
             return JsonUtility.FromJson<Restful_FileUpLoadCallBack>(jsonText);
+        }
+
+        public static UnityEngine.LocationInfo nowLocation
+        { get { return Input.location.lastData; } }
+
+        public static IEnumerator startGPS()
+        {
+            if (!Input.location.isEnabledByUser)
+            {
+                Debug.Log("GPS服务未启用");
+            }
+
+            Input.location.Start(10.0f, 10.0f);
+
+            int maxWait = 20;
+            while (Input.location.status == LocationServiceStatus.Initializing && maxWait > 0)
+            {
+                yield return new WaitForSeconds(1);
+                maxWait--;
+            }
+
+            if (maxWait < 1)
+            {
+                Debug.Log("GPS服务启动超时");
+            }
+
+            if (Input.location.status == LocationServiceStatus.Failed)
+            {
+                Debug.Log("GPS服务无法确定位置");
+            }
+            else
+            {
+                yield return new WaitForSeconds(100);
+            }
+        }
+
+        public static void stopGPS()
+        {
+            Input.location.Stop();
         }
     }
 
