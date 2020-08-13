@@ -17,6 +17,7 @@ public class MarkManager : MonoBehaviour
         Vector3 pos = Globals.instance.mapController.ConvertCoordinateToWorld(new TencentMap.CoordinateSystem.Coordinate(mark.coordinate.Latitude.Get(), mark.coordinate.Longitude.Get()));
 
         GameObject tempMark = (GameObject)Instantiate(Globals.instance.marker, GetComponent<MarkManager>().transform, true);
+        tempMark.transform.localScale *= 2.0f;
         tempMark.transform.position = pos + 0.5f * new Vector3(0, 1, tempMark.transform.localScale.y * tempMark.GetComponent<SpriteRenderer>().bounds.size.y);
         tempMark.GetComponent<Renderer>().sortingOrder = 1;
         tempMark.GetComponent<LocationInfo>().mark = mark;
