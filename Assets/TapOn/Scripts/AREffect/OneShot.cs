@@ -8,6 +8,7 @@
 
 using System;
 using UnityEngine;
+using System.Collections;
 
 namespace AREffect
 {
@@ -16,7 +17,7 @@ namespace AREffect
         private bool mirror;
         private Action<Texture2D> callback;
         private bool capturing;
-
+        
         public void OnRenderImage(RenderTexture source, RenderTexture destination)
         {
             Graphics.Blit(source, destination);
@@ -42,6 +43,7 @@ namespace AREffect
             Destroy(destTexture);
 
             callback(texture);
+            CreateEditMapController.SnapShotDone = true;
             Destroy(this);
         }
 

@@ -15,6 +15,7 @@ using TapOn.Models.States;
 using TapOn.Models.ViewModels;
 using TapOn.Models.ActionModels;
 using Unity.UIWidgets.foundation;
+using Unity.UIWidgets.async;
 
 namespace TapOn.Screens
 {
@@ -135,7 +136,7 @@ namespace TapOn.Screens
                         child: new FlatButton(
                             //minSize: 24,
                             onPressed: ()=>{
-                                Globals.instance.CreateEdit.SaveEdit();
+                                Window.instance.startCoroutine(Globals.instance.CreateEdit.SaveEdit());
                             },
                             disabledColor: CColors.WeChatGreen,
                             color: CColors.WeChatGreen, 

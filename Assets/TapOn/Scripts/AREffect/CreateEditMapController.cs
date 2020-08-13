@@ -20,7 +20,8 @@ namespace AREffect
         public RawImage PreviewImage;
         public SparseSpatialMapController MapControllerPrefab;
         public GameObject UploadPopup;
-
+        public static bool SnapShotDone = false;
+        
         private MapSession mapSession;
         private MapSession.MapData mapData;
         private bool withPreview = true;
@@ -29,6 +30,8 @@ namespace AREffect
         private int uploadingTime;
         private int tempCount = 0;
         private int tempInfoCount = 0;
+        private int pointCloudMaxNumber = 500;
+        private bool buildSuccess = false;
 
         private List<Coroutine> coroutines = new List<Coroutine>();
 
@@ -74,7 +77,18 @@ namespace AREffect
                 //}
 
                 SaveButton.interactable = true;
+                if (!buildSuccess && mapSession.MapWorker.LocalizedMap.PointCloud.Count >= pointCloudMaxNumber)
+                {
+                    StartCoroutine(Upload());
+                    buildSuccess = true;
+                }
             }
+
+            //if(!buildSuccess && mapSession.MapWorker.LocalizedMap.PointCloud.Count >= pointCloudMaxNumber)
+            //{
+            //    StartCoroutine(Upload());
+            //    buildSuccess = true;
+            //}
         }
 
         private void OnDestroy()
@@ -91,13 +105,17 @@ namespace AREffect
             PropDragger.SetMapSession(session);
         }
 
-        public void Upload()
+        public IEnumerator Upload()
         {
-            Snapshot();
+            yield return StartCoroutine(Snapshot());
             mapSession.MapWorker.enabled = false;
             mapName = "Map_" + DateTime.Now.ToString("yyyy-MM-dd_HHmmss");
-
-            mapSession.Save(mapName, null);
+            using (var buffer = easyar.Buffer.wrapByteArray(capturedImage.GetRawTextureData()))
+            using (var image = new easyar.Image(buffer, PixelFormat.RGB888, capturedImage.width, capturedImage.height))
+            {
+                mapSession.Save(mapName, withPreview ? image : null);
+            }
+            //mapSession.Save(mapName, null);
             StartCoroutine(SavingStatus());
             StartCoroutine(Saving());
         }
@@ -105,14 +123,14 @@ namespace AREffect
         /// <summary>
         /// 保存创作
         /// </summary>
-        public void SaveEdit()
+        public IEnumerator SaveEdit()
         {
             if (mapData == null)
             {
-                return;
+                yield break;
             }
             StartCoroutine(SaveMapMeta());
-            //Snapshot();
+            yield return StartCoroutine(Snapshot());
             // 保存到云端
             // (图片)capturedImage
             // (ID)mapData.Meta.Map.ID
@@ -242,7 +260,7 @@ namespace AREffect
 
         }
 
-        public void Snapshot()
+        public IEnumerator Snapshot()
         {
             var oneShot = Camera.main.gameObject.AddComponent<OneShot>();
             oneShot.Shot(false, (texture) =>
@@ -254,6 +272,8 @@ namespace AREffect
                 capturedImage = texture;
                 PreviewImage.texture = capturedImage;
             });
+            yield return new WaitUntil(() => SnapShotDone);
+            SnapShotDone = false;
         }
 
         private IEnumerator Saving()
