@@ -95,27 +95,10 @@ namespace AREffect
 
         public IEnumerator PreviewMap(Mark mark)
         {
-            //List<Prop> props = await BmobApi.getPropsInMark(mark);
-            //List<MapMeta.PropInfo> propinfo = new List<MapMeta.PropInfo>();
-            //foreach(Prop prop in props)
-            //{
-            //    propinfo.Add(
-            //        new MapMeta.PropInfo
-            //        {
-            //            Position = new float[3] { (float)prop.pos_x.Get(), (float)prop.pos_y.Get(), (float)prop.pos_z.Get() },
-            //            Rotation = new float[4] { (float)prop.rot_x.Get(), (float)prop.rot_y.Get(), (float)prop.rot_z.Get(), (float)prop.rot_w.Get() },
-            //            Scale = new float[3] { (float)prop.scale_x.Get(), (float)prop.scale_y.Get(), (float)prop.scale_z.Get() },
-
-            //        });
-            //}
-            //selectedMaps.Add(new MapMeta(new SparseSpatialMapController.SparseSpatialMapInfo { ID = mark.MapId, Name = mark.MapName }, propinfo));
-            // Load Meta 文件即可
-            // 如果本地有文件，获取之
             Debug.Log("PreviewMap");
-            var cor = StartCoroutine("LoadMetaFile", mark);
+            yield return  StartCoroutine("LoadMetaFile", mark);
             Debug.Log("After LoadMetaFile");
             CreateSession();
-            yield return cor;
             mapSession.LoadMapMeta(MapControllerPrefab, false);
             ShowParticle(false);
         }
