@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4689196882503348}
   - component: {fileID: 65931139436802030}
+  - component: {fileID: 1510390533453273609}
   m_Layer: 0
   m_Name: NameCard
   m_TagString: texture
@@ -45,6 +46,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2, y: 1.2, z: 0.01}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1510390533453273609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1247814007805120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d35b1bbef463eed4abff9e88dd5e9f4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1846920101802288
 GameObject:
   m_ObjectHideFlags: 0

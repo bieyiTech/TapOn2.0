@@ -151,7 +151,7 @@ namespace TapOn.Redux.Actions
                 }
                 dispatcher.dispatch(new ChangeProductIndexAction());
                 dispatcher.dispatch(new ChangeAppearStateAction { state = false, index = 2 });
-                if (Window.instance == null) Debug.Log("nu");
+                if (Window.instance == null) Debug.Log("null");
                 using (Unity.UIWidgets.widgets.WindowProvider.of(context).getScope())
                 {
                     Window.instance.startCoroutine(

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using System;
+using AREffect;
 
 public class SnapShotLoad : MonoBehaviour
 {
@@ -18,14 +19,21 @@ public class SnapShotLoad : MonoBehaviour
     public IEnumerator LoadSnapShot(string url, string fileName, string dic, GameObject Mark)
     {
 #pragma warning disable CS0618 // 类型或成员已过时
-        WWW www = new WWW(url);
+        WWW www;
+        if (MapMetaManager.isTextureInLocal(fileName))
+        {
+            www = new WWW("file://" + MapMetaManager.PathForFile(fileName, "picture"));
+            //Debug.Log("get from local");
+        }
+        else
+        {
+            www = new WWW(url);
+            //Debug.Log("get from url");
+        }
 #pragma warning restore CS0618 // 类型或成员已过时
         yield return www;
 
-        byte[] bytes = www.texture.EncodeToJPG();
-        string path = PathForFile(fileName, dic);
-
-        File.WriteAllBytes(path, bytes);
+        MapMetaManager.SaveTextureToLocal(www.texture, fileName);
 
         Sprite tempSp = Sprite.Create(www.texture, new Rect(0, 0, 200, 200), new Vector2(0.5f, 0.5f));
 
@@ -45,53 +53,5 @@ public class SnapShotLoad : MonoBehaviour
         tempSprite.AddComponent<SpriteMask>().sprite = spriteMaskCircle;
 
     }
-
     
-
-    /// <summary>
-    /// 在不同平台保存
-    /// </summary>
-    /// <param name="filename"></param>
-    /// <param name="dic"></param>
-    /// <returns></returns>
-    private string PathForFile(string filename, string dic)
-    {
-
-        if(Application.platform == RuntimePlatform.IPhonePlayer)
-        {
-            string path = Application.persistentDataPath.Substring(0, Application.persistentDataPath.Length - 5);
-            path = path.Substring(0, path.LastIndexOf('/'));
-            path = Path.Combine(path, "Documents");
-            path = Path.Combine(path, dic);
-            if(!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-            return Path.Combine(path, filename);
-        }
-        else if(Application.platform == RuntimePlatform.Android)
-        {
-            string path = Application.persistentDataPath;
-            path = path.Substring(0, path.LastIndexOf('/'));
-            path = Path.Combine(path, dic);
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-            return Path.Combine(path, filename);
-        }
-        else
-        {
-            string path = Application.dataPath;
-            path = path.Substring(0, path.LastIndexOf('/'));
-            path = Path.Combine(path, dic);
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-            return Path.Combine(path, filename);
-        }
-    }
-    
-
 }

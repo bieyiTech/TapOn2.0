@@ -46,6 +46,28 @@ namespace AREffect
             return true;
         }
 
+        public static void SaveTextureToLocal(Texture2D tex, string fileName)
+        {
+            if(isTextureInLocal(fileName))
+            {
+                return;
+            }
+            var bytes = tex.EncodeToJPG();
+            var path = PathForFile(fileName, "picture");
+            //Debug.Log("Local Path: " + path);
+            File.WriteAllBytes(path, bytes);
+        }
+
+        public static bool isTextureInLocal(string fileName)
+        {
+            var path = PathForFile(fileName, "picture");
+            if(!File.Exists(path))
+            {
+                return false;
+            }
+            return true;
+        }
+        
         public static bool Save(MapMeta meta)
         {
             try
@@ -89,6 +111,51 @@ namespace AREffect
         public static string GetPath(string id)
         {
             return GetRootPath() + "/" + id + ".json";
+        }
+
+        /// <summary>
+        /// 在不同平台保存
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="dic"></param>
+        /// <returns></returns>
+        public static string PathForFile(string filename, string dic)
+        {
+
+            if (Application.platform == RuntimePlatform.IPhonePlayer)
+            {
+                string path = Application.persistentDataPath.Substring(0, Application.persistentDataPath.Length - 5);
+                path = path.Substring(0, path.LastIndexOf('/'));
+                path = Path.Combine(path, "Documents");
+                path = Path.Combine(path, dic);
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                return Path.Combine(path, filename);
+            }
+            else if (Application.platform == RuntimePlatform.Android)
+            {
+                string path = Application.persistentDataPath;
+                path = path.Substring(0, path.LastIndexOf('/'));
+                path = Path.Combine(path, dic);
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                return Path.Combine(path, filename);
+            }
+            else
+            {
+                string path = Application.dataPath;
+                path = path.Substring(0, path.LastIndexOf('/'));
+                path = Path.Combine(path, dic);
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                return Path.Combine(path, filename);
+            }
         }
     }
 }

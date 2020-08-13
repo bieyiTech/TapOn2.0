@@ -713,6 +713,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 270972707}
+  - component: {fileID: 270972708}
   m_Layer: 0
   m_Name: PreviewMap
   m_TagString: Untagged
@@ -730,9 +731,69 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 285346866}
   m_Father: {fileID: 329550177}
   m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &270972708
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 270972706}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdcb6ca41f6a9f94f9759c9d750be8ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PropDragger: {fileID: 285346865}
+--- !u!1 &285346864
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 285346866}
+  - component: {fileID: 285346865}
+  m_Layer: 0
+  m_Name: PropDragger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &285346865
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 285346864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b331e8b5c13541f4fabccecb0039334d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OutlinePrefab: {fileID: 1769582183519888, guid: 44fe89c0971861f43b7198492dcf6634,
+    type: 3}
+--- !u!4 &285346866
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 285346864}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1113816459}
+  m_Father: {fileID: 270972707}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &329550175
 GameObject:
@@ -767,8 +828,8 @@ MonoBehaviour:
   MapControllerPrefab: {fileID: 114030308909499210, guid: 96cf873901cdf1048a37a20d931f6675,
     type: 3}
   Status: {fileID: 1744270632}
-  PointCloudUI: {fileID: 593478765}
   createEdit: {fileID: 1905660841}
+  previewEdit: {fileID: 270972708}
 --- !u!4 &329550177
 Transform:
   m_ObjectHideFlags: 0
@@ -1670,6 +1731,49 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 942218825, guid: 4122bc4d0d60e034f98f3b4e2782cdee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &1113816458
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1113816459}
+  - component: {fileID: 1113816460}
+  m_Layer: 0
+  m_Name: TouchController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1113816459
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1113816458}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 285346866}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1113816460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1113816458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71ff0b11089cae54bb18073ab2a1f8dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1145670207
@@ -3004,11 +3108,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PropDragger: {fileID: 2056070475}
-  SaveButton: {fileID: 1521252992}
   PreviewImage: {fileID: 720662327}
   MapControllerPrefab: {fileID: 114030308909499210, guid: 96cf873901cdf1048a37a20d931f6675,
     type: 3}
-  UploadPopup: {fileID: 1145670207}
 --- !u!4 &1905660842
 Transform:
   m_ObjectHideFlags: 0
@@ -3147,8 +3249,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OutlinePrefab: {fileID: 1769582183519888, guid: 44fe89c0971861f43b7198492dcf6634,
     type: 3}
-  FreeMove: {fileID: 1599179241}
-  VideoPlayable: {fileID: 1524538421}
 --- !u!1 &2088376061
 GameObject:
   m_ObjectHideFlags: 0
@@ -3334,5 +3434,10 @@ PrefabInstance:
       propertyPath: mapCamera
       value: 
       objectReference: {fileID: 396383552}
+    - target: {fileID: 1261297320423295707, guid: 1949112876b1dc34782673ee40eb4cab,
+        type: 3}
+      propertyPath: PreviewEdit
+      value: 
+      objectReference: {fileID: 270972708}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1949112876b1dc34782673ee40eb4cab, type: 3}

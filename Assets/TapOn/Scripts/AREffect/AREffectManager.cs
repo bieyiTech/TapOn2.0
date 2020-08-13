@@ -7,6 +7,8 @@ using System;
 using TapOn.Constants;
 using TapOn.Models.DataModels;
 using TapOn.Api;
+using Unity.UIWidgets.ui;
+using Unity.UIWidgets.async;
 
 namespace AREffect
 {
@@ -18,6 +20,7 @@ namespace AREffect
         public Text Status;
         //public Toggle PointCloudUI;
         public CreateEditMapController createEdit;
+        public PreviewEditController previewEdit;
 
         private GameObject easyarObject;
         private ARSession session;
@@ -86,29 +89,28 @@ namespace AREffect
             Globals.instance.arDisplay.SetActive(false);
             ShowParticle(false);
         }
-
-        public void SecondEditMap()
-        {
-            CreateSession();
-
-        }
-
+        
         public IEnumerator PreviewMap(Mark mark)
         {
             Debug.Log("PreviewMap");
-            yield return  StartCoroutine("LoadMetaFile", mark);
-            Debug.Log("After LoadMetaFile");
+            previewEdit.gameObject.SetActive(true);
+            yield return Window.instance.startCoroutine(LoadMetaFile(mark));
             CreateSession();
+            previewEdit.SetMapSession(mapSession);
             mapSession.LoadMapMeta(MapControllerPrefab, false);
             ShowParticle(false);
         }
 
-        public IEnumerable LoadMetaFile(Mark mark)
+        public void PreviewMapEnd()
+        {
+            previewEdit.gameObject.SetActive(false);
+            DestroySession();
+        }
+
+        private IEnumerator LoadMetaFile(Mark mark)
         {
             Debug.Log("LoadMetaFile");
-            Debug.Log(mark.MapId);
-            Debug.Log(mark.MapName);
-
+            
             if (MapMetaManager.isLocal(mark.MapId))
             {
                 Debug.Log("is Local");
@@ -116,7 +118,7 @@ namespace AREffect
             }       // 否则，从url获取, 并保存在本地
             else
             {
-                Debug.Log("get for url");
+                Debug.Log("get from url");
 #pragma warning disable CS0618 // 类型或成员已过时
                 WWW meta = new WWW(mark.metaFile.url);
 #pragma warning restore CS0618 // 类型或成员已过时

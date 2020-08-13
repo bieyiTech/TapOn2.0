@@ -10,6 +10,7 @@ using TapOn.Api;
 using System.IO;
 using TapOn.Utils;
 using cn.bmob.io;
+using Unity.UIWidgets.async;
 
 namespace AREffect
 {
@@ -33,7 +34,7 @@ namespace AREffect
         private int pointCloudMaxNumber = 300;
         private bool buildSuccess = false;
 
-        private List<Coroutine> coroutines = new List<Coroutine>();
+        private List<UIWidgetsCoroutine> coroutines = new List<UIWidgetsCoroutine>();
 
         private void Awake()
         {
@@ -129,8 +130,11 @@ namespace AREffect
             {
                 yield break;
             }
-            StartCoroutine(SaveMapMeta());
-            yield return StartCoroutine(Snapshot());
+            var cor1 = Window.instance.startCoroutine(SaveMapMeta());
+            var cor2 = Window.instance.startCoroutine(Snapshot());
+
+            yield return cor1;
+            yield return cor2;
             // 保存到云端
             // (图片)capturedImage
             // (ID)mapData.Meta.Map.ID
@@ -168,8 +172,8 @@ namespace AREffect
                 string textTemp = null;
                 BmobFile infoTemp = null;
 
-                Debug.Log("prop tag" + prop.tag);
-                Debug.Log("prop name" + prop.name);
+                Debug.Log("prop tag: " + prop.tag);
+                Debug.Log("prop name: " + prop.name);
 
                 if ("word" == prop.tag)
                 {
@@ -211,9 +215,9 @@ namespace AREffect
                         }
                         //info_byte = prop.GetComponentInChildren<MeshRenderer>().material.mainTexture.
                         coroutines.Add(
-                        StartCoroutine(
+                        Window.instance.startCoroutine(
                             TapOnUtils.upLoadFile(
-                                "NameCard_" + (tempInfoCount++) + "_"+ DateTime.Now.ToString() + ".jpg",
+                                "NameCard_" + (tempInfoCount++) + "_"+ DateTime.Now.ToString("yyyy-MM-dd_HHmmss") + ".jpg",
                                 "application/x-jpg",
                                 info_byte,
                                 (wr) =>

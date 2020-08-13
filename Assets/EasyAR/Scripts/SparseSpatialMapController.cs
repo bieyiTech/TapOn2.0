@@ -37,7 +37,7 @@ namespace easyar
         private SparseSpatialMapWorkerFrameFilter mapWorker;
         private SparseSpatialMapWorkerFrameFilter loader;
         private bool localized;
-
+        private bool loadTexture = true;
 
         public event Action MapInfoAvailable;
         public event Action MapLocalized;
@@ -45,7 +45,7 @@ namespace easyar
         public event Action<SparseSpatialMapInfo, bool, string> MapLoad;
         public event Action<SparseSpatialMapInfo, bool, string> MapUnload;
         public event Action<SparseSpatialMapInfo, bool, string> MapHost;
-
+        
         public enum ActiveControlStrategy
         {
             HideBeforeLocalized,
@@ -109,7 +109,7 @@ namespace easyar
         {
             PointCloud = new List<Vector3>();
         }
-
+        
         protected virtual void Start()
         {
             if (!IsLocalizing && (ActiveControl == ActiveControlStrategy.HideBeforeLocalized || ActiveControl == ActiveControlStrategy.HideWhenNotLocalizing))

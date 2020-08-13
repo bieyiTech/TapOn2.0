@@ -68,6 +68,7 @@ namespace TapOn.Constants {
         public PropsController dragger;
 
         public CreateEditMapController CreateEdit;
+        public PreviewEditController PreviewEdit;
 
         public Camera mapCamera;
 

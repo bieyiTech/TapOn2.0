@@ -10,9 +10,9 @@ namespace AREffect
     public class PropsController : MonoBehaviour
     {
         public GameObject OutlinePrefab;
-        public GameObject FreeMove;
-        public UnityEngine.UI.Toggle VideoPlayable;
-        
+        //public GameObject FreeMove;
+        //public UnityEngine.UI.Toggle VideoPlayable;
+
         private MapSession mapSession;
         private GameObject candidate;
         private GameObject selection;
@@ -143,7 +143,7 @@ namespace AREffect
                 var video = candidate.GetComponentInChildren<VideoPlayerAgent>(true);
                 if (video) { video.Playable = false; }
             }
-            FreeMove.SetActive(false);
+            //FreeMove.SetActive(false);
             candidate.SetActive(false);
         }
 
@@ -162,7 +162,7 @@ namespace AREffect
             {
                 Destroy(candidate);
             }
-            FreeMove.SetActive(true);
+            //FreeMove.SetActive(true);
             isOnMap = false;
             candidate = null;
         }
@@ -170,11 +170,11 @@ namespace AREffect
         public void StartEdit(GameObject obj)
         {
             selection = obj;
-            if (selection && VideoPlayable.isOn)
-            {
-                var video = selection.GetComponentInChildren<VideoPlayerAgent>(true);
-                if (video) { video.Playable = true; }
-            }
+            //if (selection && VideoPlayable.isOn)
+            //{
+            //    var video = selection.GetComponentInChildren<VideoPlayerAgent>(true);
+            //    if (video) { video.Playable = true; }
+            //}
             if(selection.tag == "texture")
             {
                 var meshFilter = selection.GetComponentInChildren<MeshFilter>();

@@ -49,6 +49,7 @@ namespace TapOn.Models.DataModels
             //userId = input.getString("userId");
             upLoadTime = input.getString("createdAt");
             snapShot = input.getFile("snapShot");
+            metaFile = input.getFile("metaFile");
             //meta = input.getFile("meta");
         }
 

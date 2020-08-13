@@ -21,9 +21,8 @@ namespace AREffect
     {
         public SparseSpatialMapWorkerFrameFilter MapWorker;
         public List<MapData> Maps = new List<MapData>();
-
         private SparseSpatialMapController builderMapController;
-
+        
         public MapSession(SparseSpatialMapWorkerFrameFilter mapWorker, List<MapMeta> maps)
         {
             MapWorker = mapWorker;
@@ -93,9 +92,11 @@ namespace AREffect
                 // In this sample, we are sure about this according to the calling sequence.
                 MapWorker.LocalizerConfig.LocalizationMode = LocalizationMode.KeepUpdate;
             }
+            Debug.Log("Maps.Count: " + Maps.Count);
             foreach (var m in Maps)
             {
                 var meta = m.Meta;
+                
                 var controller = UnityEngine.Object.Instantiate(mapControllerPrefab);
                 controller.SourceType = SparseSpatialMapController.DataSource.MapManager;
                 controller.MapManagerSource = meta.Map;
@@ -113,31 +114,22 @@ namespace AREffect
                         "load map will not trigger a download in this sample." + Environment.NewLine +
                         "Map cache is used (SparseSpatialMapManager.clear not called alone)." + Environment.NewLine +
                         "Statistical request count will not be increased (more details on EasyAR website).", 5);
-
                     // prop info
                     foreach (var propInfo in meta.Props)
                     {
                         GameObject prop = null;
-                        //foreach (var templet in PropCollection.Instance.Templets)
-                        //{
-                        //    if (templet.Object.name == propInfo.Name)
-                        //    {
-                        //        prop = UnityEngine.Object.Instantiate(templet.Object);
-                        //        break;
-                        //    }
-                        //}
+                        Debug.Log("propInfo.type: " + propInfo.type);
                         switch (propInfo.type)
                         {
                             case MapMeta.PropType.Text:
                                 prop = UnityEngine.Object.Instantiate(Globals.instance.templetes[0]);
-                                var textTmp = prop.GetComponentInChildren<TextMesh>().text;
-                                textTmp = propInfo.text;
+
+                                var textTmp = prop.GetComponentInChildren<TextMesh>();
+                                textTmp.text = propInfo.text;
                                 break;
                             case MapMeta.PropType.Texture:
                                 prop = UnityEngine.Object.Instantiate(Globals.instance.templetes[1]);
-                                // 获取纹理
-                                Window.instance.startCoroutine(LoadTexture(propInfo.infoUrl, propInfo.infoFileName, prop));
-                                //StartCoroutine(LoadTexture(propInfo.infoUrl, propInfo.infoFileName, prop));
+                                prop.GetComponent<UrlManager>().SetUrl(propInfo.infoUrl, propInfo.infoFileName, propInfo.type);
                                 break;
                             case MapMeta.PropType.Video:
                                 break;
@@ -152,7 +144,7 @@ namespace AREffect
                             Debug.LogError("Missing prop templet: " + propInfo.Name);
                             continue;
                         }
-                        prop.transform.parent = controller.transform;
+                        prop.transform.SetParent(controller.transform);
                         prop.transform.localPosition = new UnityEngine.Vector3(propInfo.Position[0], propInfo.Position[1], propInfo.Position[2]);
                         prop.transform.localRotation = new Quaternion(propInfo.Rotation[0], propInfo.Rotation[1], propInfo.Rotation[2], propInfo.Rotation[3]);
                         prop.transform.localScale = new UnityEngine.Vector3(propInfo.Scale[0], propInfo.Scale[1], propInfo.Scale[2]);
@@ -160,6 +152,7 @@ namespace AREffect
                         // prop info
                         m.Props.Add(prop);
                     }
+                    
                 };
 
                 controller.MapLocalized += () =>
@@ -179,20 +172,6 @@ namespace AREffect
                 m.Controller = controller;
             }
             MapWorker.Localizer.startLocalization();
-        }
-        
-        public IEnumerator LoadTexture(string url, string filename, GameObject prop)
-        {
-            // 判定texture是否本地存在
-
-#pragma warning disable CS0618 // 类型或成员已过时
-            WWW www = new WWW(url);
-#pragma warning restore CS0618 // 类型或成员已过时
-            yield return www;
-
-            prop.GetComponentInChildren<MeshRenderer>().material.mainTexture = www.texture;
-            // 存储texture 到本地。
-
         }
         
         public void Save(string name, Optional<easyar.Image> preview)
