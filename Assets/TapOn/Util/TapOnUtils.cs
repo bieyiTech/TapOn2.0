@@ -74,6 +74,45 @@ namespace TapOn.Utils
         {
             return JsonUtility.FromJson<Restful_FileUpLoadCallBack>(jsonText);
         }
+
+        public static UnityEngine.LocationInfo nowLocation
+        { get { return Input.location.lastData; } }
+
+        public static IEnumerator startGPS()
+        {
+            if (!Input.location.isEnabledByUser)
+            {
+                Debug.Log("GPS服务未启用");
+            }
+
+            Input.location.Start(10.0f, 10.0f);
+
+            int maxWait = 20;
+            while (Input.location.status == LocationServiceStatus.Initializing && maxWait > 0)
+            {
+                yield return new WaitForSeconds(1);
+                maxWait--;
+            }
+
+            if (maxWait < 1)
+            {
+                Debug.Log("GPS服务启动超时");
+            }
+
+            if (Input.location.status == LocationServiceStatus.Failed)
+            {
+                Debug.Log("GPS服务无法确定位置");
+            }
+            else
+            {
+                yield return new WaitForSeconds(100);
+            }
+        }
+
+        public static void stopGPS()
+        {
+            Input.location.Stop();
+        }
     }
 
     public class Restful_FileUpLoadCallBack

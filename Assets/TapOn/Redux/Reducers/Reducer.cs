@@ -159,6 +159,7 @@ namespace TapOn.Redux.Reducers {
                         foreach (Prop prop in state.settingState.products)
                         {
                             Debug.Log(prop.type);
+                            Debug.Log(prop.instance.tag);
                         }
                         break;
                     }

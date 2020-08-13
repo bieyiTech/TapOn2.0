@@ -11,6 +11,7 @@ using TapOn.Models.DataModels;
 using TapOn.Models.States;
 using TapOn.Models.ViewModels;
 using TapOn.Redux.Actions;
+using TapOn.Utils;
 using TencentMap.API;
 using TencentMap.CoordinateSystem;
 using UIWidgetsGallery.gallery;
@@ -123,6 +124,7 @@ namespace TapOn.Screens
 
         private async void updateMarks()
         {
+            Globals.instance.mapController.SetCoordinate(new Coordinate { latitude = TapOnUtils.nowLocation.latitude, lontitude = TapOnUtils.nowLocation.longitude });
             MapController m = Globals.instance.mapController;
             Coordinate now = m.GetCoordinate();
             QueryCallbackData<Mark> data = await BmobApi.queryFuzztMarksAsync(now, 3);

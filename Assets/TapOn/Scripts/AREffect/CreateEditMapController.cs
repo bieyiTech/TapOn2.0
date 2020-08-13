@@ -119,7 +119,7 @@ namespace AREffect
             // GPS
             Mark mark = new Mark
             {
-                coordinate = new cn.bmob.io.BmobGeoPoint(39.986, 116.314),
+                coordinate = new cn.bmob.io.BmobGeoPoint { Latitude = TapOnUtils.nowLocation.latitude, Longitude = TapOnUtils.nowLocation.longitude },
                 snapShot_byte = capturedImage.EncodeToJPG(),
                 MapId = mapData.Meta.Map.ID,
                 MapName = "Map_" + DateTime.Now.ToString("yyyy-MM-dd_HHmmss"),

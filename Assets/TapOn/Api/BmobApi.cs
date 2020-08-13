@@ -65,21 +65,67 @@ namespace TapOn.Api
                 });
         }
 
-        public static IEnumerator getMetaFile(BmobFile metaFile, Action<MapMeta> after)
+        public static IEnumerator getMetaFile(BmobFile metaFile, Action<List<GameObject>> after)
         {
+            MapMeta meta = null;
             yield return TapOnUtils.downloadFile(
                 metaFile.url,
                 wr => 
                 {
-                    MapMeta meta = JsonUtility.FromJson<MapMeta>(wr.downloadHandler.text);
-                    if(after!=null)
-                    {
-                        after(meta);
-                    }
-
+                    meta = JsonUtility.FromJson<MapMeta>(wr.downloadHandler.text);
                 });
+            List<GameObject> objects = new List<GameObject>();
+            List<IEnumerator> tasks = new List<IEnumerator>();
+            foreach (MapMeta.PropInfo propInfo in meta.Props)
+            {
+                if (propInfo.type == MapMeta.PropType.Text)
+                {
+                    GameObject instance = GameObject.Instantiate(Globals.instance.templetes[0]);
+                    instance.tag = "word";
+                    instance.SetActive(false);
+                    TextMesh tm = instance.GetComponentInChildren<TextMesh>();
+                    tm.text = propInfo.text;
+                    instance.transform.position = new Vector3(propInfo.Position[0], propInfo.Position[1], propInfo.Position[2]);
+                    instance.transform.rotation = new Quaternion(propInfo.Rotation[0], propInfo.Rotation[1], propInfo.Rotation[2], propInfo.Rotation[3]);
+                    instance.transform.localScale = new Vector3(propInfo.Scale[0], propInfo.Scale[1], propInfo.Scale[2]);
+                    objects.Add(instance);
+                }
+                if (propInfo.type == MapMeta.PropType.Texture)
+                {
+                    GameObject instance = GameObject.Instantiate(Globals.instance.templetes[1]);
+                    instance.tag = "texture";
+                    instance.SetActive(false);
+                    Renderer rd = instance.GetComponentInChildren<Renderer>();
+                    instance.transform.position = new Vector3(propInfo.Position[0], propInfo.Position[1], propInfo.Position[2]);
+                    instance.transform.rotation = new Quaternion(propInfo.Rotation[0], propInfo.Rotation[1], propInfo.Rotation[2], propInfo.Rotation[3]);
+                    instance.transform.localScale = new Vector3(propInfo.Scale[0], propInfo.Scale[1], propInfo.Scale[2]);
+                    objects.Add(instance);
+
+                    IEnumerator downloadTexture = TapOnUtils.downloadFile(
+                        propInfo.infoUrl,
+                        wr_dt =>
+                        {
+                            Texture2D texture = new Texture2D(10, 10);
+                            texture.LoadImage(wr_dt.downloadHandler.data);
+                            rd.material.mainTexture = texture;
+                        });
+                    tasks.Add(downloadTexture);
+                }
+            }
+            foreach (IEnumerator t in tasks)
+            {
+                yield return t;
+            }
+            if (after != null)
+            {
+                after(objects);
+            }
         }
 
+        /*public static IEnumerator getAllProps()
+        {
+
+        }*/
         public static async void addMarktoServer(Mark mark)
         {
             CreateCallbackData callback_mark = await Bmob.CreateTaskAsync(Mark.table_name, mark);
