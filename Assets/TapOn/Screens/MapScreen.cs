@@ -126,7 +126,7 @@ namespace TapOn.Screens
         {
             MapController m = Globals.instance.mapController;
             Coordinate now = m.GetCoordinate();
-            QueryCallbackData<Mark> data = await BmobApi.queryFuzztMarksAsync(now, 3);
+            QueryCallbackData<Mark> data = await BmobApi.queryFuzztMarksAsync(now, 30);
             this.widget.actionModel.addMarkJustLoading(data.results);
             this.widget.actionModel.changeMark();
         }

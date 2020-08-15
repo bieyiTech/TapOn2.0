@@ -263,11 +263,27 @@ namespace AREffect
             MapMetaManager.Save(mapData.Meta);
 
         }
+        
+        public IEnumerator takePhoto()
+        {
+            var oneShot = Camera.main.gameObject.AddComponent<OneShot>();
+            oneShot.Shot(false, false, (texture) =>
+            {
+                if (capturedImage)
+                {
+                    Destroy(capturedImage);
+                }
+                capturedImage = texture;
+                PreviewImage.texture = capturedImage;
+            });
+            yield return new WaitUntil(() => SnapShotDone);
+            SnapShotDone = false;
+        }
 
         public IEnumerator Snapshot()
         {
             var oneShot = Camera.main.gameObject.AddComponent<OneShot>();
-            oneShot.Shot(false, (texture) =>
+            oneShot.Shot(false, true, (texture) =>
             {
                 if (capturedImage)
                 {

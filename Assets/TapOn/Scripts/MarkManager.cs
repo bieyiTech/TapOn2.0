@@ -8,7 +8,7 @@ using System.IO;
 
 public class MarkManager : MonoBehaviour
 {
-    public float Saturation = 0.6f;
+    public float Saturation = 0.8f;
     public float Brightness = 0.8f;
     public SnapShotLoad snapShotLoad;
 
@@ -17,10 +17,11 @@ public class MarkManager : MonoBehaviour
         Vector3 pos = Globals.instance.mapController.ConvertCoordinateToWorld(new TencentMap.CoordinateSystem.Coordinate(mark.coordinate.Latitude.Get(), mark.coordinate.Longitude.Get()));
 
         GameObject tempMark = (GameObject)Instantiate(Globals.instance.marker, GetComponent<MarkManager>().transform, true);
-        tempMark.transform.localScale *= 1.6f;
-        tempMark.transform.position = pos + 0.5f * new Vector3(0, 250, tempMark.transform.localScale.y * tempMark.GetComponent<SpriteRenderer>().bounds.size.y);
+        tempMark.transform.localScale *= 3.2f;
+        tempMark.transform.position = pos + 0.5f * new Vector3(0, 0.01f, tempMark.transform.localScale.y * tempMark.GetComponent<SpriteRenderer>().bounds.size.y);
         tempMark.GetComponent<Renderer>().sortingOrder = 1;
         tempMark.GetComponent<LocationInfo>().mark = mark;
+        tempMark.layer = 256;
 
         //// 计算颜色 HSV->RGB
         string[] temp = mark.updatedAt.Split(' ');
