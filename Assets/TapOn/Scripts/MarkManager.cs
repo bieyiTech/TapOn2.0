@@ -17,11 +17,11 @@ public class MarkManager : MonoBehaviour
         Vector3 pos = Globals.instance.mapController.ConvertCoordinateToWorld(new TencentMap.CoordinateSystem.Coordinate(mark.coordinate.Latitude.Get(), mark.coordinate.Longitude.Get()));
 
         GameObject tempMark = (GameObject)Instantiate(Globals.instance.marker, GetComponent<MarkManager>().transform, true);
-        tempMark.transform.localScale *= 3.2f;
+        tempMark.transform.localScale *= 2.5f;
         tempMark.transform.position = pos + 0.5f * new Vector3(0, 0.01f, tempMark.transform.localScale.y * tempMark.GetComponent<SpriteRenderer>().bounds.size.y);
         tempMark.GetComponent<Renderer>().sortingOrder = 1;
         tempMark.GetComponent<LocationInfo>().mark = mark;
-        tempMark.layer = 256;
+        //tempMark.layer = 256;
 
         //// 计算颜色 HSV->RGB
         string[] temp = mark.updatedAt.Split(' ');

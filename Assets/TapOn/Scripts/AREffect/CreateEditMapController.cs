@@ -106,6 +106,12 @@ namespace AREffect
             PropDragger.SetMapSession(session);
         }
 
+        public void StartEdit()
+        {
+            mapSession.MapWorker.enabled = true;
+            mapData = mapSession.Maps[0];
+        }
+
         public IEnumerator Upload()
         {
             yield return StartCoroutine(Snapshot());

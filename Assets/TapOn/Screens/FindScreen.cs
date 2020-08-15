@@ -185,7 +185,8 @@ namespace TapOn.Screens
                                 {
                                     Globals.instance.contextStack.Push(context);
                                     Globals.instance.arEffect.SetActive(true);
-                                    Globals.instance.arEffect.GetComponent<AREffect.AREffectManager>().CreateAndEditMap();
+                                    Globals.instance.arEffect.GetComponent<AREffect.AREffectManager>().EditMap();
+
                                     Navigator.push(context, new MaterialPageRoute(builder: (_) =>
                                         {
                                             return new StoreProvider<AppState>(

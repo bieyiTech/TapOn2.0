@@ -701,7 +701,7 @@ namespace TapOn.Screens
                                                             widget.actionModel.AddImageProductFuc(texture, context);
                                                         });
                                                 }
-                                            }
+                                            },
                                             shape: new CircleBorder(new BorderSide(color: CColors.White, width: 5)),
                                             color: CColors.Transparent,
                                             disabledColor: CColors.Transparent,

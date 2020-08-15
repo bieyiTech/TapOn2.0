@@ -33,7 +33,7 @@ namespace AREffect
         public void SetMapSession(MapSession session)
         {
             mapSession = session;
-            //PropDragger.SetMapSession(session);
+            PropDragger.SetMapSession(session);
             mapData = mapSession.Maps[0];
         }
 
