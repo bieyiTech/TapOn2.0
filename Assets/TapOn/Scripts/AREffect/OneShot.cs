@@ -17,6 +17,7 @@ namespace AREffect
         private bool mirror;
         private Action<Texture2D> callback;
         private bool capturing;
+        private bool isForMark = false;
         private int ImageSize = 200;
 
         public void OnRenderImage(RenderTexture source, RenderTexture destination)
@@ -37,17 +38,30 @@ namespace AREffect
             }
 
             RenderTexture.active = destTexture;
-            var sideLength = Screen.width > Screen.height ? Screen.height : Screen.width;
-            var textureBefore = new Texture2D(sideLength, sideLength, TextureFormat.RGB24, false);
-            textureBefore.ReadPixels(new Rect((Screen.width- sideLength)/2, (Screen.height- sideLength)/2, sideLength, sideLength), 0, 0);
-            var texture = ScaleTexture(textureBefore, ImageSize, ImageSize);
-            texture.Apply();
-            RenderTexture.active = null;
-            Destroy(destTexture);
 
-            callback(texture);
-            CreateEditMapController.SnapShotDone = true;
-            Destroy(this);
+            if (isForMark)
+            {
+                var sideLength = Screen.width > Screen.height ? Screen.height : Screen.width;
+                var textureBefore = new Texture2D(sideLength, sideLength, TextureFormat.RGB24, false);
+                textureBefore.ReadPixels(new Rect((Screen.width - sideLength) / 2, (Screen.height - sideLength) / 2, sideLength, sideLength), 0, 0);
+                var texture = ScaleTexture(textureBefore, ImageSize, ImageSize);
+                texture.Apply();
+                RenderTexture.active = null;
+                Destroy(destTexture);
+                callback(texture);
+            }
+            else
+            {
+                var texture = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
+                texture.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+                texture.Apply();
+                RenderTexture.active = null;
+                Destroy(destTexture);
+                callback(texture);
+            }
+                CreateEditMapController.SnapShotDone = true;
+                Destroy(this);
+            
         }
 
         private Texture2D ScaleTexture(Texture2D source, int targetWidth, int targetHeight)
@@ -70,12 +84,13 @@ namespace AREffect
             return result;
         }
 
-        public void Shot(bool mirror, Action<Texture2D> callback)
+        public void Shot(bool mirror, bool forMark, Action<Texture2D> callback)
         {
             if (callback == null) { return; }
             this.mirror = mirror;
             this.callback = callback;
             capturing = true;
+            this.isForMark = forMark;
         }
     }
 }
