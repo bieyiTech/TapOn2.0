@@ -676,8 +676,18 @@ namespace TapOn.Screens
                                 child: new Listener(
                                     onPointerDown: detail=>
                                     {
-                                        Globals.instance.contextStack.Push(context);
-                                        Navigator.push(context, new MaterialPageRoute(builder: (_) =>
+                                        if(widget.viewModel.cameraType == 2)
+                                        {
+                                            var oneShot = Camera.main.gameObject.AddComponent<OneShot>();
+                                                oneShot.Shot(false, false, (texture) =>
+                                                {
+                                                    widget.actionModel.AddImageProductFuc(texture, context);
+                                                });
+                                        }
+                                        else if(widget.viewModel.cameraType == 0)
+                                        {
+                                            Globals.instance.contextStack.Push(context);
+                                            Navigator.push(context, new MaterialPageRoute(builder: (_) =>
                                             {
                                                 return new StoreProvider<AppState>(
                                                     store: StoreProvider.store,
@@ -686,22 +696,12 @@ namespace TapOn.Screens
                                                     )
                                                 );
                                             }));
+                                        }
                                     },
                                     child: new SizedBox(
                                         width: 60,
                                         height:60,
                                         child: new RaisedButton(
-                                            onPressed: () =>
-                                            {
-                                                if(widget.viewModel.cameraType == 2)
-                                                {
-                                                    var oneShot = Camera.main.gameObject.AddComponent<OneShot>();
-                                                        oneShot.Shot(false, false, (texture) =>
-                                                        {
-                                                            widget.actionModel.AddImageProductFuc(texture, context);
-                                                        });
-                                                }
-                                            }
                                             shape: new CircleBorder(new BorderSide(color: CColors.White, width: 5)),
                                             color: CColors.Transparent,
                                             disabledColor: CColors.Transparent,
