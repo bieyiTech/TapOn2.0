@@ -678,6 +678,7 @@ namespace TapOn.Screens
                                     {
                                         if(widget.viewModel.cameraType == 2)
                                         {
+                                            Debug.Log("onrshot!");
                                             var oneShot = Camera.main.gameObject.AddComponent<OneShot>();
                                                 oneShot.Shot(false, false, (texture) =>
                                                 {

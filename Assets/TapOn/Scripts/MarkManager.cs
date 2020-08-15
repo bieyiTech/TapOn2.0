@@ -21,7 +21,7 @@ public class MarkManager : MonoBehaviour
         tempMark.transform.position = pos + 0.5f * new Vector3(0, 0.01f, tempMark.transform.localScale.y * tempMark.GetComponent<SpriteRenderer>().bounds.size.y);
         tempMark.GetComponent<Renderer>().sortingOrder = 1;
         tempMark.GetComponent<LocationInfo>().mark = mark;
-        tempMark.layer = 256;
+        tempMark.layer = 16;
 
         //// 计算颜色 HSV->RGB
         string[] temp = mark.updatedAt.Split(' ');
