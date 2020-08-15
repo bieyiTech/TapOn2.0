@@ -30,6 +30,8 @@ public class MarkManager : MonoBehaviour
 
         StartCoroutine(snapShotLoad.LoadSnapShot(mark.snapShot.url, mark.snapShot.filename, "picture", tempMark));
 
+        Globals.instance.marks.Add(tempMark);
+
         return tempMark;
     }
     

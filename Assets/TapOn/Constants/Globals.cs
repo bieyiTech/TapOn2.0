@@ -72,6 +72,8 @@ namespace TapOn.Constants {
 
         public Camera mapCamera;
 
+        public List<GameObject> marks = new List<GameObject>();
+
         public bool uploading = true;
 
         // Start is called before the first frame update
@@ -127,7 +129,7 @@ namespace TapOn.Constants {
         {
             Globals.instance.map.SetActive(true);
             GameObject[] t = GameObject.FindGameObjectsWithTag("mark");
-            foreach (GameObject mark in t)
+            foreach (GameObject mark in Globals.instance.marks)
                 mark.SetActive(true);
             Globals.instance.arEffect.GetComponent<AREffectManager>().CreateAndEditMapEnd();
         }

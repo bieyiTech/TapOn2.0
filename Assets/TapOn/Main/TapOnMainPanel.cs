@@ -196,7 +196,7 @@ namespace TapOn.Main
                                         Globals.instance.contextStack.Push(context);
                                         Globals.instance.map.SetActive(false);
                                         GameObject[] t = GameObject.FindGameObjectsWithTag("mark");
-                                        foreach (GameObject mark in t)
+                                        foreach (GameObject mark in Globals.instance.marks)
                                             mark.SetActive(false);
                                         Globals.instance.arEffect.SetActive(true);
                                         Globals.instance.arEffect.GetComponent<AREffectManager>().CreateAndEditMap();

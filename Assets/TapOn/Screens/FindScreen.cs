@@ -3,6 +3,7 @@ using TapOn.Constants;
 using TapOn.Models.ActionModels;
 using TapOn.Models.States;
 using TapOn.Models.ViewModels;
+using TapOn.Redux;
 using Unity.UIWidgets.animation;
 using Unity.UIWidgets.foundation;
 using Unity.UIWidgets.material;
@@ -83,35 +84,6 @@ namespace TapOn.Screens
                     children: new List<Widget>
                     {
                         new Align(
-                            alignment: Alignment.topLeft,
-                            child: new IconButton(
-                            color: CColors.Transparent,
-                            iconSize: 24,
-                            onPressed: () =>
-                            {
-                                BuildContext lastContext = Globals.instance.contextStack.Pop();
-                                Navigator.pop(lastContext);
-                            },
-                            icon: new Icon(
-                                icon: MyIcons.back_mine,
-                                color: CColors.Black
-                                )
-                            )
-                        ),
-                        new Align(
-                            alignment: new Alignment(0.95f, -0.98f),
-                            child: new OutlineButton(
-                                onPressed: () =>
-                                {
-                                    BuildContext lastContext = Globals.instance.contextStack.Pop();
-                                    Navigator.pop(lastContext);
-                                },
-                                disabledBorderColor: CColors.White,
-                                borderSide: new BorderSide(color: CColors.White, width: 5),
-                                //color: CColors.Transparent,
-                                child: new Text(data:"二次创作", style: new TextStyle(color: CColors.White, fontSize:16)))
-                        ),
-                        new Align(
                             alignment: Alignment.bottomCenter,
                             child: new GestureDetector(
                                 onPanEnd: detail =>
@@ -190,6 +162,45 @@ namespace TapOn.Screens
                                     )
                                 )
                             ),
+                        new Align(
+                            alignment: Alignment.topLeft,
+                            child: new IconButton(
+                            color: CColors.Transparent,
+                            iconSize: 24,
+                            onPressed: () =>
+                            {
+                                BuildContext lastContext = Globals.instance.contextStack.Pop();
+                                Navigator.pop(lastContext);
+                            },
+                            icon: new Icon(
+                                icon: MyIcons.back_mine,
+                                color: CColors.Black
+                                )
+                            )
+                        ),
+                        new Align(
+                            alignment: new Alignment(0.95f, -0.98f),
+                            child: new OutlineButton(
+                                onPressed: () =>
+                                {
+                                    Globals.instance.contextStack.Push(context);
+                                    Globals.instance.arEffect.SetActive(true);
+                                    Globals.instance.arEffect.GetComponent<AREffect.AREffectManager>().CreateAndEditMap();
+                                    Navigator.push(context, new MaterialPageRoute(builder: (_) =>
+                                        {
+                                            return new StoreProvider<AppState>(
+                                                store: StoreProvider.store,
+                                                new MaterialApp(
+                                                    home: new SettingScreenConnector()
+                                                )
+                                            );
+                                        }));
+                                },
+                                disabledBorderColor: CColors.White,
+                                borderSide: new BorderSide(color: CColors.White, width: 5),
+                                //color: CColors.Transparent,
+                                child: new Text(data:"二次创作", style: new TextStyle(color: CColors.White, fontSize:16)))
+                        ),
                     }
                 )
             );

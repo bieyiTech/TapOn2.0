@@ -691,6 +691,13 @@ namespace TapOn.Screens
                                         width: 60,
                                         height:60,
                                         child: new RaisedButton(
+                                            onPressed: () =>
+                                            {
+                                                if(widget.viewModel.cameraType == 2)
+                                                {
+
+                                                }
+                                            }
                                             shape: new CircleBorder(new BorderSide(color: CColors.White, width: 5)),
                                             color: CColors.Transparent,
                                             disabledColor: CColors.Transparent,
