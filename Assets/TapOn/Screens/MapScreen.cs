@@ -124,7 +124,6 @@ namespace TapOn.Screens
 
         private async void updateMarks()
         {
-            Globals.instance.mapController.SetCoordinate(new Coordinate { latitude = TapOnUtils.nowLocation.latitude, lontitude = TapOnUtils.nowLocation.longitude });
             MapController m = Globals.instance.mapController;
             Coordinate now = m.GetCoordinate();
             QueryCallbackData<Mark> data = await BmobApi.queryFuzztMarksAsync(now, 3);
@@ -135,6 +134,7 @@ namespace TapOn.Screens
         private IEnumerator wait_500()
         {
             yield return new UIWidgetsWaitForSeconds(0.55f);
+            Globals.instance.mapController.SetCoordinate(new Coordinate { latitude = TapOnUtils.nowLocation.latitude, lontitude = TapOnUtils.nowLocation.longitude });
             updateMarks();
         }
 

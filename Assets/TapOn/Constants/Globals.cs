@@ -72,6 +72,8 @@ namespace TapOn.Constants {
 
         public Camera mapCamera;
 
+        public bool uploading = true;
+
         // Start is called before the first frame update
 
         public void CheckInstance()
@@ -106,7 +108,28 @@ namespace TapOn.Constants {
                 }
             }*/
         }
-        
 
+        public void returnHome(System.Action after = null)
+        {
+            /*while (contextStack.Count > 0)
+            {
+                BuildContext context = contextStack.Pop();
+                Navigator.pop(context);
+            }*/
+            Navigator.of(nowContext).pop(null);
+            Navigator.pop(contextStack.Pop());
+            Navigator.pop(contextStack.Pop());
+            if (after != null)
+                after();
+        }
+
+        public void returnMap()
+        {
+            Globals.instance.map.SetActive(true);
+            GameObject[] t = GameObject.FindGameObjectsWithTag("mark");
+            foreach (GameObject mark in t)
+                mark.SetActive(true);
+            Globals.instance.arEffect.GetComponent<AREffectManager>().CreateAndEditMapEnd();
+        }
     }
 }

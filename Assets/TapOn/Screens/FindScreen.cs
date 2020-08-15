@@ -84,11 +84,28 @@ namespace TapOn.Screens
                     {
                         new Align(
                             alignment: Alignment.topLeft,
-                            child: new BackButton()
+                            child: new IconButton(
+                            color: CColors.Transparent,
+                            iconSize: 24,
+                            onPressed: () =>
+                            {
+                                BuildContext lastContext = Globals.instance.contextStack.Pop();
+                                Navigator.pop(lastContext);
+                            },
+                            icon: new Icon(
+                                icon: MyIcons.back_mine,
+                                color: CColors.Black
+                                )
+                            )
                         ),
                         new Align(
                             alignment: new Alignment(0.95f, -0.98f),
                             child: new OutlineButton(
+                                onPressed: () =>
+                                {
+                                    BuildContext lastContext = Globals.instance.contextStack.Pop();
+                                    Navigator.pop(lastContext);
+                                },
                                 disabledBorderColor: CColors.White,
                                 borderSide: new BorderSide(color: CColors.White, width: 5),
                                 //color: CColors.Transparent,
