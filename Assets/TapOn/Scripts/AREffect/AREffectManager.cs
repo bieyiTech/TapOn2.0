@@ -94,8 +94,9 @@ namespace AREffect
         public void EditMap()
         {
             createEdit.gameObject.SetActive(true);
-            createEdit.SetMapSession(mapSession);
+            createEdit.GetComponent<CreateEditMapController>().SetMapSession(mapSession);
             createEdit.StartEdit();
+           
             ShowParticle(true);
             previewEdit.gameObject.SetActive(false);
         }

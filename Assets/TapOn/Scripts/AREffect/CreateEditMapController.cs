@@ -33,6 +33,7 @@ namespace AREffect
         private int tempInfoCount = 0;
         private int pointCloudMaxNumber = 300;
         private bool buildSuccess = false;
+        
 
         private List<UIWidgetsCoroutine> coroutines = new List<UIWidgetsCoroutine>();
 
@@ -110,6 +111,7 @@ namespace AREffect
         {
             mapSession.MapWorker.enabled = true;
             mapData = mapSession.Maps[0];
+            buildSuccess = true;
         }
 
         public IEnumerator Upload()
@@ -270,22 +272,6 @@ namespace AREffect
 
         }
         
-        public IEnumerator takePhoto()
-        {
-            var oneShot = Camera.main.gameObject.AddComponent<OneShot>();
-            oneShot.Shot(false, false, (texture) =>
-            {
-                if (capturedImage)
-                {
-                    Destroy(capturedImage);
-                }
-                capturedImage = texture;
-                PreviewImage.texture = capturedImage;
-            });
-            yield return new WaitUntil(() => SnapShotDone);
-            SnapShotDone = false;
-        }
-
         public IEnumerator Snapshot()
         {
             var oneShot = Camera.main.gameObject.AddComponent<OneShot>();

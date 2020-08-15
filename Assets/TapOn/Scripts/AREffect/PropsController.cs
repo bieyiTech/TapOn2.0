@@ -39,7 +39,9 @@ namespace AREffect
             
             if (candidate)
             {
-                
+                if (mapSession == null)
+                    Debug.Log("mapSession is null");
+
                 //if (mapSession != null && !isPointerOverGameObject && Input.touchCount > 0)
                 if (mapSession != null && Input.touchCount > 0)
                 {
@@ -47,7 +49,7 @@ namespace AREffect
                     Debug.Log(point);
                     if (point.OnSome)
                     {
-                        Debug.Log("point.OnSome");
+                        Debug.Log(point.OnSome);
                         candidate.transform.position = point.Value + Vector3.up * candidate.transform.localScale.y / 2;
                         isOnMap = true;
                     }
