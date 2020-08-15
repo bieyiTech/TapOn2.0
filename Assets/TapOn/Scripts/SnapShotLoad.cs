@@ -23,12 +23,10 @@ public class SnapShotLoad : MonoBehaviour
         if (MapMetaManager.isTextureInLocal(fileName))
         {
             www = new WWW("file://" + MapMetaManager.PathForFile(fileName, "picture"));
-            //Debug.Log("get from local");
         }
         else
         {
             www = new WWW(url);
-            //Debug.Log("get from url");
         }
 #pragma warning restore CS0618 // 类型或成员已过时
         yield return www;
@@ -43,6 +41,7 @@ public class SnapShotLoad : MonoBehaviour
         tempSprite.transform.localPosition = new Vector3(0, 0.45f, 0);
         tempSprite.transform.localRotation = Quaternion.identity;
         tempSprite.transform.localScale = Vector3.one;
+        tempSprite.layer = 256;
 
         // Add Sprite Texture
         SpriteRenderer spriteRenderer = tempSprite.AddComponent<SpriteRenderer>();

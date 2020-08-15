@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4682747338807136144}
   - component: {fileID: 65237125599874640}
   - component: {fileID: 114682041294611584}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Location
   m_TagString: mark
   m_Icon: {fileID: 0}
