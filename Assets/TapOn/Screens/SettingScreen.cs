@@ -695,7 +695,11 @@ namespace TapOn.Screens
                                             {
                                                 if(widget.viewModel.cameraType == 2)
                                                 {
-
+                                                    var oneShot = Camera.main.gameObject.AddComponent<OneShot>();
+                                                        oneShot.Shot(false, false, (texture) =>
+                                                        {
+                                                            widget.actionModel.AddImageProductFuc(texture, context);
+                                                        });
                                                 }
                                             }
                                             shape: new CircleBorder(new BorderSide(color: CColors.White, width: 5)),
