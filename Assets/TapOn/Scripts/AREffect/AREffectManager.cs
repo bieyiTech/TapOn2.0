@@ -87,6 +87,7 @@ namespace AREffect
             createEdit.gameObject.SetActive(false);
             DestroySession();
             Globals.instance.arDisplay.SetActive(false);
+            Globals.instance.arEffect.SetActive(false);
             ShowParticle(false);
         }
         

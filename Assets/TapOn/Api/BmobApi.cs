@@ -134,8 +134,20 @@ namespace TapOn.Api
                 Debug.LogError("BmobRrror: Mark hasn't upload!");
                 return;
             }
+            Globals.instance.uploading = false;
+            ((Unity.UIWidgets.widgets.Element)Globals.instance.nowContext).markNeedsBuild();
+            
             using (Unity.UIWidgets.widgets.WindowProvider.of(Globals.instance.nowContext).getScope())
             {
+                Window.instance.startCoroutine(
+                TapOnUtils.WaitSomeTime(
+                    time: 0.5f,
+                    after: () =>
+                    {
+                        Debug.Log("in back home!");
+                        Globals.instance.returnHome(() => { Globals.instance.returnMap(); });
+                    })
+                );
                 Window.instance.startCoroutine(
                     TapOnUtils.upLoadFile(
                         "img_" + DateTime.Now.ToString("yyyy-MM-dd_HHmmss") + ".jpg",

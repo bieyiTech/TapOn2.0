@@ -16,6 +16,8 @@ using TapOn.Models.ViewModels;
 using TapOn.Models.ActionModels;
 using Unity.UIWidgets.foundation;
 using Unity.UIWidgets.async;
+using RSG;
+using TapOn.Utils;
 
 namespace TapOn.Screens
 {
@@ -70,6 +72,48 @@ namespace TapOn.Screens
 
         bool switchForAllPeople = true;
         bool switchForAllTime = true;
+
+        private IPromise<object> loadingDialog()
+        {
+            return Unity.UIWidgets.material.DialogUtils.showDialog(
+                context: context,
+                barrierDismissible: Globals.instance.uploading,
+                builder: (context) =>
+                {
+                    Globals.instance.nowContext = context;
+                    return new UnconstrainedBox(
+                        child: new SizedBox(
+                            height: 240,
+                            width: 280,
+                            child: new AlertDialog(
+                                content: Globals.instance.uploading ? new Column(children: new List<Widget>
+                                {
+                                     new CircularProgressIndicator(),
+                                     new Padding(padding: EdgeInsets.only(top: 10)),
+                                     new Text("正在上传，请稍后......"),
+                                }) : new Column(children: new List<Widget>
+                                {
+                                     new Icon(icon: MyIcons.check_circle_outline, color: CColors.Blue),
+                                     new Padding(padding: EdgeInsets.only(top: 10)),
+                                     new Text("上传成功"),
+                                    /* new FlatButton(
+                                         onPressed: () =>
+                                         {
+                                            TapOnUtils.WaitSomeTime(
+                                                time: 0.5f,
+                                                after: () =>
+                                                {
+                                                    Debug.Log("in back home!");
+                                                    
+                                                });
+                                         },
+                                         child: new Text("返回主界面")),*/
+                                })
+                            )
+                        )
+                    );
+                });
+        }
         private Widget _textField()
         {
             return new TextField(
@@ -136,6 +180,7 @@ namespace TapOn.Screens
                         child: new FlatButton(
                             //minSize: 24,
                             onPressed: ()=>{
+                                loadingDialog();
                                 Window.instance.startCoroutine(Globals.instance.CreateEdit.SaveEdit());
                             },
                             disabledColor: CColors.WeChatGreen,
