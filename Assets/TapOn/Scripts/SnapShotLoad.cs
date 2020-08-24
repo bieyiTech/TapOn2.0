@@ -41,7 +41,7 @@ public class SnapShotLoad : MonoBehaviour
         tempSprite.transform.localPosition = new Vector3(0, 0.45f, 0);
         tempSprite.transform.localRotation = Quaternion.identity;
         tempSprite.transform.localScale = Vector3.one;
-        tempSprite.layer = 256;
+        //tempSprite.layer = 256;
 
         // Add Sprite Texture
         SpriteRenderer spriteRenderer = tempSprite.AddComponent<SpriteRenderer>();

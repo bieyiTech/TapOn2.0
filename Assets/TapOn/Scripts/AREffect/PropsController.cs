@@ -39,15 +39,17 @@ namespace AREffect
             
             if (candidate)
             {
-                
+                if (mapSession == null)
+                    Debug.Log("mapSession is null");
+
                 //if (mapSession != null && !isPointerOverGameObject && Input.touchCount > 0)
                 if (mapSession != null && Input.touchCount > 0)
                 {
                     var point = mapSession.HitTestOne(new Vector2(Input.touches[0].position.x / Screen.width, Input.touches[0].position.y / Screen.height));
-                    //Debug.Log(point);
+                    Debug.Log(point);
                     if (point.OnSome)
                     {
-                        //Debug.Log("point.OnSome");
+                        Debug.Log(point.OnSome);
                         candidate.transform.position = point.Value + Vector3.up * candidate.transform.localScale.y / 2;
                         isOnMap = true;
                     }
@@ -55,12 +57,12 @@ namespace AREffect
 
                 if (!isOnMap)
                 {
-                    //Debug.Log("candidate is false");
+                    Debug.Log("candidate is false");
                     candidate.SetActive(false);
                 }
                 else
                 {
-                    //Debug.Log("candidate is true");
+                    Debug.Log("candidate is true");
                     candidate.SetActive(true);
                 }
 
@@ -137,7 +139,6 @@ namespace AREffect
             isOnMap = false;
             Debug.Log("start instance: " +prop.instance.tag);
             candidate = Instantiate(prop.instance);
-            Debug.Log("start: " + candidate.tag);
             if (candidate)
             {
                 var video = candidate.GetComponentInChildren<VideoPlayerAgent>(true);

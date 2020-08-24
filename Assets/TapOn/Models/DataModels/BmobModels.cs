@@ -51,9 +51,7 @@ namespace TapOn.Models.DataModels
 
         public string modelName;
         public BmobFile preview;
-        public BmobFile prefabFile;
-        public BmobFile fbxFile;
-        public BmobFile materialFile;
+        public BmobFile asset;
         public BmobInt modelType;
 
         public override void readFields(BmobInput input)
@@ -63,9 +61,7 @@ namespace TapOn.Models.DataModels
             modelType = input.getInt("modelType");
             modelName = input.getString("modelName");
             preview = input.getFile("preview");
-            fbxFile = input.getFile("fbxFile");
-            prefabFile = input.getFile("prefabFile");
-            materialFile = input.getFile("materialFile");
+            asset = input.getFile("assetAndroid");
         }
     }
 

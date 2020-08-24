@@ -75,6 +75,14 @@ namespace TapOn.Utils
             return JsonUtility.FromJson<Restful_FileUpLoadCallBack>(jsonText);
         }
 
+        public static IEnumerator downloadModel(string url, Action<UnityWebRequest> after)
+        {
+            UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle(url);
+            yield return request.SendWebRequest();
+            if (after != null)
+                after(request);
+        }
+
         public static UnityEngine.LocationInfo nowLocation
         { get { return Input.location.lastData; } }
 

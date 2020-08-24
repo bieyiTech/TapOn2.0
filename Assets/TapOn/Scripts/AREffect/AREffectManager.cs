@@ -91,6 +91,16 @@ namespace AREffect
             ShowParticle(false);
         }
         
+        public void EditMap()
+        {
+            createEdit.gameObject.SetActive(true);
+            createEdit.GetComponent<CreateEditMapController>().SetMapSession(mapSession);
+            createEdit.StartEdit();
+           
+            ShowParticle(true);
+            previewEdit.gameObject.SetActive(false);
+        }
+        
         public IEnumerator PreviewMap(Mark mark)
         {
             Debug.Log("PreviewMap");

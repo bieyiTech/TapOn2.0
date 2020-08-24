@@ -30,5 +30,6 @@ namespace TapOn.Models.ActionModels
 
         public Func<string, object> AddTextProductFuc;
         public Func<Texture2D, Unity.UIWidgets.widgets.BuildContext, object> AddImageProductFuc;
+        public Func<GameObject, string, object> AddModelProductFuc;
     }
 }

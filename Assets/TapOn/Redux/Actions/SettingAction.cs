@@ -118,6 +118,39 @@ namespace TapOn.Redux.Actions
             });
         }
 
+        public static object AddModelProduct(GameObject model, string id)
+        {
+            return new ThunkAction<AppState>((dispatcher, getState) =>
+            {
+                model.tag = "model";
+                BmobModel m = new BmobModel();
+                m.objectId = id;
+                Prop product = new Prop { type = (int)ProductType.Model, model = m, instance = model };
+                if (getState().settingState.products.Count < 3)
+                {
+                    dispatcher.dispatch(new AddProductAction { product = product });
+                    dispatcher.dispatch(new ChangeAppearStateAction { state = true, index = getState().settingState.products.Count - 1 });
+                    return 0;
+                }
+                dispatcher.dispatch(new ChangeProductIndexAction());
+                dispatcher.dispatch(new ChangeAppearStateAction { state = false, index = 2 });
+                Window.instance.startCoroutine(
+                  TapOnUtils.WaitSomeTime(
+                      time: 0.3f,
+                      after: () =>
+                      {
+                          dispatcher.dispatch(new AddProductAction { product = product });
+                          Window.instance.startCoroutine(
+                            TapOnUtils.WaitSomeTime(
+                                time: 0.3f,
+                                after: (() =>
+                                { dispatcher.dispatch(new ChangeAppearStateAction { state = true, index = 2 }); })));
+                      }
+                       ));
+                return 0;
+            });
+        }
+
         public static object AddImageProduct(Texture2D texture, Unity.UIWidgets.widgets.BuildContext context)
         {
             return new ThunkAction<AppState>((dispatcher, getState) =>

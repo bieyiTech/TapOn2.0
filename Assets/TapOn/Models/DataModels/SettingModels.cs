@@ -94,5 +94,7 @@ namespace TapOn.Models.DataModels
         public string previewUrl;
         public string modelFileName;
         public string modelUrl;
+        public string assetName;
+        public string assetUrl;
     }
 }

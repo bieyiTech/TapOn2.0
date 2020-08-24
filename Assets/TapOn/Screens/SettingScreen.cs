@@ -26,6 +26,7 @@ using com.unity.uiwidgets.Runtime.rendering;
 using TapOn.Redux;
 using Unity.UIWidgets.cupertino;
 using AREffect;
+using TapOn.Utils;
 
 namespace TapOn.Screens
 {
@@ -68,6 +69,8 @@ namespace TapOn.Screens
                         { dispatcher.dispatch(new AddImageProductAction { texture = value, }); },
                         AddImageProductFuc = (texture, cont) =>
                         { return dispatcher.dispatch<object>(Actions.AddImageProduct(texture, cont)); },
+                        AddModelProductFuc = (model, id) =>
+                        { return dispatcher.dispatch<object>(Actions.AddModelProduct(model, id)); },
                         SetModelsMessage = (models) =>
                         { dispatcher.dispatch(new SetModelsMessageAction { models = models, }); },
                         ChangeSpanState = (state) =>
@@ -154,10 +157,13 @@ namespace TapOn.Screens
                     {
                         models.Add(new Model
                         {
+                            id = model.objectId,
                             modelName = model.modelName,
                             modelType = model.modelType.Get(),
                             previewFileName = model.preview.filename,
                             previewUrl = model.preview.url,
+                            assetName =  model.asset == null ? "" : model.asset.filename,
+                            assetUrl = model.asset == null ? "" : model.asset.url,
                         });
                     }
                     this.widget.actionModel.SetModelsMessage(models);
@@ -198,6 +204,19 @@ namespace TapOn.Screens
                     itemBuilder: (context_grid, ind) =>
                     {
                         return new GestureDetector(
+                            onTap: () => 
+                            {
+                                Window.instance.startCoroutine(
+                                    TapOnUtils.downloadModel(
+                                        models[ind].assetUrl,
+                                        request => 
+                                        {
+                                            AssetBundle ab = UnityEngine.Networking.DownloadHandlerAssetBundle.GetContent(request);
+                                            GameObject sp = ab.LoadAsset<GameObject>(models[ind].modelName);
+                                            widget.actionModel.AddModelProductFuc(sp, models[ind].id);
+                                            //GameObject.Instantiate(sp);
+                                        }));
+                            },
                             child: new Unity.UIWidgets.widgets.Image(
                                 image: new NetworkImage(url: models[ind].previewUrl)));
                     });
@@ -212,6 +231,7 @@ namespace TapOn.Screens
                 builder: (context) => 
                 {
                     TextEditingController textEditingController = new TextEditingController();
+                    textEditingController.text = "辛苦惹~";
                     return new SimpleDialog(
                     title: new Text("编辑文本内容"),
                     children: new List<Widget>
@@ -486,6 +506,7 @@ namespace TapOn.Screens
         {
             return new Scaffold(
                 backgroundColor: CColors.Transparent,
+                resizeToAvoidBottomPadding: false, 
                 bottomNavigationBar: new Builder(builder: context=> {
                     return new SizedBox(height: 79, child:
                     new BottomNavigationBar(

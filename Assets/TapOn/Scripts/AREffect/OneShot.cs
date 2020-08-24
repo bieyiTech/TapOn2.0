@@ -24,7 +24,7 @@ namespace AREffect
         {
             Graphics.Blit(source, destination);
             if (!capturing) { return; }
-
+            capturing = false;
             var destTexture = new RenderTexture(Screen.width, Screen.height, 0);
             if (mirror)
             {
