@@ -48,7 +48,6 @@ namespace TapOn.Constants {
             }
         }
 
-        public List<GameObject> models;
         public GameObject marker;
         public GameObject map;
 
@@ -73,6 +72,7 @@ namespace TapOn.Constants {
         public Camera mapCamera;
 
         public List<GameObject> marks = new List<GameObject>();
+        public Dictionary<string, GameObject> models = new Dictionary<string, GameObject>();
 
         public bool uploading = true;
 

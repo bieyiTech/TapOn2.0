@@ -89,7 +89,9 @@ namespace TapOn.Models.DataModels
         public int modelType;
         public string id;
         public string modelName;
+        public bool Downloading;
         public bool isLocal;
+        public float progress;
         public string previewFileName;
         public string previewUrl;
         public string modelFileName;

@@ -73,6 +73,12 @@ namespace TapOn.Screens
                         { return dispatcher.dispatch<object>(Actions.AddModelProduct(model, id)); },
                         SetModelsMessage = (models) =>
                         { dispatcher.dispatch(new SetModelsMessageAction { models = models, }); },
+                        ChangeModelLocalStateByIndex = (index, state) =>
+                        { dispatcher.dispatch(new ChangeModelLocalStateByIndexAction { index = index, state = state }); },
+                        ChangeModelDownloadingStateByIndex = (index, state) =>
+                        { dispatcher.dispatch(new ChangeModelDownloadingStateByIndexAction { index = index, state = state }); },
+                        ChangeModelProgressByIndex = (index, p) =>
+                        { dispatcher.dispatch(new ChangeModelProgressByIndexAction { index = index, progress = p }); },
                         ChangeSpanState = (state) =>
                         { dispatcher.dispatch(new ChangeSpanStateAction { state = state, }); },
                         ChangeShowState = (state) =>
@@ -157,7 +163,10 @@ namespace TapOn.Screens
                     {
                         models.Add(new Model
                         {
+                            isLocal = false,
+                            Downloading = false,
                             id = model.objectId,
+                            progress = 0,
                             modelName = model.modelName,
                             modelType = model.modelType.Get(),
                             previewFileName = model.preview.filename,
@@ -166,7 +175,7 @@ namespace TapOn.Screens
                             assetUrl = model.asset == null ? "" : model.asset.url,
                         });
                     }
-                    this.widget.actionModel.SetModelsMessage(models);
+                    this.widget.actionModel.SetModelsMessage(models);   
                     widget.actionModel.ChangeModelMessageReadyState(true);
                     if (bottomSheetContext != null)
                         ((StatefulElement)bottomSheetContext).markNeedsBuild();
@@ -180,18 +189,26 @@ namespace TapOn.Screens
             yield return new UIWidgetsWaitForSeconds(0.3f);
             widget.actionModel.ChangeShowState(widget.viewModel.productSpan);
         }
-
-        private Widget _modelsPreview(int index)
+        private Widget _modelsPreview(int index, BuildContext context)
         {
             List<Model> models = new List<Model>();
+            List<int> indexs = new List<int>();
             if (index == 0)
+            {
                 models = widget.viewModel.models;
+                indexs = new List<int> { 0, 1, 2, 3, 4, 5 };
+            }
             else
             {
-                foreach(Model m in widget.viewModel.models)
+                int ii = 0;
+                foreach (Model m in widget.viewModel.models)
                 {
                     if (m.modelType == index)
+                    {
                         models.Add(m);
+                        indexs.Add(ii);
+                    }
+                    ii++;
                 }
             }
             if (widget.viewModel.modelsMessageReady)
@@ -204,21 +221,50 @@ namespace TapOn.Screens
                     itemBuilder: (context_grid, ind) =>
                     {
                         return new GestureDetector(
-                            onTap: () => 
+                            onTap: () =>
                             {
-                                Window.instance.startCoroutine(
-                                    TapOnUtils.downloadModel(
-                                        models[ind].assetUrl,
-                                        request => 
-                                        {
-                                            AssetBundle ab = UnityEngine.Networking.DownloadHandlerAssetBundle.GetContent(request);
-                                            GameObject sp = ab.LoadAsset<GameObject>(models[ind].modelName);
-                                            widget.actionModel.AddModelProductFuc(sp, models[ind].id);
+                                if (models[ind].Downloading) return;
+                                if (!models[ind].isLocal)
+                                {
+                                    widget.actionModel.ChangeModelDownloadingStateByIndex(indexs[ind], true);
+                                    ((StatefulElement)bottomSheetContext).markNeedsBuild();
+                                    Window.instance.startCoroutine(
+                                        TapOnUtils.downloadModel(
+                                            models[ind].assetUrl,
+                                            models[ind].assetName,
+                                            progress =>
+                                            {
+                                                widget.actionModel.ChangeModelProgressByIndex(indexs[ind], progress);
+                                                ((StatefulElement)bottomSheetContext).markNeedsBuild();
+                                            },
+                                            request =>
+                                            {
+                                                AssetBundle ab = UnityEngine.Networking.DownloadHandlerAssetBundle.GetContent(request);
+                                                GameObject sp = ab.LoadAsset<GameObject>(models[ind].modelName);
+                                                Globals.instance.models.Add(models[ind].id, sp);
+                                                //widget.actionModel.AddModelProductFuc(sp, models[ind].id);
+                                                widget.actionModel.ChangeModelLocalStateByIndex(indexs[ind], true);
+                                                widget.actionModel.ChangeModelDownloadingStateByIndex(indexs[ind], false);
+                                                ((StatefulElement)bottomSheetContext).markNeedsBuild();
+                                            //ab.Unload();
                                             //GameObject.Instantiate(sp);
                                         }));
+                                }
+                                else
+                                {
+                                    widget.actionModel.AddModelProductFuc(Globals.instance.models[models[ind].id], models[ind].id);
+                                    Navigator.of(bottomSheetContext).pop(null);
+                                }
                             },
-                            child: new Unity.UIWidgets.widgets.Image(
-                                image: new NetworkImage(url: models[ind].previewUrl)));
+                            child: new Stack(
+                                children: new List<Widget>
+                                {
+                                    new Unity.UIWidgets.widgets.Image(image: new NetworkImage(url: models[ind].previewUrl)),
+                                    new Align(alignment: Alignment.topRight, child: new Icon(icon: models[ind].isLocal ? MyIcons.check : MyIcons.keyboard_arrow_down, size: 20, color: CColors.Blue)),
+                                    new Padding(padding: EdgeInsets.only(left: 10, right: 10), child: new Align(alignment: Alignment.bottomCenter, child: models[ind].Downloading ? new LinearProgressIndicator(value: models[ind].progress, backgroundColor:CColors.White, valueColor: new AlwaysStoppedAnimation<Unity.UIWidgets.ui.Color>(CColors.Blue)) : null)),
+                                })
+                            );
+                            
                     });
             else
                 return new SizedBox(width: 40, height: 40, child: new CircularProgressIndicator());
@@ -405,15 +451,15 @@ namespace TapOn.Screens
                                                         {
                                                             new Container(
                                                                 alignment: Alignment.center,
-                                                                child: _modelsPreview(0)
+                                                                child: _modelsPreview(0, context)
                                                                 ),
                                                             new Container(
                                                                 alignment: Alignment.center,
-                                                                child: _modelsPreview(1)
+                                                                child: _modelsPreview(1, context)
                                                                 ),
                                                             new Container(
                                                                 alignment: Alignment.center,
-                                                                child: _modelsPreview(2)
+                                                                child: _modelsPreview(2, context)
                                                                 ),
                                                         })
                                                     )

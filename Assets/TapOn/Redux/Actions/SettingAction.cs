@@ -37,6 +37,24 @@ namespace TapOn.Redux.Actions
         public List<Model> models;
     }
 
+    public class ChangeModelLocalStateByIndexAction
+    {
+        public int index;
+        public bool state;
+    }
+
+    public class ChangeModelDownloadingStateByIndexAction
+    {
+        public int index;
+        public bool state;
+    }
+
+    public class ChangeModelProgressByIndexAction
+    {
+        public int index;
+        public float progress;
+    }
+
     public class ChangeSpanStateAction
     {
         public bool state;

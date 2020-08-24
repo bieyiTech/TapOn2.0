@@ -15,6 +15,7 @@ TagManager:
   - global
   - word
   - texture
+  - model
   layers:
   - Default
   - TransparentFX

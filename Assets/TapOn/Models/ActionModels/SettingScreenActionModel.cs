@@ -18,6 +18,9 @@ namespace TapOn.Models.ActionModels
         /// 从服务器拉取所有的模型信息
         /// </summary>
         public Action<List<Model>> SetModelsMessage;
+        public Action<int, bool> ChangeModelLocalStateByIndex;
+        public Action<int, bool> ChangeModelDownloadingStateByIndex;
+        public Action<int, float> ChangeModelProgressByIndex;
 
         public Action<bool> ChangeSpanState;
         public Action<bool> ChangeShowState;
@@ -31,5 +34,6 @@ namespace TapOn.Models.ActionModels
         public Func<string, object> AddTextProductFuc;
         public Func<Texture2D, Unity.UIWidgets.widgets.BuildContext, object> AddImageProductFuc;
         public Func<GameObject, string, object> AddModelProductFuc;
+
     }
 }

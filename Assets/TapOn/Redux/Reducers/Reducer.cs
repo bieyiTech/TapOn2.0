@@ -154,6 +154,21 @@ namespace TapOn.Redux.Reducers {
                         state.settingState.models = action.models;
                         break;
                     }
+                case ChangeModelProgressByIndexAction action:
+                    {
+                        state.settingState.models[action.index].progress = action.progress;
+                        break;
+                    }
+                case ChangeModelLocalStateByIndexAction action:
+                    {
+                        state.settingState.models[action.index].isLocal = action.state;
+                        break;
+                    }
+                case ChangeModelDownloadingStateByIndexAction action:
+                    {
+                        state.settingState.models[action.index].Downloading = action.state;
+                        break;
+                    }
                 case AddProductAction action:
                     {
                         Debug.Log("S : " + action.product.text);

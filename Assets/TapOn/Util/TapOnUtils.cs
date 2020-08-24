@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -75,12 +76,36 @@ namespace TapOn.Utils
             return JsonUtility.FromJson<Restful_FileUpLoadCallBack>(jsonText);
         }
 
-        public static IEnumerator downloadModel(string url, Action<UnityWebRequest> after)
+        public static IEnumerator downloadModel(string url, string filename, Action<float> progressSolve, Action<UnityWebRequest> after)
         {
             UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle(url);
-            yield return request.SendWebRequest();
-            if (after != null)
-                after(request);
+            request.SendWebRequest();
+ 
+            while(!request.isDone)
+            {
+                
+                if (progressSolve != null)
+                    progressSolve(request.downloadProgress);
+                yield return null;
+                //yield return WaitSomeTime(time: 0.01f);
+            }
+            if(request.isDone)
+            {
+                if (progressSolve != null)
+                    progressSolve(1);
+            }
+            if (request.isHttpError || request.isNetworkError)
+            {
+                Debug.LogError("FileUploadError: " + request.error + "\nreturn: " + request.downloadHandler.text);
+            }
+            else
+            {
+                Stream sw;
+                FileInfo t = new FileInfo(Application.persistentDataPath + "//Model//" + filename);
+                Debug.Log(filename);
+                if (after != null)
+                    after(request);
+            }
         }
 
         public static UnityEngine.LocationInfo nowLocation
