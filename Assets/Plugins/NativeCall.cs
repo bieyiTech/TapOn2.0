@@ -110,7 +110,7 @@ public static class NativeCall
     /// <summary>
     /// 打开相册 选择多个视频
     /// </summary>
-    public static void OpenVideo(Action<string[]> callBack)
+    public static void OpenVideos(Action<string[]> callBack)
     {
         NativeGallery.Permission permission = NativeGallery.GetVideosFromGallery((string[] path) =>
         {

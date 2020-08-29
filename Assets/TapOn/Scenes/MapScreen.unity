@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4510507, g: 0.5008825, b: 0.5741865, a: 1}
+  m_IndirectSpecularColor: {r: 0.45105135, g: 0.5008831, b: 0.5741877, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3375,6 +3375,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1261297320423295707, guid: 1949112876b1dc34782673ee40eb4cab,
         type: 3}
+      propertyPath: templetes.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1261297320423295707, guid: 1949112876b1dc34782673ee40eb4cab,
+        type: 3}
       propertyPath: map
       value: 
       objectReference: {fileID: 1093620603}
@@ -3423,5 +3428,11 @@ PrefabInstance:
       propertyPath: PreviewEdit
       value: 
       objectReference: {fileID: 270972708}
+    - target: {fileID: 1261297320423295707, guid: 1949112876b1dc34782673ee40eb4cab,
+        type: 3}
+      propertyPath: templetes.Array.data[2]
+      value: 
+      objectReference: {fileID: 1458751586281840, guid: 08143320605ac90409d1f45f917ee963,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1949112876b1dc34782673ee40eb4cab, type: 3}

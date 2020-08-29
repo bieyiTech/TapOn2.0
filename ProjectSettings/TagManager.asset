@@ -16,6 +16,7 @@ TagManager:
   - word
   - texture
   - model
+  - video
   layers:
   - Default
   - TransparentFX

@@ -198,7 +198,8 @@ namespace TapOn.Screens
                         });
                         am_horizontal.forward();
                         am_vertical.forward();
-                        Window.instance.startCoroutine(wait_500());
+                        updateMarks();
+                        //Window.instance.startCoroutine(wait_500());
                     },
                     onPanUpdate: details =>
                     {

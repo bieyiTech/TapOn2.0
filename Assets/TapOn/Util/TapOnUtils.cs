@@ -78,7 +78,8 @@ namespace TapOn.Utils
 
         public static IEnumerator downloadModel(string url, string filename, Action<float> progressSolve, Action<UnityWebRequest> after)
         {
-            UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle(url);
+            //UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle(url);
+            UnityWebRequest request = UnityWebRequest.Get(url);
             request.SendWebRequest();
  
             while(!request.isDone)
@@ -100,9 +101,6 @@ namespace TapOn.Utils
             }
             else
             {
-                Stream sw;
-                FileInfo t = new FileInfo(Application.persistentDataPath + "//Model//" + filename);
-                Debug.Log(filename);
                 if (after != null)
                     after(request);
             }

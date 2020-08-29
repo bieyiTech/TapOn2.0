@@ -9,6 +9,7 @@ using Unity.UIWidgets.async;
 using Unity.UIWidgets.Redux;
 using Unity.UIWidgets.ui;
 using UnityEngine;
+using UnityEngine.Video;
 
 namespace TapOn.Redux.Actions
 {
@@ -194,6 +195,45 @@ namespace TapOn.Redux.Actions
 
                 rd.material.mainTexture = texture;
                 Prop product = new Prop { type = (int)ProductType.Picture, texture_byte = texture.EncodeToPNG(), instance = instance };
+                if (getState().settingState.products.Count < 3)
+                {
+                    dispatcher.dispatch(new AddProductAction { product = product });
+                    dispatcher.dispatch(new ChangeAppearStateAction { state = true, index = getState().settingState.products.Count - 1 });
+                    return 0;
+                }
+                dispatcher.dispatch(new ChangeProductIndexAction());
+                dispatcher.dispatch(new ChangeAppearStateAction { state = false, index = 2 });
+                if (Window.instance == null) Debug.Log("null");
+                using (Unity.UIWidgets.widgets.WindowProvider.of(context).getScope())
+                {
+                    Window.instance.startCoroutine(
+                      TapOnUtils.WaitSomeTime(
+                          time: 0.3f,
+                          after: () =>
+                          {
+                              Debug.Log("xs");
+                              dispatcher.dispatch(new AddProductAction { product = product });
+                              Window.instance.startCoroutine(
+                                TapOnUtils.WaitSomeTime(
+                                    time: 0.3f,
+                                    after: (() =>
+                                    { dispatcher.dispatch(new ChangeAppearStateAction { state = true, index = 2 }); })));
+                          }
+                           ));
+                }
+                return 0;
+            });
+        }
+
+        public static object AddVideoProduct(string path, Unity.UIWidgets.widgets.BuildContext context)
+        {
+            return new ThunkAction<AppState>((dispatcher, getState) =>
+            {
+                GameObject instance = GameObject.Instantiate(Globals.instance.templetes[2]);
+                instance.tag = "video";
+                instance.SetActive(false);
+                instance.GetComponentInChildren<VideoPlayer>().url = "File:////" + path;
+                Prop product = new Prop { type = (int)ProductType.Video, instance = instance };
                 if (getState().settingState.products.Count < 3)
                 {
                     dispatcher.dispatch(new AddProductAction { product = product });

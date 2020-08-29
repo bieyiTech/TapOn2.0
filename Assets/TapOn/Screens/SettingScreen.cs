@@ -27,6 +27,7 @@ using TapOn.Redux;
 using Unity.UIWidgets.cupertino;
 using AREffect;
 using TapOn.Utils;
+using System.IO;
 
 namespace TapOn.Screens
 {
@@ -69,6 +70,8 @@ namespace TapOn.Screens
                         { dispatcher.dispatch(new AddImageProductAction { texture = value, }); },
                         AddImageProductFuc = (texture, cont) =>
                         { return dispatcher.dispatch<object>(Actions.AddImageProduct(texture, cont)); },
+                        AddVideoProductFuc = (path, cont) =>
+                        { return dispatcher.dispatch<object>(Actions.AddVideoProduct(path, cont)); },
                         AddModelProductFuc = (model, id) =>
                         { return dispatcher.dispatch<object>(Actions.AddModelProduct(model, id)); },
                         SetModelsMessage = (models) =>
@@ -161,7 +164,7 @@ namespace TapOn.Screens
                     List<Model> models = new List<Model>();
                     foreach (var model in data.results)
                     {
-                        models.Add(new Model
+                        Model m = new Model
                         {
                             isLocal = false,
                             Downloading = false,
@@ -173,7 +176,16 @@ namespace TapOn.Screens
                             previewUrl = model.preview.url,
                             assetName =  model.asset == null ? "" : model.asset.filename,
                             assetUrl = model.asset == null ? "" : model.asset.url,
-                        });
+                        };
+                        FileInfo f = new FileInfo(Application.persistentDataPath + "//model//" + m.assetName);
+                        if(f.Exists)
+                        {
+                            m.isLocal = true;
+                            AssetBundle ab = AssetBundle.LoadFromFile(f.FullName);
+                            GameObject sp = ab.LoadAsset<GameObject>(m.modelName);
+                            Globals.instance.models.Add(m.id, sp);
+                        }
+                        models.Add(m);
                     }
                     this.widget.actionModel.SetModelsMessage(models);   
                     widget.actionModel.ChangeModelMessageReadyState(true);
@@ -239,7 +251,26 @@ namespace TapOn.Screens
                                             },
                                             request =>
                                             {
-                                                AssetBundle ab = UnityEngine.Networking.DownloadHandlerAssetBundle.GetContent(request);
+                                                //
+                                                //AssetBundle ab = (request.downloadHandler as UnityEngine.Networking.DownloadHandlerAssetBundle).assetBundle;
+                                                //AssetBundle ab = ((UnityEngine.Networking.DownloadHandlerAssetBundle)request.downloadHandler).assetBundle;
+                                                //AssetBundle ab = AssetBundle.LoadFromMemoryAsync(request.downloadHandler.data).assetBundle;
+                                                Stream sw;
+                                                FileInfo t = new FileInfo(Application.persistentDataPath + "//model//" + models[ind].assetName);
+                                                int length = request.downloadHandler.data.Length;
+                                                byte[] bytes = request.downloadHandler.data;
+                                                if (!t.Exists)
+                                                { 
+                                                    sw = t.Create();
+                                                }
+                                                else
+                                                { 
+                                                    sw = t.OpenWrite();
+                                                }
+                                                sw.Write(bytes, 0, length);
+                                                sw.Close();
+                                                sw.Dispose();
+                                                AssetBundle ab = AssetBundle.LoadFromFile(t.FullName);
                                                 GameObject sp = ab.LoadAsset<GameObject>(models[ind].modelName);
                                                 Globals.instance.models.Add(models[ind].id, sp);
                                                 //widget.actionModel.AddModelProductFuc(sp, models[ind].id);
@@ -642,8 +673,24 @@ namespace TapOn.Screens
                                 case 2:
                                     {
 
-                                        //to do after
-                                        //showUploadDialog().Then(message => { });
+                                        showSelectDialog().Then((content) =>
+                                        {
+                                            bool data = (bool)content;
+                                            if (data)
+                                            {
+                                                NativeCall.OpenVideo(path =>
+                                                {
+                                                    widget.actionModel.AddVideoProductFuc(path, context);
+                                                });
+                                            }
+                                            else
+                                            {
+                                                NativeCall.OpenCameraVideo(path =>
+                                                {
+                                                    widget.actionModel.AddVideoProductFuc(path, context);
+                                                });
+                                            }
+                                        });
                                         break;
                                     }
                                 case 3:
@@ -1060,6 +1107,16 @@ namespace TapOn.Screens
                                 icon: new Icon(icon: MyIcons.settings, color: CColors.White)
                                 )
                             ),
+                        new Positioned(
+                            top: 50, 
+                            right: 23, 
+                            child: new Listener(
+                                onPointerUp:detail=>{Debug.Log("up"); },
+                                child: new IconButton(
+                                    onPressed:()=>{Debug.Log("delete!"); }, 
+                                    color: CColors.Transparent,
+                                    iconSize: 36, 
+                                    icon: new Icon(icon: MyIcons.delete, color: CColors.White)))),
                         new Positioned(
                             top: 0,
                             right: 12,

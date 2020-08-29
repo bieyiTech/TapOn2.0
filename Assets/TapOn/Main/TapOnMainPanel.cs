@@ -24,6 +24,7 @@ using UnityEngine.Networking;
 using Unity.UIWidgets.async;
 using TapOn.Utils;
 using TapOn.Models.DataModels;
+using System.IO;
 
 namespace TapOn.Main
 {
@@ -55,6 +56,9 @@ namespace TapOn.Main
                 }
             }
             if (Globals.instance.bmob == null) Debug.LogError("Global bmob is null after!");
+
+            if (!Directory.Exists(Application.persistentDataPath + "//model")) Directory.CreateDirectory(Application.persistentDataPath + "//model");
+            
         }
 
         static void LoadFonts()
