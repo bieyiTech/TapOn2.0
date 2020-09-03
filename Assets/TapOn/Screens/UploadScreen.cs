@@ -181,7 +181,8 @@ namespace TapOn.Screens
                             //minSize: 24,
                             onPressed: ()=>{
                                 loadingDialog();
-                                Window.instance.startCoroutine(Globals.instance.CreateEdit.SaveEdit());
+                                Globals.instance.arBase.SaveEdit(context);
+                                //Window.instance.startCoroutine(Globals.instance.CreateEdit.SaveEdit());
                             },
                             disabledColor: CColors.WeChatGreen,
                             color: CColors.WeChatGreen, 

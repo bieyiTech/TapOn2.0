@@ -135,8 +135,10 @@ namespace TapOn.Redux.Reducers {
                                     foreach (GameObject mark in t)
                                         mark.SetActive(false);
                                     //Çëuse gameobj.GetComponent<LocationInfo>().mark
-                                    Globals.instance.arEffect.SetActive(true);
-                                    Window.instance.startCoroutine(Globals.instance.arEffect.GetComponent<AREffectManager>().PreviewMap(gameobj.GetComponent<LocationInfo>().mark));
+                                    //Globals.instance.arEffect.SetActive(true);
+                                    Globals.instance.arBase.SetAREffectState(true);
+                                    Globals.instance.arBase.PreviewMap(gameobj.GetComponent<LocationInfo>().mark, Globals.instance.nowContext);
+                                    //Window.instance.startCoroutine(Globals.instance.arEffect.GetComponent<AREffectManager>().PreviewMap(gameobj.GetComponent<LocationInfo>().mark));
                                     return new StoreProvider<AppState>(
                                         store: StoreProvider.store,
                                         new MaterialApp(

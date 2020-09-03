@@ -202,8 +202,10 @@ namespace TapOn.Main
                                         GameObject[] t = GameObject.FindGameObjectsWithTag("mark");
                                         foreach (GameObject mark in Globals.instance.marks)
                                             mark.SetActive(false);
-                                        Globals.instance.arEffect.SetActive(true);
-                                        Globals.instance.arEffect.GetComponent<AREffectManager>().CreateAndEditMap();
+                                        //Globals.instance.arEffect.SetActive(true);
+                                        Globals.instance.arBase.SetAREffectState(true);
+                                        Globals.instance.arBase.EnableAREffect();
+                                        //Globals.instance.arEffect.GetComponent<AREffectManager>().CreateAndEditMap();
                                         Navigator.push(context, new MaterialPageRoute(builder: (_) =>
                                         {
                                             return new StoreProvider<AppState>(

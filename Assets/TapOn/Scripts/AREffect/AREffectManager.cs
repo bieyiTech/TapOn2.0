@@ -78,7 +78,7 @@ namespace AREffect
                 Debug.Log("AREffectManager: mapSession is null");
             }
             createEdit.SetMapSession(mapSession);
-            Globals.instance.arDisplay.SetActive(true);
+            Globals.instance.arBase.SetARDisplayState(true);
             ShowParticle(true);
         }
 
@@ -86,8 +86,8 @@ namespace AREffect
         {
             createEdit.gameObject.SetActive(false);
             DestroySession();
-            Globals.instance.arDisplay.SetActive(false);
-            Globals.instance.arEffect.SetActive(false);
+            Globals.instance.arBase.SetARDisplayState(false);
+            Globals.instance.arBase.SetAREffectState(false);
             ShowParticle(false);
         }
         

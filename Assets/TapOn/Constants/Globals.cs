@@ -5,6 +5,7 @@ using TencentMap.API;
 using Unity.UIWidgets.widgets;
 using UnityEngine;
 using AREffect;
+using TapOn.AREffects;
 
 namespace TapOn.Constants {
     public class Globals : MonoBehaviour
@@ -60,14 +61,9 @@ namespace TapOn.Constants {
 
         public MarkManager markManager;
 
-        public GameObject arEffect;
-        public GameObject arDisplay;
-        
-        public List<GameObject> templetes;
-        public PropsController dragger;
+        public ARbase arBase;
 
-        public CreateEditMapController CreateEdit;
-        public PreviewEditController PreviewEdit;
+        public List<GameObject> templetes;
 
         public Camera mapCamera;
 
@@ -131,7 +127,8 @@ namespace TapOn.Constants {
             GameObject[] t = GameObject.FindGameObjectsWithTag("mark");
             foreach (GameObject mark in Globals.instance.marks)
                 mark.SetActive(true);
-            Globals.instance.arEffect.GetComponent<AREffectManager>().CreateAndEditMapEnd();
+            Globals.instance.arBase.DisableAREffect();
+            //Globals.instance.arEffect.GetComponent<AREffectManager>().CreateAndEditMapEnd();
         }
     }
 }

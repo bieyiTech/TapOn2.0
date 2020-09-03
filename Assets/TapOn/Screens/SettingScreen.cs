@@ -516,7 +516,8 @@ namespace TapOn.Screens
                         drag[index] = true;
                     });
                     Debug.Log("onPanStart");
-                    Globals.instance.dragger.StartCreate(widget.viewModel.products[index]);
+                    Globals.instance.arBase.StartDrag(widget.viewModel.products[index]);
+                    //Globals.instance.dragger.StartCreate(widget.viewModel.products[index]);
                 },
                 onPanEnd: detail =>
                 {
@@ -525,7 +526,8 @@ namespace TapOn.Screens
                         drag[index] = false;
                     });
                     Debug.Log("onPanEnd");
-                    Globals.instance.dragger.StopCreate();
+                    Globals.instance.arBase.StopDrag();
+                    //Globals.instance.dragger.StopCreate();
                 },
                 onPanUpdate: detail =>
                 {
@@ -1089,7 +1091,8 @@ namespace TapOn.Screens
                                     BuildContext lastContext = Globals.instance.contextStack.Pop();
                                     Navigator.pop(lastContext);
                                     Globals.instance.map.SetActive(true);
-                                    Globals.instance.arEffect.GetComponent<AREffectManager>().CreateAndEditMapEnd();
+                                    Globals.instance.arBase.DisableAREffect();
+                                    //Globals.instance.arEffect.GetComponent<AREffectManager>().CreateAndEditMapEnd();
                                 },
                                 icon: new Icon(
                                     icon: MyIcons.cancel_mine,
